@@ -3,7 +3,9 @@ package org.mixdrinks.styles
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
+@Suppress("MagicNumber")
 object MixDrinksColors {
+
   @Stable
   val Main = Color(0xFF2B4718)
 

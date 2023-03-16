@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+@Suppress("MagicNumber")
 object MixDrinksTextStyles {
 
   val H1 = TextStyle(
@@ -36,5 +37,4 @@ object MixDrinksTextStyles {
       letterSpacing = (-0.07).sp,
       lineHeight = 20.sp,
   )
-
 }

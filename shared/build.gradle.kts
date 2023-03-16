@@ -1,3 +1,4 @@
+@file:Suppress("UnusedPrivateMember")
 plugins {
   kotlin("multiplatform")
   kotlin("native.cocoapods")
