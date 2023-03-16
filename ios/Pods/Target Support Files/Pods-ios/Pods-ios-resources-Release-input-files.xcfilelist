@@ -1,0 +1,5 @@
+${PODS_ROOT}/Target Support Files/Pods-ios/Pods-ios-resources.sh
+${PODS_ROOT}/../../shared/src/commonMain/resources/back.png
+${PODS_ROOT}/../../shared/src/commonMain/resources/filter.svg
+${PODS_ROOT}/../../shared/src/commonMain/resources/minus.svg
+${PODS_ROOT}/../../shared/src/commonMain/resources/plus.svg
