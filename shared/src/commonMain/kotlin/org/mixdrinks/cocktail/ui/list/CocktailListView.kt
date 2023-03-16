@@ -25,7 +25,7 @@ import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
-import org.mixdrinks.utils.Loader
+import org.mixdrinks.cocktail.ui.widgets.Loader
 
 @Composable
 fun CocktailListView(component: ListComponent) {
@@ -74,7 +74,10 @@ fun Cocktail(cocktail: ListComponent.Cocktail, onClick: (CocktailId) -> Unit) {
     Box {
       Row {
         Image(
-            painter = rememberAsyncImagePainter(cocktail.url), contentDescription = "Коктейль ${cocktail.name}", contentScale = ContentScale.None, modifier = Modifier.width(80.dp),
+            painter = rememberAsyncImagePainter(cocktail.url),
+            contentDescription = "Коктейль ${cocktail.name}",
+            contentScale = ContentScale.None,
+            modifier = Modifier.width(80.dp),
         )
 
         Text(

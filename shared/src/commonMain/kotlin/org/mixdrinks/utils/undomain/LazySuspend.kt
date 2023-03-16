@@ -1,4 +1,4 @@
-package org.mixdrinks.utils
+package org.mixdrinks.utils.undomain
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

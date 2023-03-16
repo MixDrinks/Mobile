@@ -1,10 +1,11 @@
+@file:Suppress("UnusedPrivateMember")
 import org.jetbrains.compose.experimental.dsl.IOSDevices
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("multiplatform")
-  id("org.jetbrains.compose")
+  id("org.jetbrains.compose") version "1.3.1"
 }
 
 version = "1.0"
@@ -39,7 +40,6 @@ kotlin {
             "-linker-option", "-framework", "-linker-option", "CoreText",
             "-linker-option", "-framework", "-linker-option", "CoreGraphics"
         )
-        // TODO: the current compose binary surprises LLVM, so disable checks for now.
         freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
       }
     }
@@ -103,13 +103,11 @@ tasks.withType<KotlinCompile> {
 kotlin {
   targets.withType<KotlinNativeTarget> {
     binaries.all {
-      // TODO: the current compose binary surprises LLVM, so disable checks for now.
       freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
     }
   }
 }
 
-// TODO: remove when https://youtrack.jetbrains.com/issue/KT-50778 fixed
 project.tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile::class.java).configureEach {
   kotlinOptions.freeCompilerArgs += listOf(
       "-Xir-dce-runtime-diagnostic=log"

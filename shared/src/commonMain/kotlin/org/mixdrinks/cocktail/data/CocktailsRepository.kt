@@ -1,7 +1,7 @@
 package org.mixdrinks.cocktail.data
 
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.utils.LazySuspend
+import org.mixdrinks.utils.undomain.LazySuspend
 
 
 class CocktailsRepository(private val mixDrinksService: MixDrinksService) {
@@ -42,7 +42,8 @@ class CocktailsRepository(private val mixDrinksService: MixDrinksService) {
           )
         }
 
-    val glassware = snapshot().glassware.find { it.id == cocktail.glassware } ?: return null
+    val glassware = snapshot().glassware.find { it.id == cocktail.glassware }
+        ?: error("Cannot found glassware for cocktail")
 
     return FullCocktail(
         id = cocktail.id,

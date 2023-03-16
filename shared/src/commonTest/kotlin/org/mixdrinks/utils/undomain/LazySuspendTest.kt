@@ -1,9 +1,9 @@
-package org.mixdrinks.tools
+package org.mixdrinks.utils.undomain
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.mixdrinks.utils.LazySuspend
+import org.mixdrinks.utils.undomain.LazySuspend
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

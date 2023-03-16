@@ -19,6 +19,7 @@ import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
+import org.mixdrinks.utils.ImageUrlCreators
 
 class DetailsComponent(
     private val componentContext: ComponentContext,
@@ -43,7 +44,7 @@ class DetailsComponent(
     return FullCocktailUiModel(
         id = fullCocktail.id,
         name = fullCocktail.name,
-        url = "https://image.mixdrinks.org/cocktails/${fullCocktail.id.id}/560/${fullCocktail.id.id}.webp",
+        url = ImageUrlCreators.createUrl(fullCocktail.id, ImageUrlCreators.Size.SIZE_560),
         receipt = fullCocktail.receipt,
         goods = FullCocktailUiModel.GoodsUi(
             count = count,
@@ -52,38 +53,42 @@ class DetailsComponent(
                   goodId = it.goodId,
                   name = it.name,
                   amount = "${it.amount * count} ${it.unit}",
-                  url = "https://image.mixdrinks.org/goods/${it.goodId.id}/400/${it.goodId.id}.webp"
+                  url = ImageUrlCreators.createUrl(it.goodId, ImageUrlCreators.Size.SIZE_400)
               )
             }
         ),
         tools = fullCocktail.tools.map {
-          FullCocktailUiModel.ToolUi(
+          FullCocktailUiModel.ToolUi.Tool(
               id = it.toolId,
               name = it.name,
-              url = "https://image.mixdrinks.org/goods/${it.toolId.id}/400/${it.toolId.id}.webp"
+              url = ImageUrlCreators.createUrl(it.toolId, ImageUrlCreators.Size.SIZE_400)
           )
-        },
-        tags = fullCocktail.tags.map {
-          FullCocktailUiModel.TagUi(
-              id = it.id,
-              name = it.name,
-          )
-        },
-        taste = fullCocktail.tastes.map {
-          FullCocktailUiModel.TasteUi(
-              id = it.id,
-              name = it.name,
-          )
-        },
-        glassware = FullCocktailUiModel.GlasswareUi(
+        }.plus(FullCocktailUiModel.ToolUi.Glassware(
             id = fullCocktail.glassware.id,
             name = fullCocktail.glassware.name,
-            url = "https://image.mixdrinks.org/goods/${fullCocktail.glassware.id.value}/400/${fullCocktail.glassware.id.value}.webp"
-        )
+            url = ImageUrlCreators.createUrl(fullCocktail.glassware.id, ImageUrlCreators.Size.SIZE_400)
+        )),
+        tags = fullCocktail.tags.map {
+          FullCocktailUiModel.TagUi.Tag(
+              id = it.id,
+              name = it.name,
+          )
+        }.plus(fullCocktail.tastes.map {
+          FullCocktailUiModel.TagUi.Taste(
+              id = it.id,
+              name = it.name,
+          )
+        })
     )
   }
 
+  @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
   fun onTagClick(tagId: TagId) {
+
+  }
+
+  @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
+  fun onTasteClick(tasteId: TasteId) {
 
   }
 
@@ -113,8 +118,6 @@ data class FullCocktailUiModel(
     val goods: GoodsUi,
     val tools: List<ToolUi>,
     val tags: List<TagUi>,
-    val taste: List<TasteUi>,
-    val glassware: GlasswareUi,
 ) {
 
   data class GoodsUi(
@@ -129,25 +132,33 @@ data class FullCocktailUiModel(
       val amount: String,
   )
 
-  data class ToolUi(
-      val id: ToolId,
-      val name: String,
-      val url: String,
-  )
+  sealed class ToolUi(
+      open val name: String,
+      open val url: String,
+  ) {
+    data class Tool(
+        val id: ToolId,
+        override val name: String,
+        override val url: String,
+    ) : ToolUi(name, url)
 
-  data class TagUi(
-      val id: TagId,
-      val name: String,
-  )
+    data class Glassware(
+        val id: GlasswareId,
+        override val name: String,
+        override val url: String,
+    ) : ToolUi(name, url)
+  }
 
-  data class TasteUi(
-      val id: TasteId,
-      val name: String,
-  )
 
-  data class GlasswareUi(
-      val id: GlasswareId,
-      val name: String,
-      val url: String,
-  )
+  sealed class TagUi(open val name: String) {
+    data class Tag(
+        val id: TagId,
+        override val name: String,
+    ) : TagUi(name)
+
+    data class Taste(
+        val id: TasteId,
+        override val name: String,
+    ) : TagUi(name)
+  }
 }
