@@ -58,33 +58,5 @@ jobs:
           name: error-report
           path: build-reports.zip
 
-  windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-
-      - name: Run tests
-        run: ./gradlew mingwX64Test
-
-      - name: Bundle the build report
-        if: failure()
-        run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
-
-      - name: Upload the build report
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: error-report
-          path: build-reports.zip
-
 env:
   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"

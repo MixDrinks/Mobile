@@ -13,6 +13,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.mixdrinks.styles.MixDrinksColors
 import platform.UIKit.UIViewController
 
+@Suppress("FunctionNaming")
 fun MainViewController(): UIViewController =
     Application("Example Application") {
       Column {

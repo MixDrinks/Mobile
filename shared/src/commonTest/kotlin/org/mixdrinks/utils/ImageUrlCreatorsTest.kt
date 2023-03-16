@@ -22,5 +22,4 @@ class ImageUrlCreatorsTest {
         "https://image.mixdrinks.org/goods/10/560/10.webp"
     )
   }
-
 }

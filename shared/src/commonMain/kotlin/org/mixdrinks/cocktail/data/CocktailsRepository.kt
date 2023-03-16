@@ -42,7 +42,8 @@ class CocktailsRepository(private val mixDrinksService: MixDrinksService) {
           )
         }
 
-    val glassware = snapshot().glassware.find { it.id == cocktail.glassware } ?: return null
+    val glassware = snapshot().glassware.find { it.id == cocktail.glassware }
+        ?: throw IllegalStateException()
 
     return FullCocktail(
         id = cocktail.id,

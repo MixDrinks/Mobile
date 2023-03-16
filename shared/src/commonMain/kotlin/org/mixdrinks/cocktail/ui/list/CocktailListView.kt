@@ -74,7 +74,10 @@ fun Cocktail(cocktail: ListComponent.Cocktail, onClick: (CocktailId) -> Unit) {
     Box {
       Row {
         Image(
-            painter = rememberAsyncImagePainter(cocktail.url), contentDescription = "Коктейль ${cocktail.name}", contentScale = ContentScale.None, modifier = Modifier.width(80.dp),
+            painter = rememberAsyncImagePainter(cocktail.url),
+            contentDescription = "Коктейль ${cocktail.name}",
+            contentScale = ContentScale.None,
+            modifier = Modifier.width(80.dp),
         )
 
         Text(

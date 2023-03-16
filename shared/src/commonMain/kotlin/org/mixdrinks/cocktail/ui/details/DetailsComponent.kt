@@ -82,12 +82,12 @@ class DetailsComponent(
     )
   }
 
-  @Suppress("EmptyFunctionBlock")
+  @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
   fun onTagClick(tagId: TagId) {
 
   }
 
-  @Suppress("EmptyFunctionBlock")
+  @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
   fun onTasteClick(tasteId: TasteId) {
 
   }

@@ -1,3 +1,4 @@
+@file:Suppress("UnusedPrivateMember")
 import org.jetbrains.compose.experimental.dsl.IOSDevices
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -107,7 +108,6 @@ kotlin {
   }
 }
 
-// TODO: remove when https://youtrack.jetbrains.com/issue/KT-50778 fixed
 project.tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile::class.java).configureEach {
   kotlinOptions.freeCompilerArgs += listOf(
       "-Xir-dce-runtime-diagnostic=log"

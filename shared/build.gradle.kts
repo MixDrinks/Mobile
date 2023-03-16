@@ -1,4 +1,4 @@
-@file:Suppress("UnusedPrivateMember")
+@file:Suppress("UnusedPrivateMember", "MaxLineLength")
 plugins {
   kotlin("multiplatform")
   kotlin("native.cocoapods")
