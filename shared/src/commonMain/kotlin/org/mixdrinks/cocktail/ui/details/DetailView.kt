@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -24,8 +23,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +30,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
-import org.mixdrinks.dto.TagId
+import org.mixdrinks.cocktail.ui.widgets.Counter
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
 
@@ -105,14 +101,7 @@ fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: DetailsCompon
   Column(
       modifier = Modifier.verticalScroll(rememberScrollState())
   ) {
-    LazyRow(
-        modifier = Modifier.padding(start = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-      items(cocktail.tags) {
-        Tag(it, component::onTagClick)
-      }
-    }
+    Tags(cocktail, component)
     Image(
         painter = rememberAsyncImagePainter(cocktail.url),
         contentDescription = "Коктейль ${cocktail.name}",
@@ -164,6 +153,54 @@ fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: DetailsCompon
         )
       }
     }
+    Spacer(modifier = Modifier.height(4.dp).fillMaxWidth())
+    Tools(cocktail)
+    Spacer(modifier = Modifier.height(12.dp).fillMaxWidth())
+  }
+}
+
+@Composable
+fun Tools(cocktail: FullCocktailUiModel) {
+  LazyRow(
+      modifier = Modifier
+          .padding(start = 12.dp)
+  ) {
+    items(cocktail.tools) {
+      Tool(it)
+    }
+  }
+}
+
+@Composable
+fun Tool(toolUi: FullCocktailUiModel.ToolUi) {
+  Card(
+      modifier = Modifier
+          .width(100.dp)
+          .height(124.dp)
+          .fillMaxWidth()
+          .padding(horizontal = 2.dp)
+          .border(
+              1.dp,
+              MixDrinksColors.Main,
+              shape = RoundedCornerShape(8.dp),
+          ),
+      shape = RoundedCornerShape(8.dp),
+  ) {
+    Column {
+      Image(
+          painter = rememberAsyncImagePainter(toolUi.url),
+          contentDescription = toolUi.name,
+          contentScale = ContentScale.Fit,
+          modifier = Modifier.size(100.dp)
+      )
+      Text(
+          modifier = Modifier.align(Alignment.CenterHorizontally)
+              .padding(start = 2.dp, end = 2.dp, top = 4.dp),
+          text = toolUi.name,
+          style = MixDrinksTextStyles.H5,
+          textAlign = TextAlign.Center,
+      )
+    }
   }
 }
 
@@ -206,63 +243,6 @@ fun Good(good: FullCocktailUiModel.GoodUi) {
 }
 
 @Composable
-fun Counter(
-    count: Int,
-    onPlus: () -> Unit,
-    onMinus: () -> Unit,
-) {
-  val counterHeight = 40.dp
-  Row {
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-        onClick = onMinus,
-        contentPadding = PaddingValues(0.dp),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier
-            .size(counterHeight)
-    ) {
-      Text("-", color = MixDrinksColors.White)
-    }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-
-    Box(
-        modifier = Modifier
-            .size(counterHeight)
-            .border(1.dp, Color.Black, RoundedCornerShape(4.dp)),
-    ) {
-      Text(
-          modifier = Modifier.align(Alignment.Center),
-          text = count.toString(),
-          style = MixDrinksTextStyles.H4,
-          color = MixDrinksColors.Black,
-      )
-    }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-        onClick = onPlus,
-        contentPadding = PaddingValues(0.dp),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier
-            .size(counterHeight)
-    ) {
-      Text("+", color = MixDrinksColors.White)
-    }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-  }
-}
-
-@Composable
 fun Receipt(number: Int, text: String) {
   Row(
       modifier = Modifier
@@ -289,12 +269,29 @@ fun Receipt(number: Int, text: String) {
 }
 
 @Composable
-fun Tag(tag: FullCocktailUiModel.TagUi, onTagClick: (TagId) -> Unit) {
+fun Tags(cocktail: FullCocktailUiModel, component: DetailsComponent) {
+  LazyRow(
+      modifier = Modifier.padding(start = 8.dp),
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+  ) {
+    items(cocktail.tags) {
+      Tag(it) {
+        when (it) {
+          is FullCocktailUiModel.TagUi.Tag -> component.onTagClick(it.id)
+          is FullCocktailUiModel.TagUi.Taste -> component.onTasteClick(it.id)
+        }
+      }
+    }
+  }
+}
+
+@Composable
+fun Tag(tag: FullCocktailUiModel.TagUi, onTagClick: () -> Unit) {
   Box(
       modifier = Modifier
           .height(32.dp)
           .padding(horizontal = 4.dp)
-          .clickable { onTagClick(tag.id) }
+          .clickable { onTagClick() }
           .background(MixDrinksColors.Main, shape = RoundedCornerShape(4.dp))
   ) {
     Text(

@@ -1,4 +1,4 @@
-package org.mixdrinks.utils
+package org.mixdrinks.cocktail.ui.widgets
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

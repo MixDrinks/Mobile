@@ -25,7 +25,7 @@ import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
-import org.mixdrinks.utils.Loader
+import org.mixdrinks.cocktail.ui.widgets.Loader
 
 @Composable
 fun CocktailListView(component: ListComponent) {

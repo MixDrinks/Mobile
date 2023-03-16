@@ -1,7 +1,7 @@
 package org.mixdrinks.cocktail.data
 
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.utils.LazySuspend
+import org.mixdrinks.utils.undomain.LazySuspend
 
 
 class CocktailsRepository(private val mixDrinksService: MixDrinksService) {
