@@ -8,12 +8,12 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.data.MixDrinksService
+import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
 import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
 import org.mixdrinks.cocktail.ui.filters.FilterComponent

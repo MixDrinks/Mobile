@@ -1,3 +1,5 @@
+@file:Suppress("LongParameterList", "LongParameterList", "CyclomaticComplexMethod")
+
 package org.mixdrinks.cocktail.ui.widgets.undomain
 
 import androidx.compose.foundation.layout.Arrangement
