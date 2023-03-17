@@ -34,25 +34,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
+import org.mixdrinks.cocktail.ui.widgets.undomain.ContentHolder
 import org.mixdrinks.cocktail.ui.widgets.Counter
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
 
 @Composable
 fun DetailView(component: DetailsComponent) {
-  val state by component.state.collectAsState()
-
   Box(
       modifier = Modifier
           .fillMaxSize()
           .background(MixDrinksColors.White),
   ) {
-    when (state) {
-      is DetailsComponent.UiState.Data -> {
-        DetailViewContent((state as DetailsComponent.UiState.Data).data, component)
-      }
-
-      else -> Text("Loading / Error")
+    ContentHolder(
+        stateflow = component.state
+    ) {
+      DetailViewContent(it, component)
     }
   }
 }

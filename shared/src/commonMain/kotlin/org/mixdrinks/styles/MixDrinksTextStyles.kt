@@ -37,4 +37,12 @@ object MixDrinksTextStyles {
       letterSpacing = (-0.07).sp,
       lineHeight = 20.sp,
   )
+
+  val H6 = TextStyle(
+      fontFamily = FontFamily.Default,
+      fontSize = 12.sp,
+      fontWeight = FontWeight.Bold,
+      letterSpacing = (-0.07).sp,
+      lineHeight = 18.sp,
+  )
 }

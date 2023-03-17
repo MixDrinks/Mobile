@@ -1,14 +1,12 @@
-package org.mixdrinks.cocktail.data
+package org.mixdrinks.cocktail.ui.details
 
+import org.mixdrinks.cocktail.data.FullCocktail
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.utils.undomain.LazySuspend
+import org.mixdrinks.dto.SnapshotDto
 
-
-class CocktailsRepository(private val mixDrinksService: MixDrinksService) {
-
-  private val snapshot = LazySuspend { mixDrinksService.getSnapshot() }
-
-  suspend fun getCocktails() = snapshot().cocktails
+class FullCocktailRepository(
+    private val snapshot: suspend () -> SnapshotDto,
+) {
 
   suspend fun getFullCocktail(cocktailId: CocktailId): FullCocktail? {
     val cocktail = snapshot().cocktails.find { it.id == cocktailId } ?: return null
