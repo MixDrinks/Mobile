@@ -1,4 +1,4 @@
-@file:Suppress("LongParameterList", "LongParameterList", "CyclomaticComplexMethod")
+@file:Suppress("LongParameterList", "LongParameterList", "CyclomaticComplexMethod", "LongMethod")
 
 package org.mixdrinks.cocktail.ui.widgets.undomain
 
