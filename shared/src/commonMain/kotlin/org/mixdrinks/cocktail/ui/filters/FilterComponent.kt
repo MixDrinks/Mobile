@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.pop
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.channelFlow
@@ -31,7 +32,7 @@ class FilterComponent(
     private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext {
 
-  val state: StateFlow<UiState<List<FilterGroupUi>>> = filterRepository.selected
+  val state: Flow<UiState<List<FilterGroupUi>>> = filterRepository.selected
       .transform { selected ->
         this.emit(UiState.Loading)
         this.emit(
@@ -46,7 +47,6 @@ class FilterComponent(
         )
       }
       .flowOn(Dispatchers.Default)
-      .stateIn(CoroutineScope(EmptyCoroutineContext), SharingStarted.WhileSubscribed(), UiState.Loading)
 
   private suspend fun buildFilterItems(filterGroupDto: FilterGroupDto, selected: Map<FilterGroupId, List<FilterId>>) =
       filterGroupDto.filters.map { filter ->

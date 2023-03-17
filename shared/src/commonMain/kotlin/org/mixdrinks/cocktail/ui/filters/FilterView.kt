@@ -19,14 +19,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.mixdrinks.cocktail.ui.widgets.Loader
 import org.mixdrinks.cocktail.ui.widgets.undomain.ContentHolder
 import org.mixdrinks.cocktail.ui.widgets.undomain.FlowRow
+import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
@@ -56,16 +59,18 @@ fun FilterView(filterComponent: FilterComponent) {
       )
     }
 
-    ContentHolder(
-        stateflow = filterComponent.state
-    ) { filterGroupUis ->
-      LazyColumn {
+    val state by filterComponent.state.collectAsState(UiState.Loading)
+
+    when (val test = state) {
+      is UiState.Data -> LazyColumn {
         item {
-          filterGroupUis.forEach { filterGroupUi ->
+          test.data.forEach { filterGroupUi ->
             FilterGroup(filterGroupUi, filterComponent)
           }
         }
       }
+      is UiState.Error -> Text("Error")
+      UiState.Loading -> Loader()
     }
   }
 }
