@@ -25,7 +25,7 @@ val ComponentContext.scope: CoroutineScope
     val scope = instanceKeeper.get(INSTANCE_KEY)
     if (scope is CoroutineScope) return scope
 
-    return DestroyableCoroutineScope(SupervisorJob() + Dispatchers.Main).also {
+    return DestroyableCoroutineScope(SupervisorJob() + Dispatchers.Default).also {
       instanceKeeper.put(INSTANCE_KEY, it)
     }
   }

@@ -40,7 +40,7 @@ object Graph {
 
   val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit)
 
-  val filterRepository = FilterRepository(suspend { snapshotRepository.get() })
+  val filterRepository = FilterRepository { snapshotRepository.get() }
 }
 
 class RootComponent(
@@ -90,7 +90,8 @@ class RootComponent(
     return FilterComponent(
         componentContext,
         Graph.filterRepository,
-        navigation
+        suspend { CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() }) },
+        navigation,
     )
   }
 

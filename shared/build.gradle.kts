@@ -60,7 +60,7 @@ kotlin {
         implementation("com.arkivanov.decompose:decompose:1.0.0")
         implementation("com.arkivanov.decompose:extensions-compose-jetpack:1.0.0")
 
-        api("io.github.qdsfdhvh:image-loader:1.2.10")
+        implementation("io.github.qdsfdhvh:image-loader:1.2.10")
         implementation("com.goncalossilva:resources:0.2.5")
       }
     }
@@ -71,6 +71,9 @@ kotlin {
     }
     val androidMain by getting {
       dependsOn(commonMain)
+      dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+      }
     }
     val iosMain by getting {
       dependsOn(commonMain)
