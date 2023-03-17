@@ -1,18 +1,19 @@
 package org.mixdrinks.cocktail.ui.details
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import org.mixdrinks.cocktail.data.CocktailsRepository
 import org.mixdrinks.cocktail.data.FullCocktail
+import org.mixdrinks.cocktail.ui.RootComponent
+import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GlasswareId
 import org.mixdrinks.dto.GoodId
@@ -23,15 +24,15 @@ import org.mixdrinks.utils.ImageUrlCreators
 
 class DetailsComponent(
     private val componentContext: ComponentContext,
-    private val cocktailsRepository: CocktailsRepository,
+    private val fullCocktailRepository: FullCocktailRepository,
     private val cocktailId: CocktailId,
-    public val close: () -> Unit,
+    private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext {
 
   private val _counter = MutableStateFlow(1)
 
-  val state: StateFlow<UiState> = flow {
-    cocktailsRepository.getFullCocktail(cocktailId)?.let {
+  val state: StateFlow<UiState<FullCocktailUiModel>> = flow {
+    fullCocktailRepository.getFullCocktail(cocktailId)?.let {
       emit(it)
     }
   }
@@ -82,6 +83,10 @@ class DetailsComponent(
     )
   }
 
+  fun close() {
+    navigation.pop()
+  }
+
   @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
   fun onTagClick(tagId: TagId) {
 
@@ -100,13 +105,6 @@ class DetailsComponent(
     if (_counter.value > 1) {
       _counter.value--
     }
-  }
-
-  sealed class UiState {
-    object Loading : UiState()
-    data class Data(val data: FullCocktailUiModel) : UiState()
-
-    object Error : UiState()
   }
 }
 

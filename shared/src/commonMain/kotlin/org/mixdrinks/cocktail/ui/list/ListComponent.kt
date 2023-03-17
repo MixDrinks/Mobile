@@ -1,46 +1,46 @@
 package org.mixdrinks.cocktail.ui.list
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.mixdrinks.cocktail.data.CocktailsRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import org.mixdrinks.cocktail.ui.RootComponent
+import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.utils.ImageUrlCreators
+import kotlin.coroutines.EmptyCoroutineContext
 
 class ListComponent(
     private val componentContext: ComponentContext,
-    private val cocktailsRepository: CocktailsRepository,
-    private val openCocktail: (CocktailId) -> Unit,
+    private val cocktailListRepository: CocktailListRepository,
+    private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext {
 
-  private val _state = mutableStateOf<UiState>(UiState.Loading)
-  val state: State<UiState> = _state
+  val state: StateFlow<UiState<List<Cocktail>>> = flow {
+    emitAll(cocktailListRepository.getCocktails()
+        .map { cocktails ->
+          UiState.Data(cocktails.map { cocktail ->
+            Cocktail(
+                cocktail.id,
+                ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_400),
+                cocktail.name
+            )
+          })
+        })
+  }.stateIn(CoroutineScope(EmptyCoroutineContext), SharingStarted.Eagerly, UiState.Loading)
 
-  init {
-    _state.value = UiState.Loading
-    CoroutineScope(Dispatchers.Default).launch {
-      _state.value = UiState.Data(
-          cocktailsRepository.getCocktails()
-              .map {
-                Cocktail(
-                    it.id,
-                    "https://image.mixdrinks.org/cocktails/${it.id.id}/400/${it.id.id}.webp",
-                    it.name
-                )
-              }
-      )
-    }
+  fun openFilters() {
+    navigation.push(RootComponent.Config.FilterConfig)
   }
 
   fun onCocktailClick(cocktailId: CocktailId) {
-    openCocktail(cocktailId)
-  }
-
-  sealed class UiState {
-    object Loading : UiState()
-    data class Data(val cocktails: List<Cocktail>) : UiState()
+    navigation.push(RootComponent.Config.DetailsConfig(id = cocktailId.id))
   }
 
   data class Cocktail(

@@ -4,20 +4,23 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.mixdrinks.cocktail.data.CocktailsRepository
+import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.data.MixDrinksService
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
+import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
+import org.mixdrinks.cocktail.ui.filters.FilterComponent
+import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.list.CocktailListRepository
 import org.mixdrinks.cocktail.ui.list.ListComponent
+import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.dto.CocktailId
 
 object Graph {
@@ -35,7 +38,9 @@ object Graph {
       .create<MixDrinksService>()
 
 
-  val cocktailsRepository: CocktailsRepository = CocktailsRepository(Graph.ktorfit)
+  val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit)
+
+  val filterRepository = FilterRepository(suspend { snapshotRepository.get() })
 }
 
 class RootComponent(
@@ -58,35 +63,49 @@ class RootComponent(
       when (config) {
         Config.ListConfig -> Child.List(listScreen(componentContext))
         is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
+        Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
       }
 
   private fun listScreen(componentContext: ComponentContext): ListComponent =
       ListComponent(
           componentContext = componentContext,
-          cocktailsRepository = Graph.cocktailsRepository,
-          openCocktail = ::openCocktail,
+          cocktailListRepository = CocktailListRepository(
+              suspend { Graph.snapshotRepository.get() },
+              Graph.filterRepository,
+              suspend { CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() }) },
+          ),
+          navigation = navigation,
       )
 
   private fun detailsScreen(componentContext: ComponentContext, config: Config.DetailsConfig): DetailsComponent {
-    return DetailsComponent(componentContext, Graph.cocktailsRepository, CocktailId(config.id), navigation::pop)
+    return DetailsComponent(
+        componentContext,
+        FullCocktailRepository { Graph.snapshotRepository.get() },
+        CocktailId(config.id),
+        navigation,
+    )
   }
 
-  private fun openCocktail(id: CocktailId) {
-    navigation.push(Config.DetailsConfig(id = id.id))
-  }
-
-  fun close() {
-    navigation.pop()
+  private fun filterScreen(componentContext: ComponentContext): FilterComponent {
+    return FilterComponent(
+        componentContext,
+        Graph.filterRepository,
+        navigation
+    )
   }
 
   sealed class Child {
     class List(val component: ListComponent) : Child()
     class Details(val component: DetailsComponent) : Child()
+    class Filters(val component: FilterComponent) : Child()
   }
 
   sealed class Config : Parcelable {
     @Parcelize
     object ListConfig : Config()
+
+    @Parcelize
+    object FilterConfig : Config()
 
     @Parcelize
     data class DetailsConfig(val id: Int) : Config()

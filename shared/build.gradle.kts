@@ -1,4 +1,7 @@
 @file:Suppress("UnusedPrivateMember", "MaxLineLength")
+
+import org.jetbrains.compose.ComposeBuildConfig
+
 plugins {
   kotlin("multiplatform")
   kotlin("native.cocoapods")
@@ -44,7 +47,8 @@ kotlin {
         implementation(compose.material)
         implementation(compose.runtime)
 
-        implementation("org.jetbrains.compose.components:components-resources:${org.jetbrains.compose.ComposeBuildConfig.composeVersion}")
+        //  implementation("org.jetbrains.compose.foundation:foundation-layout:${ComposeBuildConfig.composeVersion}")
+        implementation("org.jetbrains.compose.components:components-resources:${ComposeBuildConfig.composeVersion}")
         implementation("org.mixdrinks:core:0.5.1")
 
         implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.0")
