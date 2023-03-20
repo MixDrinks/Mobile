@@ -7,7 +7,7 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "detekt"
         uses: natiginfo/action-detekt-all@1.22.0
