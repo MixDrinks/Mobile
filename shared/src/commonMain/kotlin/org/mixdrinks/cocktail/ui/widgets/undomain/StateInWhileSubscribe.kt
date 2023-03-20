@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.stateIn
 
 fun <T> Flow<UiState<T>>.stateInWhileSubscribe(): StateFlow<UiState<T>> {
   return this.stateIn(
-      CoroutineScope(Dispatchers.Main), SharingStarted.WhileSubscribed(1000), UiState.Loading
+      CoroutineScope(Dispatchers.Main), SharingStarted.WhileSubscribed(STOP_SUBSCRIBE_TIME_OUT), UiState.Loading
   )
 }
+
+private const val STOP_SUBSCRIBE_TIME_OUT = 1000L

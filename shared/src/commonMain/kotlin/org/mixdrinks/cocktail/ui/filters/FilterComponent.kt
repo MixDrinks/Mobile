@@ -49,7 +49,10 @@ class FilterComponent(
       .distinctUntilChanged()
       .stateInWhileSubscribe()
 
-  private suspend fun buildFilterItems(filterGroupDto: FilterGroupDto, selected: Map<FilterGroupId, List<FilterId>>): List<FilterUi> {
+  private suspend fun buildFilterItems(
+      filterGroupDto: FilterGroupDto,
+      selected: Map<FilterGroupId, List<FilterId>>,
+  ): List<FilterUi> {
     val filters = filterGroupDto.filters.map { filter ->
       val nextMap = selected.filter { it.value.isNotEmpty() }.toMutableMap().apply {
         this[filterGroupDto.id] = selected[filterGroupDto.id].orEmpty().plus(filter.id)
