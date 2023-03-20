@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,16 +25,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
+import org.mixdrinks.cocktail.ui.details.goods.GoodsView
 import org.mixdrinks.cocktail.ui.widgets.undomain.ContentHolder
-import org.mixdrinks.cocktail.ui.widgets.Counter
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
 
@@ -106,31 +103,8 @@ fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: DetailsCompon
         modifier = Modifier.fillMaxWidth()
             .padding(vertical = 8.dp),
     )
-    Box(modifier = Modifier.fillMaxWidth()) {
-      Text(
-          modifier = Modifier
-              .padding(start = 12.dp, bottom = 12.dp)
-              .align(Alignment.CenterStart),
-          color = MixDrinksColors.Black,
-          text = "Інгрідієнти",
-          style = MixDrinksTextStyles.H1,
-      )
-      Box(
-          modifier = Modifier
-              .padding(horizontal = 12.dp)
-              .align(Alignment.CenterEnd)
-      ) {
-        Counter(
-            count = cocktail.goods.count,
-            onPlus = component::onPlusClick,
-            onMinus = component::onMinusClick,
-        )
-      }
-    }
 
-    cocktail.goods.goods.forEach {
-      Good(it)
-    }
+    GoodsView(component.goodsSubComponent)
 
     Text(
         modifier = Modifier.padding(start = 12.dp, bottom = 12.dp),
@@ -196,44 +170,6 @@ fun Tool(toolUi: FullCocktailUiModel.ToolUi) {
           text = toolUi.name,
           style = MixDrinksTextStyles.H5,
           textAlign = TextAlign.Center,
-      )
-    }
-  }
-}
-
-@Composable
-fun Good(good: FullCocktailUiModel.GoodUi) {
-  Card(
-      modifier = Modifier
-          .height(64.dp)
-          .fillMaxWidth()
-          .padding(horizontal = 12.dp, vertical = 2.dp)
-          .border(
-              1.dp,
-              MixDrinksColors.Main,
-              shape = RoundedCornerShape(8.dp),
-          ),
-      shape = RoundedCornerShape(8.dp),
-  ) {
-    Row {
-      Image(
-          painter = rememberAsyncImagePainter(good.url),
-          contentDescription = good.name,
-          contentScale = ContentScale.FillWidth,
-          modifier = Modifier.size(64.dp)
-      )
-      Text(
-          modifier = Modifier.align(Alignment.CenterVertically)
-              .padding(horizontal = 8.dp),
-          text = good.name,
-          style = MixDrinksTextStyles.H5,
-      )
-      Spacer(Modifier.weight(1f).fillMaxHeight())
-      Text(
-          modifier = Modifier.align(Alignment.CenterVertically)
-              .padding(horizontal = 8.dp),
-          text = good.amount,
-          style = MixDrinksTextStyles.H5,
       )
     }
   }

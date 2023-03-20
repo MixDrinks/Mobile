@@ -1,8 +1,8 @@
 package org.mixdrinks.utils.undomain
 
+import kotlin.jvm.Volatile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.jvm.Volatile
 
 class LazySuspend<T>(
     private val block: suspend () -> T,

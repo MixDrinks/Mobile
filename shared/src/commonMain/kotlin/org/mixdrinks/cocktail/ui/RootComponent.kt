@@ -16,6 +16,7 @@ import org.mixdrinks.cocktail.data.MixDrinksService
 import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
 import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
+import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
 import org.mixdrinks.cocktail.ui.filters.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
 import org.mixdrinks.cocktail.ui.list.CocktailListRepository
@@ -83,6 +84,7 @@ class RootComponent(
         FullCocktailRepository { Graph.snapshotRepository.get() },
         CocktailId(config.id),
         navigation,
+        GoodsRepository { Graph.snapshotRepository.get() }
     )
   }
 
