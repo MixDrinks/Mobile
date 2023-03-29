@@ -67,7 +67,7 @@ fun CocktailListView(component: ListComponent) {
         stateflow = component.state,
     ) {
       LazyColumn {
-        items(it, key = { it.id }, contentType = { 0 }) {
+        items(it, key = { it.id }) {
           Box(modifier = Modifier.padding(4.dp)) {
             Cocktail(it, component::onCocktailClick)
           }
