@@ -49,7 +49,7 @@ kotlin {
 
         //  implementation("org.jetbrains.compose.foundation:foundation-layout:${ComposeBuildConfig.composeVersion}")
         implementation("org.jetbrains.compose.components:components-resources:${ComposeBuildConfig.composeVersion}")
-        implementation("org.mixdrinks:core:0.5.1")
+        implementation("org.mixdrinks:core:0.8.1-777512bd")
 
         implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.0")
 
