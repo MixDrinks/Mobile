@@ -1,14 +1,17 @@
-package org.mixdrinks.cocktail.ui.filters
+package org.mixdrinks.cocktail.ui.filters.main
 
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.mixdrinks.cocktail.ui.RootComponent
+import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.launch
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
@@ -101,7 +104,13 @@ class FilterComponent(
   }
 
   fun openDetailSearch(filterGroupId: FilterGroupId) {
+    val searchItemType = when (filterGroupId) {
+      FilterGroups.GOODS.id -> SearchItemComponent.SearchItemType.GOODS
+      FilterGroups.TOOLS.id -> SearchItemComponent.SearchItemType.TOOLS
+      else -> error("Unknown filter group id: $filterGroupId")
+    }
 
+    navigation.push(RootComponent.Config.SearchItemConfig(searchItemType))
   }
 
   @Immutable

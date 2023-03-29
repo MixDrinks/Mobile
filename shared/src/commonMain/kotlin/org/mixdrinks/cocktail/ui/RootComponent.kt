@@ -17,8 +17,10 @@ import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
 import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
 import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
-import org.mixdrinks.cocktail.ui.filters.FilterComponent
+import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.filters.search.ItemRepository
+import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.list.CocktailListRepository
 import org.mixdrinks.cocktail.ui.list.ListComponent
 import org.mixdrinks.domain.CocktailSelector
@@ -65,6 +67,7 @@ class RootComponent(
         Config.ListConfig -> Child.List(listScreen(componentContext))
         is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
         Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
+        is Config.SearchItemConfig -> Child.ItemSearch(searchItemScreen(componentContext, config.searchItemType))
       }
 
   private fun listScreen(componentContext: ComponentContext): ListComponent =
@@ -97,10 +100,21 @@ class RootComponent(
     )
   }
 
+  private fun searchItemScreen(component: ComponentContext, searchItemType: SearchItemComponent.SearchItemType): SearchItemComponent {
+    return SearchItemComponent(
+        component,
+        searchItemType,
+        Graph.filterRepository,
+        ItemRepository { Graph.snapshotRepository.get() },
+    )
+  }
+
   sealed class Child {
     class List(val component: ListComponent) : Child()
     class Details(val component: DetailsComponent) : Child()
     class Filters(val component: FilterComponent) : Child()
+
+    class ItemSearch(val component: SearchItemComponent) : Child()
   }
 
   sealed class Config : Parcelable {
@@ -112,5 +126,8 @@ class RootComponent(
 
     @Parcelize
     data class DetailsConfig(val id: Int) : Config()
+
+    @Parcelize
+    data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) : Config()
   }
 }

@@ -14,7 +14,8 @@ import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import org.mixdrinks.cocktail.ui.details.DetailView
-import org.mixdrinks.cocktail.ui.filters.FilterView
+import org.mixdrinks.cocktail.ui.filters.main.FilterView
+import org.mixdrinks.cocktail.ui.filters.search.SearchItemView
 import org.mixdrinks.cocktail.ui.list.CocktailListView
 import org.mixdrinks.styles.MixDrinksColors
 
@@ -29,6 +30,7 @@ fun RootContent(component: RootComponent) {
       is RootComponent.Child.List -> CocktailListView(child.component)
       is RootComponent.Child.Details -> DetailView(child.component)
       is RootComponent.Child.Filters -> FilterView(child.component)
+      is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
     }
   }
 }
