@@ -18,7 +18,7 @@ configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
 }
 
 val ktorVersion = "2.2.4"
-val ktorfitVersion = "1.0.0"
+val ktorfitVersion = "1.0.1"
 
 kotlin {
   android()
