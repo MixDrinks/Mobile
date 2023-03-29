@@ -61,7 +61,7 @@ kotlin {
         implementation("com.arkivanov.decompose:extensions-compose-jetpack:1.0.0")
 
         api("io.github.qdsfdhvh:image-loader:1.2.10")
-        implementation("com.goncalossilva:resources:0.2.5")
+        implementation("com.goncalossilva:resources:0.3.0")
       }
     }
     val commonTest by getting {
