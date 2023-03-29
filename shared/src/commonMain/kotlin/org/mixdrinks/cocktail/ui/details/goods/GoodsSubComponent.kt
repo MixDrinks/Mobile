@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
+import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GoodId
-import org.mixdrinks.utils.ImageUrlCreators
 
 class GoodsSubComponent(
     private val componentContext: ComponentContext,

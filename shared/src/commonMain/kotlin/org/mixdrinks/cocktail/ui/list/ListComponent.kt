@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.map
 import org.mixdrinks.cocktail.ui.RootComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
+import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.utils.ImageUrlCreators
 
 class ListComponent(
     private val componentContext: ComponentContext,

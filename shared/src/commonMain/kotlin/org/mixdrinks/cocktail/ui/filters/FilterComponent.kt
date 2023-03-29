@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.mixdrinks.cocktail.ui.RootComponent
@@ -46,7 +45,6 @@ class FilterComponent(
         )
       }
       .flowOn(Dispatchers.Default)
-      .distinctUntilChanged()
       .stateInWhileSubscribe()
 
   private suspend fun buildFilterItems(
