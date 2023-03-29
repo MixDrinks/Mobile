@@ -31,21 +31,30 @@ class FilterComponent(
         this.emit(UiState.Loading)
         this.emit(
             UiState.Data(filterRepository.getFilterGroups()
-                .filterNot { it.id in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id) }
                 .flatMap { filterGroupDto ->
-                  listOf(
-                      FilterScreenElement.Title(filterGroupDto.name),
-                  ).plus(
-                      FilterScreenElement.FilterGroupUi(
-                          filterGroupId = filterGroupDto.id,
-                          filterItems = buildFilterItems(filterGroupDto, selected)
-                      )
-                  )
+                  flatMapFilterGroup(filterGroupDto, selected)
                 })
         )
       }
       .flowOn(Dispatchers.Default)
       .stateInWhileSubscribe()
+
+  private suspend fun flatMapFilterGroup(filterGroupDto: FilterGroupDto, selected: Map<FilterGroupId, List<FilterId>>): List<FilterScreenElement> {
+    val list = listOf<FilterScreenElement>(
+        FilterScreenElement.Title(filterGroupDto.name),
+    )
+
+    return if (filterGroupDto.id !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id)) {
+      list.plus(
+          FilterScreenElement.FilterGroupUi(
+              filterGroupId = filterGroupDto.id,
+              filterItems = buildFilterItems(filterGroupDto, selected)
+          )
+      )
+    } else {
+      list.plus(FilterScreenElement.FilterOpenSearch(filterGroupDto.id, "Відкрити ${filterGroupDto.name}"))
+    }
+  }
 
   private suspend fun buildFilterItems(
       filterGroupDto: FilterGroupDto,
@@ -79,12 +88,20 @@ class FilterComponent(
     }
   }
 
+  fun clear() = launch {
+    filterRepository.clear()
+  }
+
   fun close() {
     navigation.pop()
   }
 
   fun onValueChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean) = launch {
     filterRepository.onValueChange(filterGroupId, id, isSelect)
+  }
+
+  fun openDetailSearch(filterGroupId: FilterGroupId) {
+
   }
 
   @Immutable
@@ -98,6 +115,12 @@ class FilterComponent(
     data class FilterGroupUi(
         val filterGroupId: FilterGroupId,
         val filterItems: List<FilterUi>,
+    ) : FilterScreenElement()
+
+    @Immutable
+    data class FilterOpenSearch(
+        val filterGroupId: FilterGroupId,
+        val text: String,
     ) : FilterScreenElement()
   }
 

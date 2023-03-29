@@ -3,6 +3,8 @@ package org.mixdrinks.cocktail.ui.filters
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -11,13 +13,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,50 +56,129 @@ fun FilterView(filterComponent: FilterComponent) {
       Spacer(Modifier.weight(1f))
       Text(
           modifier = Modifier
-              .clickable { filterComponent.close() }
+              .clickable { filterComponent.clear() }
               .padding(start = 12.dp, bottom = 12.dp),
           color = MixDrinksColors.Black,
-          text = "Закрити",
+          text = "Очистити",
           style = MixDrinksTextStyles.H1,
       )
     }
 
-    ContentHolder(
-        stateflow = filterComponent.state,
-    ) { groups ->
-      LazyColumn {
-        items(groups) {
-          FilterGroup(it, filterComponent)
-        }
+    Box(
+        modifier = Modifier.weight(1F)
+    ) {
+      ContentHolder(
+          stateflow = filterComponent.state,
+      ) { groups ->
+        FilterContent(groups, filterComponent)
       }
     }
-  }
-}
 
-@Composable
-fun FilterGroup(filterGroupUi: FilterComponent.FilterScreenElement, filterComponent: FilterComponent) {
-  when (filterGroupUi) {
-    is FilterComponent.FilterScreenElement.Title -> {
-      Text(
+    Box(
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxWidth()
+    ) {
+      Button(
+          onClick = { filterComponent.close() },
+          shape = RoundedCornerShape(16.dp),
+          colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
           modifier = Modifier
-              .padding(bottom = 12.dp),
-          color = MixDrinksColors.Black,
-          text = filterGroupUi.name,
-          style = MixDrinksTextStyles.H2,
-      )
-    }
-    is FilterComponent.FilterScreenElement.FilterGroupUi -> {
-      FlowRow(mainAxisSpacing = 4.dp, crossAxisSpacing = 4.dp) {
-        filterGroupUi.filterItems.forEach { filterUi ->
-          FilterItem(filterGroupUi.filterGroupId, filterUi, filterComponent)
-        }
+              .fillMaxWidth()
+              .padding(vertical = 8.dp)
+              .height(40.dp)
+              .align(Alignment.Center)
+      ) {
+        Text(
+            text = "Застосувати",
+            style = MixDrinksTextStyles.H4,
+            color = MixDrinksColors.White
+        )
       }
     }
   }
 }
 
 @Composable
-fun FilterItem(filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi, filterComponent: FilterComponent) {
+private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, filterComponent: FilterComponent) {
+  LazyColumn {
+    items(items = groups, key = {
+      when (it) {
+        is FilterComponent.FilterScreenElement.FilterGroupUi -> it.filterGroupId.value
+        is FilterComponent.FilterScreenElement.Title -> it.name
+        is FilterComponent.FilterScreenElement.FilterOpenSearch -> it.filterGroupId.value
+      }
+    }, contentType = {
+      when (it) {
+        is FilterComponent.FilterScreenElement.FilterGroupUi -> 1
+        is FilterComponent.FilterScreenElement.Title -> 2
+        is FilterComponent.FilterScreenElement.FilterOpenSearch -> 3
+      }
+    }) { filterGroupUi ->
+      when (filterGroupUi) {
+        is FilterComponent.FilterScreenElement.FilterGroupUi -> {
+          FlowRow(mainAxisSpacing = 4.dp, crossAxisSpacing = 4.dp) {
+            filterGroupUi.filterItems.forEach { filterUi ->
+              FilterItem(
+                  filterGroupId = filterGroupUi.filterGroupId,
+                  filterUi = filterUi,
+                  filterComponent = filterComponent,
+              )
+            }
+          }
+        }
+        is FilterComponent.FilterScreenElement.Title -> {
+          Text(
+              modifier = Modifier
+                  .padding(bottom = 12.dp),
+              color = MixDrinksColors.Black,
+              text = filterGroupUi.name,
+              style = MixDrinksTextStyles.H2,
+          )
+        }
+        is FilterComponent.FilterScreenElement.FilterOpenSearch -> {
+          AddMoreFilterButton(
+              modifier = Modifier.fillMaxWidth(),
+              filterGroupId = filterGroupUi.filterGroupId,
+              text = filterGroupUi.text,
+              filterComponent = filterComponent,
+          )
+        }
+      }
+    }
+    item {
+      Spacer(modifier = Modifier.fillMaxWidth().height(32.dp))
+    }
+  }
+}
+
+@Composable
+fun AddMoreFilterButton(
+    modifier: Modifier = Modifier,
+    filterGroupId: FilterGroupId,
+    text: String,
+    filterComponent: FilterComponent,
+) {
+  Button(
+      modifier = modifier
+          .fillMaxWidth()
+          .height(32.dp),
+      onClick = { filterComponent.openDetailSearch(filterGroupId) },
+      colors = ButtonDefaults.buttonColors(MixDrinksColors.White),
+      shape = RoundedCornerShape(16.dp),
+      border = BorderStroke(1.dp, MixDrinksColors.Main)
+  ) {
+    Text(
+        text = text,
+        color = MixDrinksColors.Main,
+        style = MixDrinksTextStyles.H6,
+    )
+  }
+}
+
+
+@Composable
+fun FilterItem(modifier: Modifier = Modifier, filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi, filterComponent: FilterComponent) {
   val color = updateTransition(filterUi, label = "Checked indicator")
 
   val backgroundColor by color.animateColor(
@@ -116,7 +202,7 @@ fun FilterItem(filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi,
   }
 
   Card(
-      modifier = Modifier
+      modifier = modifier
           .height(32.dp),
       shape = RoundedCornerShape(16.dp),
       backgroundColor = backgroundColor,

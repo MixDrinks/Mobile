@@ -30,7 +30,11 @@ class FilterRepository(
 
     copy[filterGroupId] = selectedFilters
 
-    _selected.tryEmit(copy)
+    _selected.emit(copy)
+  }
+
+  suspend fun clear() {
+    _selected.emit(emptyMap())
   }
 
   suspend fun getFilterGroups(): List<FilterGroupDto> {
