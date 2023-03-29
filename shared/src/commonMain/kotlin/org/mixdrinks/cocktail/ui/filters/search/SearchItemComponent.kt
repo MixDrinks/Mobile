@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.transform
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
 import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
+import org.mixdrinks.cocktail.ui.widgets.undomain.launch
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.domain.ImageUrlCreators
@@ -29,7 +30,7 @@ class SearchItemComponent(
         it[searchItemType.filterGroupId] ?: emptyList()
       }
       .transform { selected ->
-        this.emit(UiState.Loading)
+        //this.emit(UiState.Loading)
         this.emit(
             UiState.Data(mapItemsToUi(itemRepository.getItems(searchItemType), selected))
         )
@@ -50,6 +51,10 @@ class SearchItemComponent(
           isSelected = item.id.value in selected.map { it.value }
       )
     }
+  }
+
+  fun onItemClicked(id: ItemRepository.ItemId, isSelected: Boolean) = launch {
+    filterRepository.onValueChange(searchItemType.filterGroupId, FilterId(id.value), isSelected)
   }
 
   data class ItemUiModel(

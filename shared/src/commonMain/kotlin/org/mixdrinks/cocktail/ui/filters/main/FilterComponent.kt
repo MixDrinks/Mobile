@@ -55,8 +55,29 @@ class FilterComponent(
           )
       )
     } else {
-      list.plus(FilterScreenElement.FilterOpenSearch(filterGroupDto.id, "Відкрити ${filterGroupDto.name}"))
+      list
+          .plus(
+              FilterScreenElement.FilterGroupUi(
+                  filterGroupId = filterGroupDto.id,
+                  filterItems = buildSelectedFilterItems(filterGroupDto, selected[filterGroupDto.id].orEmpty())
+              )
+          )
+          .plus(FilterScreenElement.FilterOpenSearch(filterGroupDto.id, "Додати ${filterGroupDto.name.lowercase()} до фільтру"))
     }
+  }
+
+  private fun buildSelectedFilterItems(filterGroupDto: FilterGroupDto, filters: List<FilterId>): List<FilterUi> {
+    return filterGroupDto.filters
+        .filter { it.id in filters }
+        .map { filter ->
+          FilterUi(
+              id = filter.id,
+              name = filter.name,
+              isSelect = true,
+              isEnable = true,
+              cocktailCount = 0,
+          )
+        }
   }
 
   private suspend fun buildFilterItems(
@@ -70,11 +91,14 @@ class FilterComponent(
 
       val cocktailCount = cocktailSelector().getCocktailIds(nextMap).count()
 
+      val isSelected = selected[filterGroupDto.id]?.contains(filter.id) ?: false
+      val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
+
       FilterUi(
           id = filter.id,
           name = filter.name,
-          isSelect = selected[filterGroupDto.id]?.contains(filter.id) ?: false,
-          isEnable = filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0,
+          isSelect = isSelected,
+          isEnable = isEnable,
           cocktailCount = cocktailCount,
       )
     }

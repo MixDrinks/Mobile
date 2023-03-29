@@ -103,13 +103,7 @@ private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, fil
       when (it) {
         is FilterComponent.FilterScreenElement.FilterGroupUi -> it.filterGroupId.value
         is FilterComponent.FilterScreenElement.Title -> it.name
-        is FilterComponent.FilterScreenElement.FilterOpenSearch -> it.filterGroupId.value
-      }
-    }, contentType = {
-      when (it) {
-        is FilterComponent.FilterScreenElement.FilterGroupUi -> 1
-        is FilterComponent.FilterScreenElement.Title -> 2
-        is FilterComponent.FilterScreenElement.FilterOpenSearch -> 3
+        is FilterComponent.FilterScreenElement.FilterOpenSearch -> it.filterGroupId.value + 100
       }
     }) { filterGroupUi ->
       when (filterGroupUi) {
@@ -159,6 +153,7 @@ fun AddMoreFilterButton(
   Button(
       modifier = modifier
           .fillMaxWidth()
+          .padding(top = 4.dp)
           .height(32.dp),
       onClick = { filterComponent.openDetailSearch(filterGroupId) },
       colors = ButtonDefaults.buttonColors(MixDrinksColors.White),

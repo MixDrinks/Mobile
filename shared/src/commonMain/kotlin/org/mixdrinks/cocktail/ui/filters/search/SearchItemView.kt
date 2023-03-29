@@ -5,8 +5,10 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,11 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +44,7 @@ fun SearchItemView(searchItemComponent: SearchItemComponent) {
         backgroundColor = MixDrinksColors.White,
         elevation = 4.dp,
         modifier = Modifier
+            .padding(top = 24.dp)
             .background(MixDrinksColors.White)
             .fillMaxSize()
     ) {
@@ -55,21 +60,21 @@ fun ItemList(searchItemComponent: SearchItemComponent) {
   ) {
     LazyColumn {
       items(items = it) { item ->
-        Item(item = item)
+        Item(item = item, searchItemComponent)
       }
     }
   }
 }
 
 @Composable
-fun Item(item: SearchItemComponent.ItemUiModel) {
+fun Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemComponent) {
   val color = updateTransition(item.isSelected, label = "Checked indicator")
 
   val backgroundColor by color.animateColor(
       label = "BackgroundColor"
   ) { isSelect ->
     if (isSelect) {
-      MixDrinksColors.Main
+      MixDrinksColors.Main.copy(alpha = 0.5f)
     } else {
       MixDrinksColors.White
     }
@@ -80,13 +85,19 @@ fun Item(item: SearchItemComponent.ItemUiModel) {
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)
+          .toggleable(
+              value = item.isSelected,
+              enabled = true,
+              onValueChange = { searchItemComponent.onItemClicked(item.id, it) },
+              interactionSource = remember { MutableInteractionSource() },
+              indication = null,
+          )
           .border(
               1.dp,
               MixDrinksColors.Main,
               shape = RoundedCornerShape(8.dp),
           ),
       shape = RoundedCornerShape(8.dp),
-      backgroundColor = backgroundColor,
   ) {
     Row {
       Image(
@@ -95,12 +106,20 @@ fun Item(item: SearchItemComponent.ItemUiModel) {
           contentScale = ContentScale.FillWidth,
           modifier = Modifier.size(64.dp)
       )
-      Text(
-          modifier = Modifier.align(Alignment.CenterVertically)
-              .padding(horizontal = 8.dp),
-          text = item.name,
-          style = MixDrinksTextStyles.H5,
-      )
+      Box(
+          modifier = Modifier
+              .weight(1F)
+              .fillMaxHeight()
+              .background(backgroundColor)
+      ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 8.dp),
+            text = item.name,
+            style = MixDrinksTextStyles.H5,
+        )
+      }
     }
   }
 }
