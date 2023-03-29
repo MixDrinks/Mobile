@@ -11,7 +11,6 @@ plugins {
   id("com.google.devtools.ksp") version "1.8.10-1.0.9"
   id("de.jensklingenberg.ktorfit") version "1.0.0"
   id("kotlin-parcelize")
-  id("com.goncalossilva.resources") version "0.2.5"
 }
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
@@ -47,7 +46,6 @@ kotlin {
         implementation(compose.material)
         implementation(compose.runtime)
 
-        //  implementation("org.jetbrains.compose.foundation:foundation-layout:${ComposeBuildConfig.composeVersion}")
         implementation("org.jetbrains.compose.components:components-resources:${ComposeBuildConfig.composeVersion}")
         implementation("org.mixdrinks:core:0.8.1-777512bd")
 
@@ -61,7 +59,6 @@ kotlin {
         implementation("com.arkivanov.decompose:extensions-compose-jetpack:1.0.0")
 
         implementation("io.github.qdsfdhvh:image-loader:1.2.10")
-        implementation("com.goncalossilva:resources:0.2.5")
       }
     }
     val commonTest by getting {
