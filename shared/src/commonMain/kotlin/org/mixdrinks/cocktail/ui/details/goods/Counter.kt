@@ -1,4 +1,4 @@
-package org.mixdrinks.cocktail.ui.widgets
+package org.mixdrinks.cocktail.ui.details.goods
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box

@@ -10,14 +10,7 @@ class FullCocktailRepository(
 
   suspend fun getFullCocktail(cocktailId: CocktailId): FullCocktail? {
     val cocktail = snapshot().cocktails.find { it.id == cocktailId } ?: return null
-    val goods = cocktail.goods.map {
-      FullCocktail.Good(
-          goodId = it.goodId,
-          name = snapshot().goods.first { good -> good.id == it.goodId }.name,
-          amount = it.amount,
-          unit = it.unit,
-      )
-    }
+
     val tools = snapshot().tools.filter { cocktail.tools.contains(it.id) }
         .map {
           FullCocktail.Tool(
@@ -47,7 +40,6 @@ class FullCocktailRepository(
         id = cocktail.id,
         name = cocktail.name,
         receipt = cocktail.receipt,
-        goods = goods,
         tools = tools,
         tags = tags,
         tastes = tastes,

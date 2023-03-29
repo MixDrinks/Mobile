@@ -14,4 +14,7 @@ object MixDrinksColors {
 
   @Stable
   val Black = Color(0xFF000000)
+
+  @Stable
+  val Grey = Color(0xFF9C9C9C)
 }

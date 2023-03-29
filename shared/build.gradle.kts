@@ -11,7 +11,6 @@ plugins {
   id("com.google.devtools.ksp") version "1.8.10-1.0.9"
   id("de.jensklingenberg.ktorfit") version "1.0.0"
   id("kotlin-parcelize")
-  id("com.goncalossilva.resources") version "0.2.5"
 }
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
@@ -47,9 +46,8 @@ kotlin {
         implementation(compose.material)
         implementation(compose.runtime)
 
-        //  implementation("org.jetbrains.compose.foundation:foundation-layout:${ComposeBuildConfig.composeVersion}")
         implementation("org.jetbrains.compose.components:components-resources:${ComposeBuildConfig.composeVersion}")
-        implementation("org.mixdrinks:core:0.5.1")
+        implementation("org.mixdrinks:core:0.8.1-777512bd")
 
         implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.0")
 
@@ -60,8 +58,7 @@ kotlin {
         implementation("com.arkivanov.decompose:decompose:1.0.0")
         implementation("com.arkivanov.decompose:extensions-compose-jetpack:1.0.0")
 
-        api("io.github.qdsfdhvh:image-loader:1.2.10")
-        implementation("com.goncalossilva:resources:0.2.5")
+        implementation("io.github.qdsfdhvh:image-loader:1.2.10")
       }
     }
     val commonTest by getting {
@@ -71,6 +68,9 @@ kotlin {
     }
     val androidMain by getting {
       dependsOn(commonMain)
+      dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+      }
     }
     val iosMain by getting {
       dependsOn(commonMain)

@@ -16,6 +16,7 @@ import org.mixdrinks.cocktail.data.MixDrinksService
 import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
 import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
+import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
 import org.mixdrinks.cocktail.ui.filters.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
 import org.mixdrinks.cocktail.ui.list.CocktailListRepository
@@ -40,7 +41,7 @@ object Graph {
 
   val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit)
 
-  val filterRepository = FilterRepository(suspend { snapshotRepository.get() })
+  val filterRepository = FilterRepository { snapshotRepository.get() }
 }
 
 class RootComponent(
@@ -83,6 +84,7 @@ class RootComponent(
         FullCocktailRepository { Graph.snapshotRepository.get() },
         CocktailId(config.id),
         navigation,
+        GoodsRepository { Graph.snapshotRepository.get() }
     )
   }
 
@@ -90,7 +92,8 @@ class RootComponent(
     return FilterComponent(
         componentContext,
         Graph.filterRepository,
-        navigation
+        suspend { CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() }) },
+        navigation,
     )
   }
 
