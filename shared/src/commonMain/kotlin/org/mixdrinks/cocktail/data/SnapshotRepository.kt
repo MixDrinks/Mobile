@@ -1,6 +1,5 @@
 package org.mixdrinks.cocktail.data
 
-import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.SnapshotDto
 import org.mixdrinks.utils.undomain.LazySuspend
 
@@ -12,5 +11,4 @@ class SnapshotRepository(private val mixDrinksService: MixDrinksService) {
   suspend fun get(): SnapshotDto {
     return snapshot()
   }
-
 }

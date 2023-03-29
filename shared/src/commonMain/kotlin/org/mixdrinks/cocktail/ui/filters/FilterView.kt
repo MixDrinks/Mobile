@@ -3,9 +3,8 @@ package org.mixdrinks.cocktail.ui.filters
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,14 +14,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.mixdrinks.cocktail.ui.widgets.undomain.ContentHolder
 import org.mixdrinks.cocktail.ui.widgets.undomain.FlowRow
@@ -55,14 +57,12 @@ fun FilterView(filterComponent: FilterComponent) {
       )
     }
 
-    LazyColumn {
-      item {
-        ContentHolder(
-            stateflow = filterComponent.state
-        ) { filterGroupUis ->
-          filterGroupUis.forEach { filterGroupUi ->
-            FilterGroup(filterGroupUi, filterComponent)
-          }
+    ContentHolder(
+        stateflow = filterComponent.state,
+    ) { groups ->
+      LazyColumn {
+        items(groups) {
+          FilterGroup(it, filterComponent)
         }
       }
     }
@@ -70,35 +70,49 @@ fun FilterView(filterComponent: FilterComponent) {
 }
 
 @Composable
-fun FilterGroup(filterGroupUi: FilterComponent.FilterGroupUi, filterComponent: FilterComponent) {
-  Text(
-      modifier = Modifier
-          .padding(bottom = 12.dp),
-      color = MixDrinksColors.Black,
-      text = filterGroupUi.name,
-      style = MixDrinksTextStyles.H2,
-  )
-  FlowRow(mainAxisSpacing = 4.dp, crossAxisSpacing = 4.dp) {
-    filterGroupUi.filterItems.forEach { filterUi ->
-      FilterItem(filterGroupUi.filterGroupId, filterUi, filterComponent)
+fun FilterGroup(filterGroupUi: FilterComponent.FilterScreenElement, filterComponent: FilterComponent) {
+  when (filterGroupUi) {
+    is FilterComponent.FilterScreenElement.Title -> {
+      Text(
+          modifier = Modifier
+              .padding(bottom = 12.dp),
+          color = MixDrinksColors.Black,
+          text = filterGroupUi.name,
+          style = MixDrinksTextStyles.H2,
+      )
+    }
+    is FilterComponent.FilterScreenElement.FilterGroupUi -> {
+      FlowRow(mainAxisSpacing = 4.dp, crossAxisSpacing = 4.dp) {
+        filterGroupUi.filterItems.forEach { filterUi ->
+          FilterItem(filterGroupUi.filterGroupId, filterUi, filterComponent)
+        }
+      }
     }
   }
 }
 
 @Composable
 fun FilterItem(filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi, filterComponent: FilterComponent) {
-  val transition = updateTransition(filterUi.isSelect, label = "Checked indicator")
+  val color = updateTransition(filterUi, label = "Checked indicator")
 
-  val backgroundColor by transition.animateColor(
+  val backgroundColor by color.animateColor(
       label = "BackgroundColor"
-  ) { isChecked ->
-    if (isChecked) MixDrinksColors.Main else MixDrinksColors.White
+  ) { filter ->
+    when {
+      filter.isSelect -> MixDrinksColors.Main
+      !filter.isEnable -> Color.Transparent
+      else -> MixDrinksColors.White
+    }
   }
 
-  val textColor by transition.animateColor(
+  val textColor by color.animateColor(
       label = "TextColor"
-  ) { isChecked ->
-    if (isChecked) MixDrinksColors.White else MixDrinksColors.Main
+  ) { filter ->
+    when {
+      filter.isSelect -> MixDrinksColors.White
+      !filter.isEnable -> MixDrinksColors.Grey
+      else -> MixDrinksColors.Main
+    }
   }
 
   Card(
@@ -109,11 +123,15 @@ fun FilterItem(filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi,
       border = BorderStroke(1.dp, MixDrinksColors.Main)
   ) {
     Box(
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
             .toggleable(
                 value = filterUi.isSelect,
+                enabled = filterUi.isEnable,
                 onValueChange = { filterComponent.onValueChange(filterGroupId, filterUi.id, it) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
             )
+            .fillMaxHeight()
     ) {
       Text(
           modifier = Modifier

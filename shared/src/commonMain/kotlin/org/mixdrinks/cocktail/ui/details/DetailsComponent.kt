@@ -3,20 +3,19 @@ package org.mixdrinks.cocktail.ui.details
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import org.mixdrinks.cocktail.data.FullCocktail
 import org.mixdrinks.cocktail.ui.RootComponent
+import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
+import org.mixdrinks.cocktail.ui.details.goods.GoodsSubComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
+import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GlasswareId
-import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
@@ -27,37 +26,32 @@ class DetailsComponent(
     private val fullCocktailRepository: FullCocktailRepository,
     private val cocktailId: CocktailId,
     private val navigation: StackNavigation<RootComponent.Config>,
+    private val goodsRepository: GoodsRepository,
 ) : ComponentContext by componentContext {
 
-  private val _counter = MutableStateFlow(1)
+  val goodsSubComponent = GoodsSubComponent(
+      componentContext,
+      goodsRepository,
+      cocktailId
+  )
 
   val state: StateFlow<UiState<FullCocktailUiModel>> = flow {
     fullCocktailRepository.getFullCocktail(cocktailId)?.let {
       emit(it)
     }
   }
-      .combine(_counter) { cocktail: FullCocktail, count: Int ->
-        UiState.Data(map(cocktail, count))
+      .map { cocktail: FullCocktail ->
+        UiState.Data(map(cocktail))
       }
-      .stateIn(CoroutineScope(Dispatchers.Default), SharingStarted.Eagerly, UiState.Loading)
+      .flowOn(Dispatchers.Default)
+      .stateInWhileSubscribe()
 
-  private fun map(fullCocktail: FullCocktail, count: Int): FullCocktailUiModel {
+  private fun map(fullCocktail: FullCocktail): FullCocktailUiModel {
     return FullCocktailUiModel(
         id = fullCocktail.id,
         name = fullCocktail.name,
         url = ImageUrlCreators.createUrl(fullCocktail.id, ImageUrlCreators.Size.SIZE_560),
         receipt = fullCocktail.receipt,
-        goods = FullCocktailUiModel.GoodsUi(
-            count = count,
-            goods = fullCocktail.goods.map {
-              FullCocktailUiModel.GoodUi(
-                  goodId = it.goodId,
-                  name = it.name,
-                  amount = "${it.amount * count} ${it.unit}",
-                  url = ImageUrlCreators.createUrl(it.goodId, ImageUrlCreators.Size.SIZE_400)
-              )
-            }
-        ),
         tools = fullCocktail.tools.map {
           FullCocktailUiModel.ToolUi.Tool(
               id = it.toolId,
@@ -96,16 +90,6 @@ class DetailsComponent(
   fun onTasteClick(tasteId: TasteId) {
 
   }
-
-  fun onPlusClick() {
-    _counter.value++
-  }
-
-  fun onMinusClick() {
-    if (_counter.value > 1) {
-      _counter.value--
-    }
-  }
 }
 
 data class FullCocktailUiModel(
@@ -113,22 +97,9 @@ data class FullCocktailUiModel(
     val url: String,
     val name: String,
     val receipt: List<String>,
-    val goods: GoodsUi,
     val tools: List<ToolUi>,
     val tags: List<TagUi>,
 ) {
-
-  data class GoodsUi(
-      val count: Int,
-      val goods: List<GoodUi>,
-  )
-
-  data class GoodUi(
-      val goodId: GoodId,
-      val url: String,
-      val name: String,
-      val amount: String,
-  )
 
   sealed class ToolUi(
       open val name: String,
