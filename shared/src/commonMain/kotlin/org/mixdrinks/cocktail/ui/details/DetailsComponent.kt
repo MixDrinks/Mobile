@@ -14,12 +14,12 @@ import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
 import org.mixdrinks.cocktail.ui.details.goods.GoodsSubComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
+import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GlasswareId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
-import org.mixdrinks.utils.ImageUrlCreators
 
 class DetailsComponent(
     private val componentContext: ComponentContext,

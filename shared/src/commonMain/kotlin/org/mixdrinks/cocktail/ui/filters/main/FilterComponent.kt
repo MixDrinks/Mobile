@@ -1,15 +1,17 @@
-package org.mixdrinks.cocktail.ui.filters
+package org.mixdrinks.cocktail.ui.filters.main
 
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.mixdrinks.cocktail.ui.RootComponent
+import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.launch
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
@@ -32,22 +34,59 @@ class FilterComponent(
         this.emit(UiState.Loading)
         this.emit(
             UiState.Data(filterRepository.getFilterGroups()
-                .filterNot { it.id in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id) }
                 .flatMap { filterGroupDto ->
-                  listOf(
-                      FilterScreenElement.Title(filterGroupDto.name),
-                  ).plus(
-                      FilterScreenElement.FilterGroupUi(
-                          filterGroupId = filterGroupDto.id,
-                          filterItems = buildFilterItems(filterGroupDto, selected)
-                      )
-                  )
+                  flatMapFilterGroup(filterGroupDto, selected)
                 })
         )
       }
       .flowOn(Dispatchers.Default)
-      .distinctUntilChanged()
       .stateInWhileSubscribe()
+
+  private suspend fun flatMapFilterGroup(
+      filterGroupDto: FilterGroupDto,
+      selected: Map<FilterGroupId, List<FilterId>>,
+  ): List<FilterScreenElement> {
+    val list = listOf<FilterScreenElement>(
+        FilterScreenElement.Title(filterGroupDto.name),
+    )
+
+    return if (filterGroupDto.id !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id)) {
+      list.plus(
+          FilterScreenElement.FilterGroupUi(
+              filterGroupId = filterGroupDto.id,
+              filterItems = buildFilterItems(filterGroupDto, selected)
+          )
+      )
+    } else {
+      list
+          .plus(
+              FilterScreenElement.FilterGroupUi(
+                  filterGroupId = filterGroupDto.id,
+                  filterItems = buildSelectedFilterItems(filterGroupDto, selected[filterGroupDto.id].orEmpty())
+              )
+          )
+          .plus(
+              FilterScreenElement.FilterOpenSearch(
+                  filterGroupDto.id,
+                  "Додати ${filterGroupDto.name.lowercase()} до фільтру"
+              )
+          )
+    }
+  }
+
+  private fun buildSelectedFilterItems(filterGroupDto: FilterGroupDto, filters: List<FilterId>): List<FilterUi> {
+    return filterGroupDto.filters
+        .filter { it.id in filters }
+        .map { filter ->
+          FilterUi(
+              id = filter.id,
+              name = filter.name,
+              isSelect = true,
+              isEnable = true,
+              cocktailCount = 0,
+          )
+        }
+  }
 
   private suspend fun buildFilterItems(
       filterGroupDto: FilterGroupDto,
@@ -60,11 +99,14 @@ class FilterComponent(
 
       val cocktailCount = cocktailSelector().getCocktailIds(nextMap).count()
 
+      val isSelected = selected[filterGroupDto.id]?.contains(filter.id) ?: false
+      val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
+
       FilterUi(
           id = filter.id,
           name = filter.name,
-          isSelect = selected[filterGroupDto.id]?.contains(filter.id) ?: false,
-          isEnable = filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0,
+          isSelect = isSelected,
+          isEnable = isEnable,
           cocktailCount = cocktailCount,
       )
     }
@@ -81,6 +123,10 @@ class FilterComponent(
     }
   }
 
+  fun clear() = launch {
+    filterRepository.clear()
+  }
+
   fun close() {
     navigation.pop()
   }
@@ -89,18 +135,34 @@ class FilterComponent(
     filterRepository.onValueChange(filterGroupId, id, isSelect)
   }
 
+  fun openDetailSearch(filterGroupId: FilterGroupId) {
+    val searchItemType = when (filterGroupId) {
+      FilterGroups.GOODS.id -> SearchItemComponent.SearchItemType.GOODS
+      FilterGroups.TOOLS.id -> SearchItemComponent.SearchItemType.TOOLS
+      else -> error("Unknown filter group id: $filterGroupId")
+    }
+
+    navigation.push(RootComponent.Config.SearchItemConfig(searchItemType))
+  }
+
   @Immutable
-  sealed class FilterScreenElement {
+  sealed class FilterScreenElement(val key: Int) {
     @Immutable
     data class Title(
         val name: String,
-    ) : FilterScreenElement()
+    ) : FilterScreenElement(name.hashCode())
 
     @Immutable
     data class FilterGroupUi(
         val filterGroupId: FilterGroupId,
         val filterItems: List<FilterUi>,
-    ) : FilterScreenElement()
+    ) : FilterScreenElement(filterGroupId.value)
+
+    @Immutable
+    data class FilterOpenSearch(
+        val filterGroupId: FilterGroupId,
+        val text: String,
+    ) : FilterScreenElement(-filterGroupId.value /*Use - for make key difference from Title element*/)
   }
 
   @Immutable

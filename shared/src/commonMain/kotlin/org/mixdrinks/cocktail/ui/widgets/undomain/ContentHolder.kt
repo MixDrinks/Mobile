@@ -1,6 +1,5 @@
 package org.mixdrinks.cocktail.ui.widgets.undomain
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,17 +17,15 @@ fun <T> ContentHolder(
 ) {
   val state by stateflow.collectAsState()
 
-  AnimatedContent(state) { safeState ->
-    when (safeState) {
-      is UiState.Data<T> -> {
-        content(safeState.data)
-      }
-      is UiState.Error -> {
-        Text(safeState.reason)
-      }
-      UiState.Loading -> {
-        Loader()
-      }
+  when (val safeState = state) {
+    is UiState.Data<T> -> {
+      content(safeState.data)
+    }
+    is UiState.Error -> {
+      Text(safeState.reason)
+    }
+    UiState.Loading -> {
+      Loader()
     }
   }
 }
