@@ -19,7 +19,10 @@ class CocktailListRepository(
       if (notEmptyFilter.isEmpty()) {
         snapshot().cocktails
       } else {
-        val ids = cocktailSelector().getCocktailIds(notEmptyFilter)
+        val notEmptyFilterIds = notEmptyFilter
+            .mapValues { filterGroupIdListEntry -> filterGroupIdListEntry.value.map { it.filterId } }
+
+        val ids = cocktailSelector().getCocktailIds(notEmptyFilterIds)
         snapshot().cocktails.filter { cocktailDto -> ids.contains(cocktailDto.id) }
       }
     }

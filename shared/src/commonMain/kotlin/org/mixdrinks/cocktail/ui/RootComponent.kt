@@ -1,6 +1,5 @@
 package org.mixdrinks.cocktail.ui
 
-import androidx.compose.ui.input.key.Key.Companion.F
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -18,9 +17,9 @@ import org.mixdrinks.cocktail.data.SnapshotRepository
 import org.mixdrinks.cocktail.ui.details.DetailsComponent
 import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
 import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
-import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
 import org.mixdrinks.cocktail.ui.filters.FutureCocktailSelector
+import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.search.ItemRepository
 import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.list.CocktailListRepository
@@ -97,8 +96,19 @@ class RootComponent(
     return FilterComponent(
         componentContext,
         Graph.filterRepository,
+        getFutureCocktail(),
         suspend { CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() }) },
         navigation,
+    )
+  }
+
+  private fun getFutureCocktail(): FutureCocktailSelector {
+    return FutureCocktailSelector(
+        snapshot = { Graph.snapshotRepository.get() },
+        cocktailSelector = {
+          CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() })
+        },
+        filterRepository = { Graph.filterRepository },
     )
   }
 
@@ -108,18 +118,14 @@ class RootComponent(
   ): SearchItemComponent {
     val itemRepository = ItemRepository(
         suspend { Graph.snapshotRepository.get() },
-        FutureCocktailSelector(
-            cocktailSelector = {
-              CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() })
-            },
-            filterRepository = { Graph.filterRepository },
-        )
+        getFutureCocktail()
     )
     return SearchItemComponent(
         component,
         searchItemType,
         Graph.filterRepository,
         itemRepository,
+        navigation,
     )
   }
 

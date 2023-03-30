@@ -12,8 +12,15 @@ class FilterRepository(
     private val snapshot: suspend () -> SnapshotDto,
 ) {
 
-  private val _selected = MutableStateFlow<Map<FilterGroupId, List<FilterId>>>(mapOf())
-  val selected: StateFlow<Map<FilterGroupId, List<FilterId>>> = _selected
+  private var operationCount: Long = 0
+
+  data class FilterSelected(
+      val filterId: FilterId,
+      val operationIndex: Long,
+  )
+
+  private val _selected = MutableStateFlow<Map<FilterGroupId, List<FilterSelected>>>(mapOf())
+  val selected: StateFlow<Map<FilterGroupId, List<FilterSelected>>> = _selected
 
   suspend fun onValueChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean) {
     val copy = _selected.value.toMutableMap()
@@ -23,9 +30,9 @@ class FilterRepository(
       if (getFilterSelectionType(filterGroupId) == SelectionType.SINGLE) {
         selectedFilters.clear()
       }
-      selectedFilters.add(id)
+      selectedFilters.add(FilterSelected(id, operationCount++))
     } else {
-      selectedFilters.remove(id)
+      selectedFilters.removeAll { it.filterId == id }
     }
 
     copy[filterGroupId] = selectedFilters
@@ -41,7 +48,7 @@ class FilterRepository(
     return snapshot().filterGroups
   }
 
-  fun getSelectedFilters(): Map<FilterGroupId, List<FilterId>> {
+  fun getSelectedFilters(): Map<FilterGroupId, List<FilterSelected>> {
     return _selected.value
   }
 

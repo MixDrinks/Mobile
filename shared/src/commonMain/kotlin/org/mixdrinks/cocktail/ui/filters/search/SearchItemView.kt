@@ -1,6 +1,10 @@
 package org.mixdrinks.cocktail.ui.filters.search
 
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -22,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -37,12 +42,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
+import kotlinx.coroutines.coroutineScope
+import org.mixdrinks.cocktail.ui.widgets.CustomButton
 import org.mixdrinks.cocktail.ui.widgets.undomain.ContentHolder
 import org.mixdrinks.styles.MixDrinksColors
 import org.mixdrinks.styles.MixDrinksTextStyles
+import org.mixdrinks.utils.ResString
 
 @Composable
 fun SearchItemView(searchItemComponent: SearchItemComponent) {
@@ -77,6 +87,7 @@ fun SearchItemView(searchItemComponent: SearchItemComponent) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 4.dp),
+            singleLine = true,
             trailingIcon = {
               Icon(
                   Icons.Filled.Clear,
@@ -89,7 +100,18 @@ fun SearchItemView(searchItemComponent: SearchItemComponent) {
               )
             }
         )
-        ItemList(searchItemComponent)
+        Box(modifier = Modifier.weight(1F)) {
+          ItemList(searchItemComponent)
+        }
+        Box(
+            modifier = Modifier
+                .background(Color.White)
+                .height(56.dp)
+                .padding(horizontal = 12.dp)
+                .fillMaxWidth()
+        ) {
+          CustomButton(Modifier.align(Alignment.Center), ResString.apply, searchItemComponent::close)
+        }
       }
     }
   }
@@ -125,7 +147,7 @@ fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchItemComponen
 
   Card(
       modifier = Modifier
-          .animateItemPlacement()
+          .animateItemPlacement(tween(300))
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)

@@ -1,5 +1,6 @@
 package org.mixdrinks.cocktail.ui.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -68,23 +70,23 @@ fun CocktailListView(component: ListComponent) {
     ) {
       LazyColumn {
         items(it, key = { it.id.id }) {
-          Box(modifier = Modifier.padding(4.dp)) {
-            Cocktail(it, component::onCocktailClick)
-          }
+          Cocktail(it, component::onCocktailClick)
         }
       }
     }
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Cocktail(cocktail: ListComponent.Cocktail, onClick: (CocktailId) -> Unit) {
+fun LazyItemScope.Cocktail(cocktail: ListComponent.Cocktail, onClick: (CocktailId) -> Unit) {
   Card(
       modifier = Modifier
+          .animateItemPlacement()
           .clickable { onClick(cocktail.id) }
           .height(80.dp)
           .fillMaxWidth()
-          .padding(2.dp)
+          .padding(4.dp)
           .border(
               1.dp,
               MixDrinksColors.Main,

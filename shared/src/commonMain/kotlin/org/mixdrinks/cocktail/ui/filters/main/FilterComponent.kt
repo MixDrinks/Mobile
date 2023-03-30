@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.mixdrinks.cocktail.ui.RootComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.filters.FutureCocktailSelector
 import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
 import org.mixdrinks.cocktail.ui.widgets.undomain.launch
 import org.mixdrinks.cocktail.ui.widgets.undomain.stateInWhileSubscribe
 import org.mixdrinks.domain.CocktailSelector
+import org.mixdrinks.domain.FilterGroup
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.dto.FilterGroupDto
 import org.mixdrinks.dto.FilterGroupId
@@ -25,13 +27,14 @@ import org.mixdrinks.dto.SelectionType
 class FilterComponent(
     private val componentContext: ComponentContext,
     private val filterRepository: FilterRepository,
+    private val futureCocktailSelector: FutureCocktailSelector,
     private val cocktailSelector: suspend () -> CocktailSelector,
     private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext {
 
   val state: StateFlow<UiState<List<FilterScreenElement>>> = filterRepository.selected
       .transform { selected ->
-        this.emit(UiState.Loading)
+        //this.emit(UiState.Loading)
         this.emit(
             UiState.Data(filterRepository.getFilterGroups()
                 .flatMap { filterGroupDto ->
@@ -44,33 +47,40 @@ class FilterComponent(
 
   private suspend fun flatMapFilterGroup(
       filterGroupDto: FilterGroupDto,
-      selected: Map<FilterGroupId, List<FilterId>>,
+      selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
   ): List<FilterScreenElement> {
     val list = listOf<FilterScreenElement>(
         FilterScreenElement.Title(filterGroupDto.name),
     )
 
-    return if (filterGroupDto.id !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id)) {
-      list.plus(
-          FilterScreenElement.FilterGroupUi(
-              filterGroupId = filterGroupDto.id,
-              filterItems = buildFilterItems(filterGroupDto, selected)
-          )
-      )
-    } else {
-      list
-          .plus(
-              FilterScreenElement.FilterGroupUi(
-                  filterGroupId = filterGroupDto.id,
-                  filterItems = buildSelectedFilterItems(filterGroupDto, selected[filterGroupDto.id].orEmpty())
-              )
-          )
-          .plus(
-              FilterScreenElement.FilterOpenSearch(
-                  filterGroupDto.id,
-                  "Додати ${filterGroupDto.name.lowercase()} до фільтру"
-              )
-          )
+    return when (filterGroupDto.id) {
+      FilterGroups.TAGS.id -> emptyList()
+      !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id) -> {
+        list.plus(
+            FilterScreenElement.FilterGroupUi(
+                filterGroupId = filterGroupDto.id,
+                filterItems = buildFilterItems(filterGroupDto, selected)
+            )
+        )
+      }
+      else -> {
+        list
+            .plus(
+                FilterScreenElement.FilterGroupUi(
+                    filterGroupId = filterGroupDto.id,
+                    filterItems = buildSelectedFilterItems(
+                        filterGroupDto,
+                        selected[filterGroupDto.id].orEmpty().map { it.filterId }
+                    )
+                )
+            )
+            .plus(
+                FilterScreenElement.FilterOpenSearch(
+                    filterGroupDto.id,
+                    "Додати ${filterGroupDto.name.lowercase()} до фільтру"
+                )
+            )
+      }
     }
   }
 
@@ -90,16 +100,16 @@ class FilterComponent(
 
   private suspend fun buildFilterItems(
       filterGroupDto: FilterGroupDto,
-      selected: Map<FilterGroupId, List<FilterId>>,
+      selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
   ): List<FilterUi> {
     val filters = filterGroupDto.filters.map { filter ->
-      val nextMap = selected.filter { it.value.isNotEmpty() }.toMutableMap().apply {
-        this[filterGroupDto.id] = selected[filterGroupDto.id].orEmpty().plus(filter.id)
-      }
+      val cocktailCount = futureCocktailSelector.getCocktailIds(
+          filterGroupDto.id,
+          filter.id,
+      )
+          .size
 
-      val cocktailCount = cocktailSelector().getCocktailIds(nextMap).count()
-
-      val isSelected = selected[filterGroupDto.id]?.contains(filter.id) ?: false
+      val isSelected = selected[filterGroupDto.id].orEmpty().map { it.filterId }.contains(filter.id)
       val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
 
       FilterUi(
@@ -111,16 +121,7 @@ class FilterComponent(
       )
     }
 
-    return when (filterGroupDto.selectionType) {
-      SelectionType.SINGLE -> filters
-      SelectionType.MULTIPLE -> filters.sortedWith(
-          compareBy(
-              { -it.cocktailCount },
-              { !it.isSelect },
-              { !it.isEnable }
-          )
-      )
-    }
+    return filters
   }
 
   fun clear() = launch {

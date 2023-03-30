@@ -2,6 +2,8 @@ package org.mixdrinks.cocktail.ui.filters.search
 
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.parcelable.Parcelize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
+import org.mixdrinks.cocktail.ui.RootComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
 import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.widgets.undomain.UiState
@@ -26,6 +29,7 @@ class SearchItemComponent(
     private val searchItemType: SearchItemType,
     private val filterRepository: FilterRepository,
     private val itemRepository: ItemRepository,
+    private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext {
 
   private val _textState = MutableStateFlow("")
@@ -53,26 +57,43 @@ class SearchItemComponent(
       .flowOn(Dispatchers.Default)
       .stateInWhileSubscribe()
 
-  private fun mapItemsToUi(items: List<ItemRepository.ItemDto>, selected: List<FilterId>): List<ItemUiModel> {
+  private fun mapItemsToUi(items: List<ItemRepository.ItemDto>, selected: List<FilterRepository.FilterSelected>): List<ItemUiModel> {
     return items
         .map { item ->
           val imageUrl = when (item.id) {
             is ItemRepository.ItemId.Good -> ImageUrlCreators.createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
             is ItemRepository.ItemId.Tool -> ImageUrlCreators.createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
           }
+
+          val inSelected = selected.find { it.filterId == FilterId(item.id.value) }
+
+          val isSelect = inSelected != null
+
+          val operationIndex = inSelected?.operationIndex ?: -1L
+
           ItemUiModel(
               id = item.id,
               name = item.name,
               imageUrl = imageUrl,
-              isSelected = item.id.value in selected.map { it.value },
+              isSelected = isSelect,
               count = item.cocktailCount,
+              operationIndex = operationIndex,
           )
         }
-        .sortedWith(compareBy(
-            { !it.isSelected },
-            { -it.count },
-            { it.name },
-        ))
+        .sortedWith(
+            compareByDescending<ItemUiModel> { it.isSelected }
+                .then { a, b ->
+                  if (a.isSelected) {
+                    compareBy<ItemUiModel> { it.operationIndex }.compare(a, b)
+                  } else {
+                    compareBy<ItemUiModel>({ -it.count }, { it.name }).compare(a, b)
+                  }
+                }
+        )
+  }
+
+  fun close() {
+    navigation.pop()
   }
 
   fun onSearchQueryChanged(query: String) = launch {
@@ -90,6 +111,7 @@ class SearchItemComponent(
       val imageUrl: String,
       val isSelected: Boolean,
       val count: Int,
+      val operationIndex: Long,
   )
 
   enum class SearchItemType(val filterGroupId: FilterGroupId) {
