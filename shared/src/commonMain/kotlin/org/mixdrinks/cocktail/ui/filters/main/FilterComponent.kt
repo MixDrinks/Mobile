@@ -162,7 +162,7 @@ class FilterComponent(
     data class FilterOpenSearch(
         val filterGroupId: FilterGroupId,
         val text: String,
-    ) : FilterScreenElement(filterGroupId.value + 100)
+    ) : FilterScreenElement(-filterGroupId.value /*Use - for make key difference from Title element*/)
   }
 
   @Immutable
