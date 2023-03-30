@@ -42,7 +42,10 @@ class FilterComponent(
       .flowOn(Dispatchers.Default)
       .stateInWhileSubscribe()
 
-  private suspend fun flatMapFilterGroup(filterGroupDto: FilterGroupDto, selected: Map<FilterGroupId, List<FilterId>>): List<FilterScreenElement> {
+  private suspend fun flatMapFilterGroup(
+      filterGroupDto: FilterGroupDto,
+      selected: Map<FilterGroupId, List<FilterId>>,
+  ): List<FilterScreenElement> {
     val list = listOf<FilterScreenElement>(
         FilterScreenElement.Title(filterGroupDto.name),
     )
@@ -62,7 +65,12 @@ class FilterComponent(
                   filterItems = buildSelectedFilterItems(filterGroupDto, selected[filterGroupDto.id].orEmpty())
               )
           )
-          .plus(FilterScreenElement.FilterOpenSearch(filterGroupDto.id, "Додати ${filterGroupDto.name.lowercase()} до фільтру"))
+          .plus(
+              FilterScreenElement.FilterOpenSearch(
+                  filterGroupDto.id,
+                  "Додати ${filterGroupDto.name.lowercase()} до фільтру"
+              )
+          )
     }
   }
 
@@ -138,23 +146,23 @@ class FilterComponent(
   }
 
   @Immutable
-  sealed class FilterScreenElement {
+  sealed class FilterScreenElement(val key: Int) {
     @Immutable
     data class Title(
         val name: String,
-    ) : FilterScreenElement()
+    ) : FilterScreenElement(name.hashCode())
 
     @Immutable
     data class FilterGroupUi(
         val filterGroupId: FilterGroupId,
         val filterItems: List<FilterUi>,
-    ) : FilterScreenElement()
+    ) : FilterScreenElement(filterGroupId.value)
 
     @Immutable
     data class FilterOpenSearch(
         val filterGroupId: FilterGroupId,
         val text: String,
-    ) : FilterScreenElement()
+    ) : FilterScreenElement(filterGroupId.value + 100)
   }
 
   @Immutable

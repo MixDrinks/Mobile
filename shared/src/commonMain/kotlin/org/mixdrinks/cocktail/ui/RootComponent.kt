@@ -100,7 +100,10 @@ class RootComponent(
     )
   }
 
-  private fun searchItemScreen(component: ComponentContext, searchItemType: SearchItemComponent.SearchItemType): SearchItemComponent {
+  private fun searchItemScreen(
+      component: ComponentContext,
+      searchItemType: SearchItemComponent.SearchItemType,
+  ): SearchItemComponent {
     return SearchItemComponent(
         component,
         searchItemType,

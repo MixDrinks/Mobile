@@ -99,13 +99,7 @@ fun FilterView(filterComponent: FilterComponent) {
 @Composable
 private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, filterComponent: FilterComponent) {
   LazyColumn {
-    items(items = groups, key = {
-      when (it) {
-        is FilterComponent.FilterScreenElement.FilterGroupUi -> it.filterGroupId.value
-        is FilterComponent.FilterScreenElement.Title -> it.name
-        is FilterComponent.FilterScreenElement.FilterOpenSearch -> it.filterGroupId.value + 100
-      }
-    }) { filterGroupUi ->
+    items(items = groups, key = { it.key }) { filterGroupUi ->
       when (filterGroupUi) {
         is FilterComponent.FilterScreenElement.FilterGroupUi -> {
           FlowRow(mainAxisSpacing = 4.dp, crossAxisSpacing = 4.dp) {
@@ -170,7 +164,12 @@ fun AddMoreFilterButton(
 
 
 @Composable
-fun FilterItem(modifier: Modifier = Modifier, filterGroupId: FilterGroupId, filterUi: FilterComponent.FilterUi, filterComponent: FilterComponent) {
+fun FilterItem(
+    modifier: Modifier = Modifier,
+    filterGroupId: FilterGroupId,
+    filterUi: FilterComponent.FilterUi,
+    filterComponent: FilterComponent,
+) {
   val color = updateTransition(filterUi, label = "Checked indicator")
 
   val backgroundColor by color.animateColor(
