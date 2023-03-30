@@ -23,7 +23,8 @@ kotlin {
     binaries {
       executable {
         entryPoint = "main"
-        freeCompilerArgs += listOf(
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-linker-option", "-framework", "-linker-option", "UIKit",
             "-linker-option", "-framework", "-linker-option", "Metal",
             "-linker-option", "-framework", "-linker-option", "CoreText",
             "-linker-option", "-framework", "-linker-option", "CoreGraphics"
@@ -35,12 +36,13 @@ kotlin {
     binaries {
       executable {
         entryPoint = "main"
-        freeCompilerArgs += listOf(
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-linker-option", "-framework", "-linker-option", "UIKit",
             "-linker-option", "-framework", "-linker-option", "Metal",
             "-linker-option", "-framework", "-linker-option", "CoreText",
             "-linker-option", "-framework", "-linker-option", "CoreGraphics"
         )
-        freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
+        freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=VerifyBitcode"
       }
     }
   }
@@ -103,7 +105,7 @@ tasks.withType<KotlinCompile> {
 kotlin {
   targets.withType<KotlinNativeTarget> {
     binaries.all {
-      freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
+      freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=VerifyBitcode"
     }
   }
 }

@@ -30,7 +30,7 @@ class SearchItemComponent(
         it[searchItemType.filterGroupId] ?: emptyList()
       }
       .transform { selected ->
-        //this.emit(UiState.Loading)
+        this.emit(UiState.Loading)
         this.emit(
             UiState.Data(mapItemsToUi(itemRepository.getItems(searchItemType), selected))
         )
