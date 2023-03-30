@@ -41,6 +41,10 @@ class FilterRepository(
     return snapshot().filterGroups
   }
 
+  fun getSelectedFilters(): Map<FilterGroupId, List<FilterId>> {
+    return _selected.value
+  }
+
   private suspend fun getFilterSelectionType(filterGroupId: FilterGroupId): SelectionType {
     return snapshot().filterGroups.find { it.id == filterGroupId }?.selectionType
         ?: error("Cannot found filter group")

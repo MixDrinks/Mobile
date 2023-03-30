@@ -2,25 +2,37 @@ package org.mixdrinks.cocktail.ui.filters.search
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,7 +60,37 @@ fun SearchItemView(searchItemComponent: SearchItemComponent) {
             .background(MixDrinksColors.White)
             .fillMaxSize()
     ) {
-      ItemList(searchItemComponent)
+      Column {
+        val textState by searchItemComponent.textState.collectAsState()
+        TextField(
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = MixDrinksColors.White,
+                textColor = MixDrinksColors.Main,
+                cursorColor = MixDrinksColors.Main,
+                focusedIndicatorColor = MixDrinksColors.Main,
+                unfocusedIndicatorColor = MixDrinksColors.Main,
+                focusedLabelColor = MixDrinksColors.Main,
+            ),
+            value = textState,
+            onValueChange = { searchItemComponent.onSearchQueryChanged(it) },
+            label = { Text("Пошук") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 4.dp),
+            trailingIcon = {
+              Icon(
+                  Icons.Filled.Clear,
+                  contentDescription = "Clear search",
+                  modifier = Modifier
+                      .offset(x = 12.dp)
+                      .clickable {
+                        searchItemComponent.onSearchQueryChanged("")
+                      }
+              )
+            }
+        )
+        ItemList(searchItemComponent)
+      }
     }
   }
 }
@@ -59,15 +101,16 @@ fun ItemList(searchItemComponent: SearchItemComponent) {
       stateflow = searchItemComponent.state,
   ) {
     LazyColumn {
-      items(items = it) { item ->
+      items(items = it, key = { it.id.value }) { item ->
         Item(item = item, searchItemComponent)
       }
     }
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemComponent) {
+fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemComponent) {
   val color = updateTransition(item.isSelected, label = "Checked indicator")
 
   val backgroundColor by color.animateColor(
@@ -82,6 +125,7 @@ fun Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemC
 
   Card(
       modifier = Modifier
+          .animateItemPlacement()
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)
@@ -111,6 +155,7 @@ fun Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemC
               .weight(1F)
               .fillMaxHeight()
               .background(backgroundColor)
+              .padding(end = 8.dp)
       ) {
         Text(
             modifier = Modifier
@@ -119,6 +164,22 @@ fun Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemC
             text = item.name,
             style = MixDrinksTextStyles.H5,
         )
+        Box(
+            modifier = Modifier
+                .background(color = MixDrinksColors.Main, shape = RoundedCornerShape(16.dp))
+                .defaultMinSize(minWidth = 32.dp)
+                .height(32.dp)
+                .align(Alignment.CenterEnd)
+        ) {
+          Text(
+              modifier = Modifier
+                  .align(Alignment.Center)
+                  .padding(horizontal = 8.dp),
+              text = item.count.toString(),
+              style = MixDrinksTextStyles.H4,
+              color = MixDrinksColors.White,
+          )
+        }
       }
     }
   }

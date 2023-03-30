@@ -1,5 +1,6 @@
 package org.mixdrinks.cocktail.ui
 
+import androidx.compose.ui.input.key.Key.Companion.F
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -19,6 +20,7 @@ import org.mixdrinks.cocktail.ui.details.FullCocktailRepository
 import org.mixdrinks.cocktail.ui.details.goods.GoodsRepository
 import org.mixdrinks.cocktail.ui.filters.main.FilterComponent
 import org.mixdrinks.cocktail.ui.filters.FilterRepository
+import org.mixdrinks.cocktail.ui.filters.FutureCocktailSelector
 import org.mixdrinks.cocktail.ui.filters.search.ItemRepository
 import org.mixdrinks.cocktail.ui.filters.search.SearchItemComponent
 import org.mixdrinks.cocktail.ui.list.CocktailListRepository
@@ -104,11 +106,20 @@ class RootComponent(
       component: ComponentContext,
       searchItemType: SearchItemComponent.SearchItemType,
   ): SearchItemComponent {
+    val itemRepository = ItemRepository(
+        suspend { Graph.snapshotRepository.get() },
+        FutureCocktailSelector(
+            cocktailSelector = {
+              CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() })
+            },
+            filterRepository = { Graph.filterRepository },
+        )
+    )
     return SearchItemComponent(
         component,
         searchItemType,
         Graph.filterRepository,
-        ItemRepository { Graph.snapshotRepository.get() },
+        itemRepository,
     )
   }
 

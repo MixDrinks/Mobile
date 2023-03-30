@@ -1,11 +1,15 @@
 package org.mixdrinks.cocktail.ui.filters.search
 
+import org.mixdrinks.cocktail.ui.filters.FutureCocktailSelector
+import org.mixdrinks.domain.FilterGroups
+import org.mixdrinks.dto.FilterId
 import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.SnapshotDto
 import org.mixdrinks.dto.ToolId
 
 class ItemRepository(
     private val snapshot: suspend () -> SnapshotDto,
+    private val futureCocktailSelector: FutureCocktailSelector,
 ) {
 
   suspend fun getItems(searchItemType: SearchItemComponent.SearchItemType): List<ItemDto> {
@@ -21,6 +25,10 @@ class ItemRepository(
           ItemDto(
               id = ItemId.Tool(it.id),
               name = it.name,
+              cocktailCount = futureCocktailSelector.getCocktailIds(
+                  FilterGroups.TOOLS.id,
+                  FilterId(it.id.id),
+              ).size,
           )
         }
   }
@@ -31,6 +39,10 @@ class ItemRepository(
           ItemDto(
               id = ItemId.Good(it.id),
               name = it.name,
+              cocktailCount = futureCocktailSelector.getCocktailIds(
+                  FilterGroups.GOODS.id,
+                  FilterId(it.id.id),
+              ).size,
           )
         }
   }
@@ -43,5 +55,6 @@ class ItemRepository(
   data class ItemDto(
       val id: ItemId,
       val name: String,
+      val cocktailCount: Int,
   )
 }
