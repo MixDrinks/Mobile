@@ -18,14 +18,14 @@ fun main() {
   val args = emptyArray<String>()
   memScoped {
     val argc = args.size + 1
-    val argv = (arrayOf("skikoApp") + args).map { it.cstr.ptr }.toCValues()
+    val argv = (arrayOf("mixdrinks_app") + args).map { it.cstr.ptr }.toCValues()
     autoreleasepool {
-      UIApplicationMain(argc, argv, null, NSStringFromClass(SkikoAppDelegate))
+      UIApplicationMain(argc, argv, null, NSStringFromClass(MixDrinksAppDelegate))
     }
   }
 }
 
-class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
+class MixDrinksAppDelegate : UIResponder, UIApplicationDelegateProtocol {
   companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta
 
   @ObjCObjectBase.OverrideInit

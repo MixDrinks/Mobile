@@ -10,7 +10,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Application
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import org.mixdrinks.styles.MixDrinksColors
+import org.mixdrinks.app.MixDrinksApp
+import org.mixdrinks.app.styles.MixDrinksColors
 import platform.UIKit.UIViewController
 
 @Suppress("FunctionNaming")
