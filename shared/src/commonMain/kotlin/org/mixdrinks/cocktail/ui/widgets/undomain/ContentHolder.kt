@@ -1,6 +1,5 @@
 package org.mixdrinks.cocktail.ui.widgets.undomain
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -9,7 +8,6 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
 import org.mixdrinks.cocktail.ui.widgets.Loader
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun <T> ContentHolder(
     stateflow: StateFlow<UiState<T>>,
