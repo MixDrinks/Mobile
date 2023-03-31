@@ -83,6 +83,7 @@ compose.experimental {
     bundleIdPrefix = "org.mixdrinks"
     projectName = "MixDrinks"
     deployConfigurations {
+      // <--- Add new your simulator here
       simulator("IPhone13Pro") {
         //Usage: ./gradlew iosDeployIPhone13ProDebug
         device = IOSDevices.IPHONE_13_PRO
