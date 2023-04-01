@@ -15,7 +15,7 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "compose-ios"
+rootProject.name = "mixdrinks"
 include(":android")
 include(":shared")
 include(":iosCompose")

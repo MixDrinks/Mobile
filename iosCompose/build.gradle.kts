@@ -24,7 +24,6 @@ kotlin {
       executable {
         entryPoint = "main"
         freeCompilerArgs = freeCompilerArgs + listOf(
-            "-linker-option", "-framework", "-linker-option", "UIKit",
             "-linker-option", "-framework", "-linker-option", "Metal",
             "-linker-option", "-framework", "-linker-option", "CoreText",
             "-linker-option", "-framework", "-linker-option", "CoreGraphics"
@@ -37,7 +36,6 @@ kotlin {
       executable {
         entryPoint = "main"
         freeCompilerArgs = freeCompilerArgs + listOf(
-            "-linker-option", "-framework", "-linker-option", "UIKit",
             "-linker-option", "-framework", "-linker-option", "Metal",
             "-linker-option", "-framework", "-linker-option", "CoreText",
             "-linker-option", "-framework", "-linker-option", "CoreGraphics"
