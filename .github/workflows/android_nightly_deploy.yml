@@ -1,9 +1,6 @@
 name: Publish Android Nightly build
 
-on:
-  push:
-    branches:
-      - feat/prepare_for_google_pla
+on: workflow_call
 
 jobs:
   build:
