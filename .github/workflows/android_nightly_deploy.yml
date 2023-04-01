@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: "checkout"
         uses: r0adkll/upload-google-play@v1
         with:
