@@ -17,4 +17,5 @@ jobs:
           packageName: org.mixdrinks.app
           releaseFiles: android/release/android-release.aab
           track: beta
+          changesNotSentForReview: true
           status: completed
