@@ -7,6 +7,9 @@ on:
 
 jobs:
   build:
+    env:
+      MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.1.1"
+      MIXDRINKS_MOBILE_APP_VERSION_CODE: "11"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -14,9 +17,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build bundle release
-        environment:
-          MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.1.1"
-          MIXDRINKS_MOBILE_APP_VERSION_CODE: "11"
         run: gradle android:bundleRelease
 
       - uses: r0adkll/sign-android-release@v1
