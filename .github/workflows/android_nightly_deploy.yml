@@ -12,7 +12,7 @@ jobs:
       - name: "checkout"
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ MIXDRINKS_ANDROID_DEPLOY_SERVICE_ACCOUNT_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.MIXDRINKS_ANDROID_DEPLOY_SERVICE_ACCOUNT_JSON }}
           packageName: org.mixdrinks.app
           releaseFiles: android/release/android-release.aab
           track: beta
