@@ -14,7 +14,12 @@
 `./gradlew android:installDebug`
 
 Додаток для debug має applicationIdSuffix `.debug`,
-тому він може бути встановлений на пристрій разом з релізним додатком.
+тому він може бути встановлений на телефон разом з релізним додатком.
+
+Для зміни version name та version code використовуйте наступні environment variables:
+
+- `MIXDRINKS_MOBILE_APP_VERSION_NAME` - version name, default `0.0.1`
+- `MIXDRINKS_MOBILE_APP_VERSION_CODE` - version code, default `1`
 
 #### IOS
 
