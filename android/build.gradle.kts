@@ -11,8 +11,8 @@ android {
     applicationId = "org.mixdrinks.app"
     minSdk = 24
     targetSdk = 33
-    versionCode = System.getenv("MIXDRINKS_MOBILE_APP_VERSION_CODE")?.toIntOrNull() ?: 1
-    versionName = System.getenv("MIXDRINKS_MOBILE_APP_VERSION_NAME") ?: "0.0.1"
+    versionCode = 10
+    versionName = "1.0.1"
   }
   buildFeatures {
     compose = true

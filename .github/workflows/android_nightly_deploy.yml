@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: "checkout"
+      - name: "Upload to Google Play"
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.MIXDRINKS_ANDROID_DEPLOY_SERVICE_ACCOUNT_JSON }}
