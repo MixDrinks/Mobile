@@ -8,7 +8,7 @@ plugins {
   id("com.android.library")
   id("org.jetbrains.compose")
   kotlin("plugin.serialization") version "1.8.10"
-  id("com.google.devtools.ksp") version "1.8.10-1.0.9"
+  id("com.google.devtools.ksp") version "1.8.20-1.0.10"
   id("de.jensklingenberg.ktorfit") version "1.0.0"
   id("kotlin-parcelize")
 }
