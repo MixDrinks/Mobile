@@ -101,7 +101,7 @@ private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, fil
           ) {
             filterGroupUi.filterItems.forEach { filterItem ->
               FilterItem(
-                  modifier = Modifier.animateItemPlacement(tween(300)),
+                  modifier = Modifier.animateItemPlacement(tween()),
                   filterUi = filterItem,
                   onValue = filterComponent::onFilterStateChange,
               )
@@ -111,7 +111,7 @@ private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, fil
         is FilterComponent.FilterScreenElement.Title -> {
           Text(
               modifier = Modifier
-                  .animateItemPlacement(tween(300))
+                  .animateItemPlacement(tween())
                   .padding(bottom = 12.dp),
               color = MixDrinksColors.Black,
               text = filterGroupUi.name,
@@ -121,7 +121,7 @@ private fun FilterContent(groups: List<FilterComponent.FilterScreenElement>, fil
         is FilterComponent.FilterScreenElement.FilterOpenSearch -> {
           AddMoreFilterButton(
               modifier = Modifier
-                  .animateItemPlacement(tween(300))
+                  .animateItemPlacement(tween())
                   .fillMaxWidth(),
               filterGroupId = filterGroupUi.filterGroupId,
               text = filterGroupUi.text,

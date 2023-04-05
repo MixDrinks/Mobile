@@ -12,8 +12,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -88,9 +86,7 @@ internal fun SearchItemView(searchItemComponent: SearchItemComponent) {
                   contentDescription = "Clear search",
                   modifier = Modifier
                       .offset(x = 12.dp)
-                      .clickable {
-                        searchItemComponent.onSearchQueryChanged("")
-                      }
+                      .clickable { searchItemComponent.onSearchQueryChanged("") }
               )
             }
         )
@@ -141,7 +137,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
 
   Card(
       modifier = Modifier
-          .animateItemPlacement(tween(300))
+          .animateItemPlacement(tween())
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)
@@ -158,6 +154,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
               shape = RoundedCornerShape(8.dp),
           ),
       shape = RoundedCornerShape(8.dp),
+      backgroundColor = backgroundColor,
   ) {
     Row {
       Image(
@@ -166,37 +163,22 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
           contentScale = ContentScale.FillWidth,
           modifier = Modifier.size(64.dp)
       )
-      Box(
+      Text(
           modifier = Modifier
               .weight(1F)
-              .fillMaxHeight()
-              .background(backgroundColor)
-              .padding(end = 8.dp)
-      ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 8.dp),
-            text = item.name,
-            style = MixDrinksTextStyles.H5,
-        )
-        Box(
-            modifier = Modifier
-                .background(color = MixDrinksColors.Main, shape = RoundedCornerShape(16.dp))
-                .defaultMinSize(minWidth = 32.dp)
-                .height(32.dp)
-                .align(Alignment.CenterEnd)
-        ) {
-          Text(
-              modifier = Modifier
-                  .align(Alignment.Center)
-                  .padding(horizontal = 8.dp),
-              text = item.count.toString(),
-              style = MixDrinksTextStyles.H4,
-              color = MixDrinksColors.White,
-          )
-        }
-      }
+              .align(Alignment.CenterVertically)
+              .padding(start = 8.dp),
+          text = item.name,
+          style = MixDrinksTextStyles.H5,
+      )
+      Text(
+          modifier = Modifier
+              .align(Alignment.CenterVertically)
+              .padding(horizontal = 8.dp),
+          text = item.count.toString(),
+          style = MixDrinksTextStyles.H4,
+          color = MixDrinksColors.White,
+      )
     }
   }
 }

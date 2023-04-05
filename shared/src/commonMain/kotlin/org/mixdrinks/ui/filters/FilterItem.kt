@@ -25,15 +25,6 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
 
-@Immutable
-internal data class FilterItemUiModel(
-    val groupId: FilterGroupId,
-    val id: FilterId,
-    val name: String,
-    val isSelect: Boolean,
-    val isEnable: Boolean,
-)
-
 @Composable
 internal fun FilterItem(
     modifier: Modifier = Modifier,
@@ -91,3 +82,12 @@ internal fun FilterItem(
     }
   }
 }
+
+@Immutable
+internal data class FilterItemUiModel(
+    val groupId: FilterGroupId,
+    val id: FilterId,
+    val name: String,
+    val isSelect: Boolean,
+    val isEnable: Boolean,
+)

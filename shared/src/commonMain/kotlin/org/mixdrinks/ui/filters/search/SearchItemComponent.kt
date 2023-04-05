@@ -54,12 +54,17 @@ internal class SearchItemComponent(
       .flowOn(Dispatchers.Default)
       .stateInWhileSubscribe()
 
-  private fun mapItemsToUi(items: List<ItemRepository.ItemDto>, selected: List<FilterRepository.FilterSelected>): List<ItemUiModel> {
+  private fun mapItemsToUi(
+      items: List<ItemRepository.ItemDto>,
+      selected: List<FilterRepository.FilterSelected>,
+  ): List<ItemUiModel> {
     return items
         .map { item ->
           val imageUrl = when (item.id) {
-            is ItemRepository.ItemId.Good -> ImageUrlCreators.createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
-            is ItemRepository.ItemId.Tool -> ImageUrlCreators.createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
+            is ItemRepository.ItemId.Good -> ImageUrlCreators
+                .createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
+            is ItemRepository.ItemId.Tool -> ImageUrlCreators
+                .createUrl(item.id.id, ImageUrlCreators.Size.SIZE_320)
           }
 
           val inSelected = selected.find { it.filterId == FilterId(item.id.value) }

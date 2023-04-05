@@ -82,65 +82,29 @@ Gradle
 
 ## iOS
 
-We suggest going through the "Hello, World" steps of creating and deploying a sample project in
-Xcode to a simulator and/or your physical device.
-A video tutorial for setting up Xcode and running your first "Hello, World" application is available
-in [this Standford CS193P lecture recording](https://youtu.be/bqu6BquVi2M?start=716&end=1399).
+### Запуск на iOS simulator
 
-### Running on an iOS simulator
+Виберіть конфігурацію `iosApp` -> `Run`
 
-Once you have configured your environment correctly, you will be able to select which iOS simulator
-to run your application in Android Studio on by modifying the `iosApp` run configuration.
+### Запуск на реальному iOS пристрої
 
-Select "Run" | "Edit Configurations..." and navigate to the "iOS Application" | "iosApp" run
-configuration. In the "Execution target" drop-down, select your target device.
+Підготовка до запуску на фізичному пристрої
 
-<img src="readme_images/edit_run_config.png" height="200px">
-<img src="readme_images/target_device.png">
+- [Apple ID](https://support.apple.com/en-us/HT204316)
+- Зареєструй пристрій в Xcode
 
-Press the "Run" button to run your Compose Multiplatform app on the iOS simulator.
+Перед тим як запускати цей проект переконайтеся що можете запустити "Hello, World" додаток що
+створений Xcode на вашому фізичному пристрої.
 
-<img src="readme_images/hello_world_ios.png" height="200px">
+Далі додайте значення для поля `TEAM_ID` в `iosApp/Configuration/Config.xcconfig`
 
-### Running on a real iOS device
+Список team id що є в системі можна отримати за допомогою команди `kdoctor --team-ids`
 
-Running your Compose Multiplatform application on a physical device can be done for free. You need:
+### Contributing
 
-- an [Apple ID](https://support.apple.com/en-us/HT204316)
-- the registered iOS device in Xcode
+Автор проекту буде радий будь-якій допомозі. 
 
-Before you continue, make sure that you can successfully run a plain "Hello, World" application from
-Xcode on your physical device.
-
-To run the application, set the `TEAM_ID` associated with your Apple ID
-in `iosApp/Configuration/Config.xcconfig`.
-
-#### Finding your Team ID
-
-Use `kdoctor --team-ids` to find and set your Team ID. This will list all Team IDs currently
-configured on your system, for example:
-
-```
-3ABC246XYZ (Max Sample)
-ZABCW6SXYZ (SampleTech Inc.)
-```
-
-<details>
-<summary>Alternative way of finding your Team ID</summary>
-
-If you're running into trouble with the method described above, you can try this alternative method.
-
-- Run the `iosApp` run configuration from Android Studio (it will fail)
-- Open the `iosApp/iosApp.xcworkspace` in Xcode
-- Select `iosApp` in the menu on the left side
-- Navigate to "Signing & Capabilities"
-- Select your Personal Team in the "Team" dropdown. If you haven't set up your team, use the "Add
-  account..." option and follow the steps inside Xcode.
-
-</details>
-
-Set this Team ID in `iosApp/Configuration/Config.xcconfig` in the `TEAM_ID` field.
-
-After that you can re-open the project in Android Studio, and it will show the registered iOS device
-in the `iosApp`
-run configuration.
+Нотатки про для розробників що будуть робити зміни в проекті: 
+- Якщо ваші зміни в код відбуваються в файлі `iosApp/Configuration/Config.xcconfig` то закрийте 
+Android studio та зробіть зміни в іншому редакторі, далі запустіть `./cleanup.sh` після чого проект
+знову можна відкривати в Android Studio.
