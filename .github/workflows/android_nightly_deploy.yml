@@ -24,7 +24,7 @@ jobs:
         id: set-output
         run: |
           echo "mix_drinks_mobile_version_name=${{ steps.bump-semver.outputs.new_version }}" >> $GITHUB_OUTPUT
-          echo "mix_drinks_mobile_version_code=${mix_drinks_mobile_version_name.new_version//.}" >> $GITHUB_OUTPUT
+          echo "mix_drinks_mobile_version_code=${mix_drinks_mobile_version_name//.}" >> $GITHUB_OUTPUT
       - name: "Print output"
         run: |
           echo -e "Version name is: \n ${{ steps.set-output.outputs.mix_drinks_mobile_version_name }}"
