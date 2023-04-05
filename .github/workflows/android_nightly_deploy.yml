@@ -51,7 +51,7 @@ jobs:
         name: Sign app aab file
         id: sign_app
         with:
-          releaseDirectory: android/build/outputs/bundle/release
+          releaseDirectory: androidApp/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.MIXDRINKS_ANDROID_SIGNING_KEY }}
           alias: ${{ secrets.MIXDRINKS_ANDROID_ALIAS }}
           keyStorePassword: ${{ secrets.MIXDRINKS_ANDROID_KEY_STORE_PASSWORD }}
