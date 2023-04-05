@@ -1,0 +1,44 @@
+name: Publish Android Nightly build
+
+on: workflow_call
+
+jobs:
+  build:
+    env:
+      MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.1.1"
+      MIXDRINKS_MOBILE_APP_VERSION_CODE: "11"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build bundle release
+        run: gradle android:bundleRelease
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app aab file
+        id: sign_app
+        with:
+          releaseDirectory: android/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.MIXDRINKS_ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.MIXDRINKS_ANDROID_ALIAS }}
+          keyStorePassword: ${{ secrets.MIXDRINKS_ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.MIXDRINKS_ANDROID_KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "30.0.2"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Aab file
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
+      - name: "Upload to Google Play"
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.MIXDRINKS_ANDROID_DEPLOY_SERVICE_ACCOUNT_JSON }}
+          packageName: org.mixdrinks.app
+          releaseFiles: ${{steps.sign_app.outputs.signedReleaseFile}}
+          track: beta
+          changesNotSentForReview: true
+          status: completed
