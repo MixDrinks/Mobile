@@ -28,9 +28,10 @@ jobs:
       output_write_mix_drinks_mobile_version_name: ${{ steps.set-output.outputs.mix_drinks_mobile_version_name }}
       output_write_mix_drinks_mobile_version_code: ${{ steps.set-output.outputs.mix_drinks_mobile_version_code }}
   deploy_android:
+    needs: [ prepare_deploy ]
     env:
-      MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.1.1"
-      MIXDRINKS_MOBILE_APP_VERSION_CODE: "11"
+      MIXDRINKS_MOBILE_APP_VERSION_NAME: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_name }}
+      MIXDRINKS_MOBILE_APP_VERSION_CODE: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_code }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -66,3 +67,10 @@ jobs:
           track: beta
           changesNotSentForReview: true
           status: completed
+  after_deploy:
+    needs: [ deploy_android ]
+    steps:
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_name }}
+          message: 'Release ${{ steps.bump-semver.outputs.new_version }}'
