@@ -79,7 +79,9 @@ internal class RootComponent(
     }
   }
       .stateIn(
-          CoroutineScope(Dispatchers.Main), SharingStarted.WhileSubscribed(100), null
+          CoroutineScope(Dispatchers.Main),
+          SharingStarted.WhileSubscribed(),
+          null
       )
 
 

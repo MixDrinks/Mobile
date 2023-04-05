@@ -34,7 +34,6 @@ internal class FilterComponent(
 
   val state: StateFlow<UiState<List<FilterScreenElement>>> = filterRepository.selected
       .transform { selected ->
-        //this.emit(UiState.Loading)
         this.emit(
             UiState.Data(filterRepository.getFilterGroups()
                 .flatMap { filterGroupDto ->
@@ -84,7 +83,10 @@ internal class FilterComponent(
     }
   }
 
-  private fun buildSelectedFilterItems(filterGroupDto: FilterGroupDto, filters: List<FilterId>): List<FilterItemUiModel> {
+  private fun buildSelectedFilterItems(
+      filterGroupDto: FilterGroupDto,
+      filters: List<FilterId>,
+  ): List<FilterItemUiModel> {
     return filterGroupDto.filters
         .filter { it.id in filters }
         .map { filter ->

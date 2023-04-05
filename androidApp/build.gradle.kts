@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateMember")
+
 plugins {
   kotlin("multiplatform")
   id("com.android.application")
