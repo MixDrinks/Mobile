@@ -56,6 +56,11 @@ kotlin {
         implementation("io.github.qdsfdhvh:image-loader:1.2.10")
       }
     }
+    val commonTest by getting {
+      dependencies {
+        implementation(kotlin("test"))
+      }
+    }
     val androidMain by getting {
       dependencies {
         api("androidx.activity:activity-compose:1.7.0")
