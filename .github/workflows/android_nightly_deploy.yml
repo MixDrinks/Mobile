@@ -3,7 +3,31 @@ name: Publish Android Nightly build
 on: workflow_call
 
 jobs:
-  build:
+  prepare_deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v3
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: patch
+      - name: "Set output"
+        id: set-output
+        run: |
+          echo "mix_drinks_mobile_version_name=${{ steps.bump-semver.outputs.new_version }}" >> $GITHUB_OUTPUT
+          echo "mix_drinks_mobile_version_code=${{ steps.bump-semver.outputs.new_version//. }}" >> $GITHUB_OUTPUT
+      - name: "Print output"
+        run: |
+          echo -e "Version name is: \n ${{ steps.set-output.outputs.mix_drinks_mobile_version_name }}"
+          echo -e "Version code is: \n ${{ steps.set-output.outputs.mix_drinks_mobile_version_code }}"
+    outputs:
+      output_write_mix_drinks_mobile_version_name: ${{ steps.set-output.outputs.mix_drinks_mobile_version_name }}
+      output_write_mix_drinks_mobile_version_code: ${{ steps.set-output.outputs.mix_drinks_mobile_version_code }}
+  deploy_android:
     env:
       MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.1.1"
       MIXDRINKS_MOBILE_APP_VERSION_CODE: "11"
