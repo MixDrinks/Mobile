@@ -91,7 +91,6 @@ internal class RootComponent(
         is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
         Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
         is Config.SearchItemConfig -> Child.ItemSearch(searchItemScreen(componentContext, config.searchItemType))
-        else -> throw IllegalStateException("Unknown config: $config")
       }
 
   private fun listScreen(componentContext: ComponentContext): ListComponent =

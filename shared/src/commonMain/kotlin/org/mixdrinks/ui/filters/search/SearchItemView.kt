@@ -137,7 +137,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
 
   Card(
       modifier = Modifier
-          .animateItemPlacement(tween(300))
+          .animateItemPlacement(tween())
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)
