@@ -20,6 +20,9 @@ jobs:
         with:
           current_version: ${{ steps.get-latest-tag.outputs.tag }}
           level: patch
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
       - name: "Set output"
         id: set-output
         run: |
@@ -72,11 +75,3 @@ jobs:
           releaseFiles: ${{steps.sign_app.outputs.signedReleaseFile}}
           track: beta
           status: completed
-  after_deploy:
-    needs: [ deploy_android ]
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_name }}
