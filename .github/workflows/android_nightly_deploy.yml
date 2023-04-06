@@ -38,7 +38,7 @@ jobs:
     env:
       MIXDRINKS_MOBILE_APP_VERSION_NAME: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_name }}
       MIXDRINKS_MOBILE_APP_VERSION_CODE: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_code }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Setup Gradle
@@ -74,10 +74,9 @@ jobs:
           status: completed
   after_deploy:
     needs: [ deploy_android ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions-ecosystem/action-push-tag@v1
         with:
           tag: ${{ needs.prepare_deploy.outputs.output_write_mix_drinks_mobile_version_name }}
-          message: 'Release ${{ steps.bump-semver.outputs.new_version }}'
