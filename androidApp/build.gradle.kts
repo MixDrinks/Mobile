@@ -30,6 +30,16 @@ android {
     versionCode = System.getenv("MIXDRINKS_MOBILE_APP_VERSION_CODE")?.toIntOrNull() ?: 1
     versionName = System.getenv("MIXDRINKS_MOBILE_APP_VERSION_NAME") ?: "0.0.1"
   }
+  buildTypes {
+    getByName("release") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+    }
+    getByName("debug") {
+      applicationIdSuffix = ".debug"
+      isDebuggable = true
+    }
+  }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
