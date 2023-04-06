@@ -3,9 +3,8 @@ name: Publish Android Nightly build
 on:
   push:
     branches:
-      - setup_release_ci
+      - main
   workflow_dispatch:
-
 
 jobs:
   prepare_deploy:
