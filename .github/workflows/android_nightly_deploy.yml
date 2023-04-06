@@ -71,7 +71,6 @@ jobs:
           packageName: org.mixdrinks.app
           releaseFiles: ${{steps.sign_app.outputs.signedReleaseFile}}
           track: beta
-          changesNotSentForReview: true
           status: completed
   after_deploy:
     needs: [ deploy_android ]
