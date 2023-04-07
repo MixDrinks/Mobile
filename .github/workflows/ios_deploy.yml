@@ -60,7 +60,7 @@ jobs:
           xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath build/MixDrinksIosApp.xcarchive
           xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
           ls build
-      - name: 'Upload app to TestFlight'
+      - name: 'Upload App to TestFlight'
         uses: apple-actions/upload-testflight-build@v1
         with:
           app-path: 'path/to/application.ipa'
