@@ -58,5 +58,12 @@ jobs:
           echo "Building app..."
           cd iosApp
           xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath build/MixDrinksIosApp.xcarchive
-          xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build -allowProvisioningUpdates
+          xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
           ls build
+      - name: 'Upload app to TestFlight'
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: 'path/to/application.ipa'
+          issuer-id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY }}
