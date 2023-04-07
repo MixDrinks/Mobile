@@ -19,7 +19,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build xcworkspace
-        run: gradle podInstall
+        run: ./gradlew podInstall
 
       - name: Install the Apple certificate and provisioning profile
         env:
