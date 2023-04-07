@@ -57,4 +57,6 @@ jobs:
         run: |
           echo "Building app..."
           cd iosApp
-          xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath $PWD/build/MixDrinksIosApp.xcarchive
+          xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath build/MixDrinksIosApp.xcarchive
+          xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
+          ls build
