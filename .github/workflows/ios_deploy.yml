@@ -57,14 +57,14 @@ jobs:
         run: |
           echo "Building app..."
           cd iosApp
-          xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath build/MixDrinksIosApp.xcarchive
+          xcrun xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath build/MixDrinksIosApp.xcarchive
           ls build
       - name: Xcarhive to ipa
         run: |
           echo "Converting xcarhive to ipa..."
           cd iosApp
           ls build
-          xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
+          xcrun xcodebuild -exportArchive -archivePath build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
           ls build
       - name: 'Upload App to TestFlight'
         uses: apple-actions/upload-testflight-build@v1
