@@ -2,12 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>method</key>
-    <string>ad-hoc</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>build_pp.mobileprovision</key>
-        <string>distribution</string>
-    </dict>
+	<key>destination</key>
+	<string>upload</string>
+	<key>method</key>
+	<string>app-store</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>org.mixdrinks.app9LJW42P73L</key>
+		<string>build_pp.mobileprovision</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>iPhone Distribution</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>9LJW42P73L</string>
+	<key>uploadBitcode</key>
+	<true/>
+	<key>uploadSymbols</key>
+	<true/>
 </dict>
 </plist>
