@@ -4,8 +4,8 @@
 <dict>
 	<key>destination</key>
 	<string>upload</string>
-	<key>ad-hoc</key>
-	<string>app-store</string>
+	<key>method</key>
+	<string>ad-hoc</string>
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>org.mixdrinks.app9LJW42P73L</key>
