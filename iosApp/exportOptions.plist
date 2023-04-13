@@ -3,8 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>
-    <key>teamID</key>
-    <string>9LJW42P73L</string>
+    <string>ad-hoc</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>build_pp.mobileprovision</key>
+        <string>distribution</string>
+    </dict>
 </dict>
 </plist>
