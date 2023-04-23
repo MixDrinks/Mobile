@@ -4,8 +4,6 @@
 <dict>
 	<key>teamID</key>
 	<string>9LJW42P73L</string>
-    <key>method</key>
-    <string>ad-hoc</string>
 	<key>uploadSymbols</key>
 	<true/>
     <key>provisioningProfiles</key>
