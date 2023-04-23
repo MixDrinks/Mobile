@@ -34,6 +34,7 @@ jobs:
             team-id: "9LJW42P73L"
             certificate-password: ${{ secrets.MIXDRINKS_IOS_CERTIFICATE_PASSWORD }}
             workspace-path: iosApp/iosApp.xcworkspace
+            export-method: "ad-hoc"
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
