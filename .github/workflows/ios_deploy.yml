@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "Converting xcarhive to ipa..."
           ls
-          xcrun xcodebuild -exportArchive -archivePath iosApp/build/MixDrinksIosApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath iosApp/build
+          xcrun xcodebuild -exportArchive -archivePath iosApp/build/MixDrinksIosApp.xcarchive -exportOptionsPlist iosApp/exportOptions.plist -exportPath iosApp/build
           ls
       - name: 'Upload App to TestFlight'
         uses: apple-actions/upload-testflight-build@v1
