@@ -25,7 +25,7 @@ internal fun RootContent(component: RootComponent) {
       modifier = Modifier.pointerInput(Unit) {
         detectDragGestures(
             onDragStart = {
-              lastTouch = if (it.x < 100) {
+              lastTouch = if (it.x < CLOSE_ANIMATION_DURACIOTN_TRIGGER) {
                 it
               } else {
                 Offset.Infinite
@@ -38,7 +38,7 @@ internal fun RootContent(component: RootComponent) {
               lastTouch = Offset.Infinite
             },
             onDrag = { change: PointerInputChange, dragAmount: Offset ->
-              if (change.position.x - lastTouch.x > 100) {
+              if (change.position.x - lastTouch.x > CLOSE_ANIMATION_DURACIOTN_TRIGGER) {
                 component.onBack()
               }
             }
@@ -58,3 +58,5 @@ internal fun RootContent(component: RootComponent) {
       }
   )
 }
+
+private const val CLOSE_ANIMATION_DURACIOTN_TRIGGER = 300

@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextForegroundStyle.Unspecified.color
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.app.styles.MixDrinksColors
@@ -135,16 +136,6 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
     }
   }
 
-  val textColor by color.animateColor(
-      label = "TextColor"
-  ) { isSelect ->
-    if (isSelect) {
-      MixDrinksColors.White
-    } else {
-      MixDrinksColors.Main
-    }
-  }
-
   Card(
       modifier = Modifier
           .animateItemPlacement(tween())
@@ -166,30 +157,46 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
       shape = RoundedCornerShape(8.dp),
       backgroundColor = backgroundColor,
   ) {
-    Row {
-      Image(
-          painter = rememberAsyncImagePainter(item.imageUrl),
-          contentDescription = item.name,
-          contentScale = ContentScale.FillWidth,
-          modifier = Modifier.size(64.dp)
-      )
-      Text(
-          modifier = Modifier
-              .weight(1F)
-              .align(Alignment.CenterVertically)
-              .padding(start = 8.dp),
-          text = item.name,
-          style = MixDrinksTextStyles.H5,
-          color = textColor,
-      )
-      Text(
-          modifier = Modifier
-              .align(Alignment.CenterVertically)
-              .padding(horizontal = 8.dp),
-          text = item.count.toString(),
-          style = MixDrinksTextStyles.H4,
-          color = textColor,
-      )
+    ItemContent(item)
+  }
+}
+
+@Composable
+private fun ItemContent(item: SearchItemComponent.ItemUiModel) {
+  val color = updateTransition(item.isSelected, label = "Checked indicator")
+  val textColor by color.animateColor(
+      label = "TextColor"
+  ) { isSelect ->
+    if (isSelect) {
+      MixDrinksColors.White
+    } else {
+      MixDrinksColors.Main
     }
+  }
+
+  Row {
+    Image(
+        painter = rememberAsyncImagePainter(item.imageUrl),
+        contentDescription = item.name,
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier.size(64.dp)
+    )
+    Text(
+        modifier = Modifier
+            .weight(1F)
+            .align(Alignment.CenterVertically)
+            .padding(start = 8.dp),
+        text = item.name,
+        style = MixDrinksTextStyles.H5,
+        color = textColor,
+    )
+    Text(
+        modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .padding(horizontal = 8.dp),
+        text = item.count.toString(),
+        style = MixDrinksTextStyles.H4,
+        color = textColor,
+    )
   }
 }
