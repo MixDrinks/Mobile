@@ -34,10 +34,12 @@ android {
     getByName("release") {
       isMinifyEnabled = true
       isShrinkResources = true
+      this.resValue("string", "app_name", "MixDrinks")
     }
     getByName("debug") {
       applicationIdSuffix = ".debug"
       isDebuggable = true
+      this.resValue("string", "app_name", "Debug_MixDrinks")
     }
   }
   compileOptions {

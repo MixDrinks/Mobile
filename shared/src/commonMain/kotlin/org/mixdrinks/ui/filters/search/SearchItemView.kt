@@ -129,7 +129,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
       label = "BackgroundColor"
   ) { isSelect ->
     if (isSelect) {
-      MixDrinksColors.Main.copy(alpha = 0.5f)
+      MixDrinksColors.Main
     } else {
       MixDrinksColors.White
     }
@@ -156,29 +156,46 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
       shape = RoundedCornerShape(8.dp),
       backgroundColor = backgroundColor,
   ) {
-    Row {
-      Image(
-          painter = rememberAsyncImagePainter(item.imageUrl),
-          contentDescription = item.name,
-          contentScale = ContentScale.FillWidth,
-          modifier = Modifier.size(64.dp)
-      )
-      Text(
-          modifier = Modifier
-              .weight(1F)
-              .align(Alignment.CenterVertically)
-              .padding(start = 8.dp),
-          text = item.name,
-          style = MixDrinksTextStyles.H5,
-      )
-      Text(
-          modifier = Modifier
-              .align(Alignment.CenterVertically)
-              .padding(horizontal = 8.dp),
-          text = item.count.toString(),
-          style = MixDrinksTextStyles.H4,
-          color = MixDrinksColors.White,
-      )
+    ItemContent(item)
+  }
+}
+
+@Composable
+private fun ItemContent(item: SearchItemComponent.ItemUiModel) {
+  val color = updateTransition(item.isSelected, label = "Checked indicator")
+  val textColor by color.animateColor(
+      label = "TextColor"
+  ) { isSelect ->
+    if (isSelect) {
+      MixDrinksColors.White
+    } else {
+      MixDrinksColors.Main
     }
+  }
+
+  Row {
+    Image(
+        painter = rememberAsyncImagePainter(item.imageUrl),
+        contentDescription = item.name,
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier.size(64.dp)
+    )
+    Text(
+        modifier = Modifier
+            .weight(1F)
+            .align(Alignment.CenterVertically)
+            .padding(start = 8.dp),
+        text = item.name,
+        style = MixDrinksTextStyles.H5,
+        color = textColor,
+    )
+    Text(
+        modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .padding(horizontal = 8.dp),
+        text = item.count.toString(),
+        style = MixDrinksTextStyles.H4,
+        color = textColor,
+    )
   }
 }
