@@ -1,12 +1,18 @@
 package org.mixdrinks.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import org.mixdrinks.app.styles.MixDrinksColors
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
@@ -14,17 +20,41 @@ import org.mixdrinks.ui.list.CocktailListView
 
 @Composable
 internal fun RootContent(component: RootComponent) {
-  Box(Modifier.background(MixDrinksColors.White)) {
-    val state by component.stack.collectAsState()
-
-    when (val child = state?.active?.instance) {
-      is RootComponent.Child.List -> CocktailListView(child.component)
-      is RootComponent.Child.Details -> DetailView(child.component)
-      is RootComponent.Child.Filters -> FilterView(child.component)
-      is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
-      else -> {
-        println("Unknown child: $child")
+  var lastTouch by remember { mutableStateOf(Offset.Infinite) }
+  Children(
+      modifier = Modifier.pointerInput(Unit) {
+        detectDragGestures(
+            onDragStart = {
+              lastTouch = if (it.x < 100) {
+                it
+              } else {
+                Offset.Infinite
+              }
+            },
+            onDragEnd = {
+              lastTouch = Offset.Infinite
+            },
+            onDragCancel = {
+              lastTouch = Offset.Infinite
+            },
+            onDrag = { change: PointerInputChange, dragAmount: Offset ->
+              if (change.position.x - lastTouch.x > 100) {
+                component.onBack()
+              }
+            }
+        )
+      },
+      stack = component.stack,
+      animation = stackAnimation(
+          animator = slide()
+      ),
+      content = {
+        when (val child = it.instance) {
+          is RootComponent.Child.List -> CocktailListView(child.component)
+          is RootComponent.Child.Details -> DetailView(child.component)
+          is RootComponent.Child.Filters -> FilterView(child.component)
+          is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
+        }
       }
-    }
-  }
+  )
 }

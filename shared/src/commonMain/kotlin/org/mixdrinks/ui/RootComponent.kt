@@ -4,6 +4,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.russhwolf.settings.Settings
@@ -11,13 +13,6 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.json.Json
 import org.mixdrinks.data.CocktailListRepository
 import org.mixdrinks.data.FilterRepository
@@ -66,7 +61,7 @@ internal class RootComponent(
 
   private val navigation = StackNavigation<Config>()
 
-  private val _stack =
+  private val _stack: Value<ChildStack<Config, Child>> =
       childStack(
           source = navigation,
           initialConfiguration = Config.ListConfig,
@@ -74,22 +69,11 @@ internal class RootComponent(
           childFactory = ::createChild
       )
 
-  val stack: StateFlow<ChildStack<*, Child>?> = callbackFlow {
-    val listener: (ChildStack<*, Child>) -> Unit = {
-      this.trySend(it)
-    }
+  val stack: Value<ChildStack<Config, Child>> = _stack
 
-    _stack.subscribe(listener)
-    awaitClose {
-      _stack.unsubscribe(listener)
-    }
+  fun onBack() {
+    navigation.pop()
   }
-      .stateIn(
-          CoroutineScope(Dispatchers.Main),
-          SharingStarted.WhileSubscribed(),
-          null
-      )
-
 
   private fun createChild(config: Config, componentContext: ComponentContext): Child =
       when (config) {
