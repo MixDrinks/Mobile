@@ -40,3 +40,10 @@ jobs:
         with:
             name: IOS IPA
             path: "output.ipa"
+      - name: 'Upload app to TestFlight'
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+            app-path: 'output.ipa'
+            issuer-id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ISSUER_ID }}
+            api-key-id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}
+            api-private-key: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY }}
