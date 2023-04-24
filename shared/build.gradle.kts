@@ -46,7 +46,7 @@ kotlin {
 
         implementation("org.mixdrinks:core:1.8.1")
 
-        implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.1")
+        implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.1.0")
 
         implementation("io.ktor:ktor-client-serialization:$ktorVersion")
         implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
