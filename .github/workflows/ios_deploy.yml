@@ -41,7 +41,6 @@ jobs:
             name: IOS IPA
             path: "output.ipa"
 
-      # Deploy parts
       - name: Install private API key P8
         env:
             PRIVATE_API_KEY_BASE64: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY }}
