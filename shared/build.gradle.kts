@@ -11,7 +11,7 @@ plugins {
   id("kotlin-parcelize")
 }
 
-val ktorVersion = "2.2.4"
+val ktorVersion = "2.3.0"
 val ktorfitVersion = "1.0.1"
 
 kotlin {
