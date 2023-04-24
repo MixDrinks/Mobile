@@ -56,6 +56,8 @@ kotlin {
         implementation("com.arkivanov.decompose:extensions-compose-jetpack:1.0.0")
 
         implementation("io.github.qdsfdhvh:image-loader:1.2.10")
+
+        implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
       }
     }
     val commonTest by getting {

@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.russhwolf.settings.Settings
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -35,13 +36,18 @@ import org.mixdrinks.ui.list.ListComponent
 import org.mixdrinks.ui.list.SelectedFilterProvider
 
 internal object Graph {
+
+  private val settings: Settings = Settings()
+
+  private val json = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+  }
+
   private val ktorfit = Ktorfit.Builder()
       .httpClient(HttpClient {
         install(ContentNegotiation) {
-          json(Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-          })
+          json(json)
         }
       })
       .baseUrl("https://api.mixdrinks.org/")
@@ -49,7 +55,7 @@ internal object Graph {
       .create<MixDrinksService>()
 
 
-  val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit)
+  val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit, settings, json)
 
   val filterRepository = FilterRepository { snapshotRepository.get() }
 }
