@@ -31,6 +31,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.ui.details.goods.GoodsView
@@ -51,6 +53,7 @@ internal fun DetailView(component: DetailsComponent) {
   }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: DetailsComponent) {
   Column {
@@ -71,7 +74,7 @@ internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: Details
                 .align(Alignment.Center)
                 .size(32.dp)
                 .padding(start = 12.dp),
-            painter = rememberAsyncImagePainter("https://image.mixdrinks.org/icons%2Fback.png"),
+            painter = painterResource("ic_arrow_back.xml"),
             contentDescription = "Test"
         )
       }

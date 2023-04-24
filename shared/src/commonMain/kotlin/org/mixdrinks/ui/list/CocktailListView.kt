@@ -30,6 +30,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.app.utils.ResString
@@ -38,6 +40,7 @@ import org.mixdrinks.ui.filters.FilterItem
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 import org.mixdrinks.ui.widgets.undomain.FlowRow
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun CocktailListView(component: ListComponent) {
   Column(
@@ -63,7 +66,7 @@ internal fun CocktailListView(component: ListComponent) {
             modifier = Modifier
                 .align(Alignment.Center)
                 .size(32.dp),
-            painter = rememberAsyncImagePainter("https://image.mixdrinks.org/icons%2Ffilter.svg"),
+            painter = painterResource("ic_filter.xml"),
             contentDescription = ResString.filters,
             colorFilter = ColorFilter.tint(Color.White)
         )
