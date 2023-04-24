@@ -102,7 +102,7 @@ jobs:
           project-path: iosApp
 
       - name: "Build IOS App"
-        uses: yukiarrr/ios-build-action@v1.4.0
+        uses: yukiarrr/ios-build-action@v1.9.1
         with:
           project-path: iosApp/iosApp.xcodeproj
           p12-base64: ${{ secrets.MIXDRINKS_IOS_P12_BASE64 }}
