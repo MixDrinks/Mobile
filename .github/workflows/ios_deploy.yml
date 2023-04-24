@@ -24,6 +24,12 @@ jobs:
       - name: Build xcworkspace
         run: ./gradlew podInstall
 
+      - uses: yanamura/ios-bump-version@v1
+        with:
+            version: ${{ env.MIXDRINKS_MOBILE_APP_VERSION_NAME }}
+            build-number: ${{ env.MIXDRINKS_MOBILE_APP_VERSION_CODE }}
+            project-path: iosApp
+
       - name: Build IOS App
         uses: yukiarrr/ios-build-action@v1.4.0
         with:
