@@ -129,9 +129,19 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
       label = "BackgroundColor"
   ) { isSelect ->
     if (isSelect) {
-      MixDrinksColors.Main.copy(alpha = 0.5f)
+      MixDrinksColors.Main
     } else {
       MixDrinksColors.White
+    }
+  }
+
+  val textColor by color.animateColor(
+      label = "TextColor"
+  ) { isSelect ->
+    if (isSelect) {
+      MixDrinksColors.White
+    } else {
+      MixDrinksColors.Main
     }
   }
 
@@ -170,6 +180,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
               .padding(start = 8.dp),
           text = item.name,
           style = MixDrinksTextStyles.H5,
+          color = textColor,
       )
       Text(
           modifier = Modifier
@@ -177,7 +188,7 @@ internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchIte
               .padding(horizontal = 8.dp),
           text = item.count.toString(),
           style = MixDrinksTextStyles.H4,
-          color = MixDrinksColors.White,
+          color = textColor,
       )
     }
   }
