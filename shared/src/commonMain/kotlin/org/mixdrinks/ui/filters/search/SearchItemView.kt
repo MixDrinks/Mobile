@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextForegroundStyle.Unspecified.color
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.app.styles.MixDrinksColors
