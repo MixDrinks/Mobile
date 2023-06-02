@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -131,8 +131,9 @@
 		7555FF73242A565900829871 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = orgName;
 				TargetAttributes = {
 					7555FF7A242A565900829871 = {
@@ -384,7 +385,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -404,7 +405,7 @@
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.mixdrinks.app9LJW42P73L;
 				PRODUCT_NAME = "${APP_NAME}";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Development;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AppStoreProdV1;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
