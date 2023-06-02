@@ -1,4 +1,4 @@
-name: Publish Nightly build
+name: Publish production build
 
 on:
   workflow_dispatch:
