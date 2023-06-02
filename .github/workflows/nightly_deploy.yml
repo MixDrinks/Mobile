@@ -1,4 +1,4 @@
-name: Publish Android Nightly build
+name: Publish Nightly build
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "30.0.2"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "Upload AAB file as artifact"
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
@@ -102,7 +102,7 @@ jobs:
           project-path: iosApp
 
       - name: "Build IOS App"
-        uses: yukiarrr/ios-build-action@v1.4.0
+        uses: yukiarrr/ios-build-action@v1.9.1
         with:
           project-path: iosApp/iosApp.xcodeproj
           p12-base64: ${{ secrets.MIXDRINKS_IOS_P12_BASE64 }}
@@ -113,7 +113,7 @@ jobs:
           workspace-path: iosApp/iosApp.xcworkspace
           export-method: "ad-hoc"
       - name: "Upload IPA file as artifact"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: IOS IPA
           path: "output.ipa"
