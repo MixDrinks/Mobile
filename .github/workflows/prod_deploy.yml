@@ -1,9 +1,8 @@
 name: Publish production build
 
 on:
-  push:
-    branches:
-      - prod_ci
+  schedule:
+    - cron: '0 17 * * 2'
   workflow_dispatch:
 
 jobs:
