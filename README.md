@@ -6,6 +6,7 @@ Play.
 В додатка є відритий beta тест в google play. (В нього попадаються нічні зробки)
 
 - [Android](https://play.google.com/store/apps/details?id=org.mixdrinks.app)
+- [App Store](https://apps.apple.com/app/id6447103081)
 - [Web](https://play.google.com/apps/testing/org.mixdrinks.app)
 
 ## Перед роботою з проектом
