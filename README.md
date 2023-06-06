@@ -1,9 +1,6 @@
 ## MixDrinks app
 
-Даний додаток ще не є готовим до продакшну, але доступний для відкритого бета-тестування в Google
-Play.
-
-В додатка є відритий beta тест в google play. (В нього попадаються нічні зробки)
+Додаток доступний в **Google Play** та **App Store**:
 
 - [Android](https://play.google.com/store/apps/details?id=org.mixdrinks.app)
 - [App Store](https://apps.apple.com/app/id6447103081)
