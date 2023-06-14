@@ -26,10 +26,7 @@ jobs:
         run: |
           echo "mix_drinks_mobile_version_name=${{ steps.bump-semver.outputs.new_version }}" >> $GITHUB_OUTPUT
           
-          IFS='.' read -ra version_parts <<< "$mix_drinks_mobile_version_name"
-          major=${version_parts[0]}
-          minor=${version_parts[1]}
-          patch=${version_parts[2]}
+          IFS='.' read -r major minor patch <<< "$mix_drinks_mobile_version_name"
           mix_drinks_mobile_version_code=$((major * 10000 + minor * 100 + patch))
 
           echo "mix_drinks_mobile_version_code=${mix_drinks_mobile_version_code}" >> $GITHUB_OUTPUT
