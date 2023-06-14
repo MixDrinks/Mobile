@@ -11,5 +11,4 @@ class TagsRepository(
   suspend fun getTags(tagId: List<TagId>): List<TagDto> {
     return snapshot().tags.filter { tagDto -> tagId.contains(tagDto.id) }
   }
-
 }
