@@ -32,5 +32,6 @@ internal class SnapshotRepository(
 
   companion object {
     private const val SNAPSHOT_KEY = "SNAPSHOT_KEY"
+    private const val SNAPSHOW_VERSION_KEY = "SNAPSHOW_VERSION_KEY"
   }
 }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.mixdrinks.data.CocktailListRepository
+import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailDto
 import org.mixdrinks.dto.CocktailId
@@ -25,6 +26,7 @@ internal class ListComponent(
     private val componentContext: ComponentContext,
     private val cocktailListRepository: CocktailListRepository,
     private val selectedFilterProvider: SelectedFilterProvider,
+    private val tagsRepository: TagsRepository,
     private val navigation: StackNavigation<RootComponent.Config>,
 ) : ComponentContext by componentContext,
     FilterValueChangeDelegate by filterRepository {
@@ -49,8 +51,9 @@ internal class ListComponent(
               cocktails.map { cocktail ->
                 CocktailsListState.Cocktails.Cocktail(
                     id = cocktail.id,
-                    url = ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_320),
-                    name = cocktail.name
+                    url = ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_400),
+                    name = cocktail.name,
+                    tags = tagsRepository.getTags(cocktail.tags).map { it.name },
                 )
               }
           )
@@ -77,6 +80,7 @@ internal class ListComponent(
           val id: CocktailId,
           val url: String,
           val name: String,
+          val tags: List<String>,
       )
     }
 

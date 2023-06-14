@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -80,6 +82,7 @@ internal fun CocktailListView(component: ListComponent) {
         is ListComponent.CocktailsListState.PlaceHolder -> {
           PlaceHolder(it, component)
         }
+
         is ListComponent.CocktailsListState.Cocktails -> {
           CocktailList(it, component)
         }
@@ -145,12 +148,12 @@ internal fun LazyItemScope.Cocktail(
       modifier = Modifier
           .animateItemPlacement()
           .clickable { onClick(cocktail.id) }
-          .height(80.dp)
+          .height(96.dp)
           .fillMaxWidth()
-          .padding(4.dp)
+          .padding(horizontal = 8.dp, vertical = 4.dp)
           .border(
               1.dp,
-              MixDrinksColors.Main,
+              MixDrinksColors.Main.copy(alpha = 0.8F),
               shape = RoundedCornerShape(8.dp),
           ),
       shape = RoundedCornerShape(8.dp),
@@ -160,16 +163,33 @@ internal fun LazyItemScope.Cocktail(
         Image(
             painter = rememberAsyncImagePainter(cocktail.url),
             contentDescription = "Коктейль ${cocktail.name}",
-            contentScale = ContentScale.None,
-            modifier = Modifier.width(80.dp),
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.width(96.dp),
         )
 
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = cocktail.name,
-            color = MixDrinksColors.Main,
-            style = MixDrinksTextStyles.H5,
-        )
+        Column {
+          Text(
+              modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+              text = cocktail.name,
+              color = MixDrinksColors.Main,
+              style = MixDrinksTextStyles.H5,
+          )
+
+          LazyRow(
+              modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+              horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            items(cocktail.tags) {
+              Text(
+                  modifier = Modifier
+                      .background(MixDrinksColors.Grey.copy(alpha = 0.8F), shape = RoundedCornerShape(2.dp))
+                      .padding(4.dp),
+                  text = it,
+                  color = MixDrinksColors.Black,
+                  style = MixDrinksTextStyles.H6,
+              )
+            }
+          }
+        }
       }
     }
   }
