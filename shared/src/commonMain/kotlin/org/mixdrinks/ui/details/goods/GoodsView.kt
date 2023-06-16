@@ -72,23 +72,18 @@ internal fun GoodsView(
 internal fun Good(good: GoodsSubComponent.GoodUi, onGoodClick: (goodId: GoodId) -> Unit) {
     Card(
         modifier = Modifier
-            .clickable { onGoodClick(good.goodId) }
-            .height(64.dp)
+            .height(80.dp)
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 2.dp)
-            .border(
-                1.dp,
-                MixDrinksColors.Main,
-                shape = RoundedCornerShape(8.dp),
-            ),
+            .padding(horizontal = 12.dp, vertical = 4.dp),
         shape = RoundedCornerShape(8.dp),
     ) {
-        Row {
+        Row(modifier = Modifier.clickable { onGoodClick(good.goodId) }) {
             Image(
                 painter = rememberAsyncImagePainter(good.url),
                 contentDescription = good.name,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.size(64.dp)
+                contentScale = ContentScale.Inside,
+                modifier = Modifier.size(80.dp, 80.dp)
+                    .padding(2.dp),
             )
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically)

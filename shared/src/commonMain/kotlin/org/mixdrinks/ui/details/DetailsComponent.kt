@@ -1,5 +1,7 @@
 package org.mixdrinks.ui.details
 
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
@@ -70,15 +72,15 @@ internal class DetailsComponent(
                     url = ImageUrlCreators.createUrl(it.toolId, ImageUrlCreators.Size.SIZE_400)
                 )
             },
-            tags = fullCocktail.tags.map {
-                FullCocktailUiModel.TagUi.Tag(
-                    id = it.id,
-                    name = it.name,
-                )
-            }.plus(fullCocktail.tastes.map {
+            tags = fullCocktail.tastes.map {
                 FullCocktailUiModel.TagUi.Taste(
                     id = it.id,
-                    name = it.name,
+                    name = it.name.capitalize(Locale.current),
+                )
+            }.plus(fullCocktail.tags.map {
+                FullCocktailUiModel.TagUi.Tag(
+                    id = it.id,
+                    name = it.name.capitalize(Locale.current),
                 )
             })
         )
