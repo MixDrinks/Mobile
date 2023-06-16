@@ -13,6 +13,7 @@ data class GoodsType(
 ) {
     enum class Type {
         GOODS, GLASSWARE, TOOL;
+
         companion object {
             fun fromString(value: String) = Type.values().first { it.toString() == value }
         }

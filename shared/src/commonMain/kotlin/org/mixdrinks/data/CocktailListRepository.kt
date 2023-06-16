@@ -12,18 +12,18 @@ internal class CocktailListRepository(
     private val cocktailSelector: suspend () -> CocktailSelector,
 ) {
 
-  suspend fun getCocktails(): Flow<List<CocktailDto>> {
-    return filterRepository.selected.map {
-      val notEmptyFilter = it.filter { it.value.isNotEmpty() }
-      if (notEmptyFilter.isEmpty()) {
-        snapshot().cocktails
-      } else {
-        val notEmptyFilterIds = notEmptyFilter
-            .mapValues { filterGroupIdListEntry -> filterGroupIdListEntry.value.map { it.filterId } }
+    suspend fun getCocktails(): Flow<List<CocktailDto>> {
+        return filterRepository.selected.map {
+            val notEmptyFilter = it.filter { it.value.isNotEmpty() }
+            if (notEmptyFilter.isEmpty()) {
+                snapshot().cocktails
+            } else {
+                val notEmptyFilterIds = notEmptyFilter
+                    .mapValues { filterGroupIdListEntry -> filterGroupIdListEntry.value.map { it.filterId } }
 
-        val ids = cocktailSelector().getCocktailIds(notEmptyFilterIds)
-        snapshot().cocktails.filter { cocktailDto -> ids.contains(cocktailDto.id) }
-      }
+                val ids = cocktailSelector().getCocktailIds(notEmptyFilterIds)
+                snapshot().cocktails.filter { cocktailDto -> ids.contains(cocktailDto.id) }
+            }
+        }
     }
-  }
 }

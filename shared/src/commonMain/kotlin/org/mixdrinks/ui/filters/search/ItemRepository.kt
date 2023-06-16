@@ -12,49 +12,49 @@ internal class ItemRepository(
     private val futureCocktailSelector: FutureCocktailSelector,
 ) {
 
-  suspend fun getItems(searchItemType: SearchItemComponent.SearchItemType): List<ItemDto> {
-    return when (searchItemType) {
-      SearchItemComponent.SearchItemType.GOODS -> getGoods()
-      SearchItemComponent.SearchItemType.TOOLS -> getTools()
+    suspend fun getItems(searchItemType: SearchItemComponent.SearchItemType): List<ItemDto> {
+        return when (searchItemType) {
+            SearchItemComponent.SearchItemType.GOODS -> getGoods()
+            SearchItemComponent.SearchItemType.TOOLS -> getTools()
+        }
     }
-  }
 
-  private suspend fun getTools(): List<ItemDto> {
-    return snapshot().tools
-        .map {
-          ItemDto(
-              id = ItemId.Tool(it.id),
-              name = it.name,
-              cocktailCount = futureCocktailSelector.getCocktailIds(
-                  FilterGroups.TOOLS.id,
-                  FilterId(it.id.id),
-              ).size,
-          )
-        }
-  }
+    private suspend fun getTools(): List<ItemDto> {
+        return snapshot().tools
+            .map {
+                ItemDto(
+                    id = ItemId.Tool(it.id),
+                    name = it.name,
+                    cocktailCount = futureCocktailSelector.getCocktailIds(
+                        FilterGroups.TOOLS.id,
+                        FilterId(it.id.id),
+                    ).size,
+                )
+            }
+    }
 
-  private suspend fun getGoods(): List<ItemDto> {
-    return snapshot().goods
-        .map {
-          ItemDto(
-              id = ItemId.Good(it.id),
-              name = it.name,
-              cocktailCount = futureCocktailSelector.getCocktailIds(
-                  FilterGroups.GOODS.id,
-                  FilterId(it.id.id),
-              ).size,
-          )
-        }
-  }
+    private suspend fun getGoods(): List<ItemDto> {
+        return snapshot().goods
+            .map {
+                ItemDto(
+                    id = ItemId.Good(it.id),
+                    name = it.name,
+                    cocktailCount = futureCocktailSelector.getCocktailIds(
+                        FilterGroups.GOODS.id,
+                        FilterId(it.id.id),
+                    ).size,
+                )
+            }
+    }
 
-  sealed class ItemId(val value: Int) {
-    data class Good(val id: GoodId) : ItemId(id.id)
-    data class Tool(val id: ToolId) : ItemId(id.id)
-  }
+    sealed class ItemId(val value: Int) {
+        data class Good(val id: GoodId) : ItemId(id.id)
+        data class Tool(val id: ToolId) : ItemId(id.id)
+    }
 
-  data class ItemDto(
-      val id: ItemId,
-      val name: String,
-      val cocktailCount: Int,
-  )
+    data class ItemDto(
+        val id: ItemId,
+        val name: String,
+        val cocktailCount: Int,
+    )
 }

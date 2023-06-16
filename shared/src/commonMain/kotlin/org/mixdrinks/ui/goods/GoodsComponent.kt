@@ -28,9 +28,11 @@ internal class GoodsComponent(
         GoodsType.Type.GOODS -> flow {
             emit(goodsRepository.getDetailGood(GoodId(goodsType.id)))
         }
+
         GoodsType.Type.TOOL -> flow {
             emit(goodsRepository.getDetailGood(ToolId(goodsType.id)))
         }
+
         GoodsType.Type.GLASSWARE -> flow {
             emit(goodsRepository.getDetailGood(GlasswareId(goodsType.id)))
         }

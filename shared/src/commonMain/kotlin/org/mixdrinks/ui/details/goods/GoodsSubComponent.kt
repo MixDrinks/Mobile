@@ -19,48 +19,48 @@ internal class GoodsSubComponent(
     private val cocktailId: CocktailId,
 ) : ComponentContext by componentContext {
 
-  private val _counter = MutableStateFlow(1)
+    private val _counter = MutableStateFlow(1)
 
-  val state: StateFlow<UiState<GoodsUi>> = flow {
-    emit(goodsRepository.getGoods(cocktailId))
-  }
-      .combine(_counter) { goods: List<GoodsRepository.Good>, count: Int ->
-        UiState.Data(
-            GoodsUi(
-                count = count,
-                goods = goods.map { good ->
-                  GoodUi(
-                      goodId = good.goodId,
-                      url = ImageUrlCreators.createUrl(good.goodId, ImageUrlCreators.Size.SIZE_320),
-                      name = good.name,
-                      amount = "${good.amount * count} ${good.unit}"
-                  )
-                }
-            )
-        )
-      }
-      .flowOn(Dispatchers.Default)
-      .stateInWhileSubscribe()
-
-  fun onPlusClick() {
-    _counter.value++
-  }
-
-  fun onMinusClick() {
-    if (_counter.value > 1) {
-      _counter.value--
+    val state: StateFlow<UiState<GoodsUi>> = flow {
+        emit(goodsRepository.getGoods(cocktailId))
     }
-  }
+        .combine(_counter) { goods: List<GoodsRepository.Good>, count: Int ->
+            UiState.Data(
+                GoodsUi(
+                    count = count,
+                    goods = goods.map { good ->
+                        GoodUi(
+                            goodId = good.goodId,
+                            url = ImageUrlCreators.createUrl(good.goodId, ImageUrlCreators.Size.SIZE_320),
+                            name = good.name,
+                            amount = "${good.amount * count} ${good.unit}"
+                        )
+                    }
+                )
+            )
+        }
+        .flowOn(Dispatchers.Default)
+        .stateInWhileSubscribe()
 
-  data class GoodsUi(
-      val count: Int,
-      val goods: List<GoodUi>,
-  )
+    fun onPlusClick() {
+        _counter.value++
+    }
 
-  data class GoodUi(
-      val goodId: GoodId,
-      val url: String,
-      val name: String,
-      val amount: String,
-  )
+    fun onMinusClick() {
+        if (_counter.value > 1) {
+            _counter.value--
+        }
+    }
+
+    data class GoodsUi(
+        val count: Int,
+        val goods: List<GoodUi>,
+    )
+
+    data class GoodUi(
+        val goodId: GoodId,
+        val url: String,
+        val name: String,
+        val amount: String,
+    )
 }

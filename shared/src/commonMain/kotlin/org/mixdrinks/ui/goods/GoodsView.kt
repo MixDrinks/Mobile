@@ -89,7 +89,8 @@ internal fun GoodsViewContent(
 }
 
 @Composable
-internal fun GoodsViewScrollContent(modifier: Modifier, good: DetailGoodsUiModel,
+internal fun GoodsViewScrollContent(
+    modifier: Modifier, good: DetailGoodsUiModel,
 ) {
     Column(
         modifier = modifier

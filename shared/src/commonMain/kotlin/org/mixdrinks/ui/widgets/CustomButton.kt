@@ -15,19 +15,19 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 
 @Composable
 internal fun CustomButton(modifier: Modifier, text: String, onClick: () -> Unit) {
-  Button(
-      onClick = { onClick() },
-      shape = RoundedCornerShape(16.dp),
-      colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-      modifier = modifier
-          .fillMaxWidth()
-          .padding(vertical = 8.dp)
-          .height(40.dp)
-  ) {
-    Text(
-        text = text,
-        style = MixDrinksTextStyles.H4,
-        color = MixDrinksColors.White
-    )
-  }
+    Button(
+        onClick = { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(40.dp)
+    ) {
+        Text(
+            text = text,
+            style = MixDrinksTextStyles.H4,
+            color = MixDrinksColors.White
+        )
+    }
 }

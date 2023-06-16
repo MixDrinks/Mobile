@@ -45,97 +45,97 @@ import org.mixdrinks.ui.widgets.undomain.FlowRow
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun CocktailListView(component: ListComponent) {
-  Column(
-      modifier = Modifier
-          .fillMaxHeight()
-          .background(MixDrinksColors.White),
-  ) {
-    Box(
+    Column(
         modifier = Modifier
-            .background(MixDrinksColors.Main)
-            .fillMaxWidth()
-            .height(52.dp),
+            .fillMaxHeight()
+            .background(MixDrinksColors.White),
     ) {
-      Box(
-          modifier = Modifier
-              .clickable {
-                component.openFilters()
-              }
-              .align(Alignment.CenterEnd)
-              .size(52.dp)
-      ) {
-        Image(
+        Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .size(32.dp),
-            painter = painterResource("ic_filter.xml"),
-            contentDescription = ResString.filters,
-            colorFilter = ColorFilter.tint(Color.White)
-        )
-      }
-    }
-
-    ContentHolder(
-        stateflow = component.state,
-    ) {
-      when (it) {
-        is ListComponent.CocktailsListState.PlaceHolder -> {
-          PlaceHolder(it, component)
+                .background(MixDrinksColors.Main)
+                .fillMaxWidth()
+                .height(52.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .clickable {
+                        component.openFilters()
+                    }
+                    .align(Alignment.CenterEnd)
+                    .size(52.dp)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(32.dp),
+                    painter = painterResource("ic_filter.xml"),
+                    contentDescription = ResString.filters,
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            }
         }
 
-        is ListComponent.CocktailsListState.Cocktails -> {
-          CocktailList(it, component)
+        ContentHolder(
+            stateflow = component.state,
+        ) {
+            when (it) {
+                is ListComponent.CocktailsListState.PlaceHolder -> {
+                    PlaceHolder(it, component)
+                }
+
+                is ListComponent.CocktailsListState.Cocktails -> {
+                    CocktailList(it, component)
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 internal fun PlaceHolder(placeHolder: ListComponent.CocktailsListState.PlaceHolder, component: ListComponent) {
-  Box(
-      modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight(),
-      contentAlignment = Alignment.Center,
-  ) {
-    Column(
+    Box(
         modifier = Modifier
-            .padding(16.dp),
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
     ) {
-      Text(
-          text = ResString.cocktailNotFound,
-          style = MixDrinksTextStyles.H1,
-          color = MixDrinksColors.Black,
-          textAlign = TextAlign.Center,
-      )
-      Spacer(modifier = Modifier.height(16.dp))
-      Text(
-          text = ResString.clearFilterForFoundSomething,
-          style = MixDrinksTextStyles.H4,
-          color = MixDrinksColors.Black,
-          textAlign = TextAlign.Center,
-      )
-      Spacer(modifier = Modifier.height(32.dp))
-      FlowRow(
-          mainAxisSpacing = 4.dp,
-          crossAxisSpacing = 4.dp
-      ) {
-        placeHolder.filters.forEach {
-          FilterItem(filterUi = it, onValue = component::onFilterStateChange)
+        Column(
+            modifier = Modifier
+                .padding(16.dp),
+        ) {
+            Text(
+                text = ResString.cocktailNotFound,
+                style = MixDrinksTextStyles.H1,
+                color = MixDrinksColors.Black,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = ResString.clearFilterForFoundSomething,
+                style = MixDrinksTextStyles.H4,
+                color = MixDrinksColors.Black,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            FlowRow(
+                mainAxisSpacing = 4.dp,
+                crossAxisSpacing = 4.dp
+            ) {
+                placeHolder.filters.forEach {
+                    FilterItem(filterUi = it, onValue = component::onFilterStateChange)
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 internal fun CocktailList(cocktails: ListComponent.CocktailsListState.Cocktails, component: ListComponent) {
-  LazyColumn {
-    items(cocktails.list, key = { it.id.id }) { cocktail ->
-      Cocktail(cocktail, component::onCocktailClick)
+    LazyColumn {
+        items(cocktails.list, key = { it.id.id }) { cocktail ->
+            Cocktail(cocktail, component::onCocktailClick)
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -144,53 +144,53 @@ internal fun LazyItemScope.Cocktail(
     cocktail: ListComponent.CocktailsListState.Cocktails.Cocktail,
     onClick: (CocktailId) -> Unit,
 ) {
-  Card(
-      modifier = Modifier
-          .animateItemPlacement()
-          .clickable { onClick(cocktail.id) }
-          .height(96.dp)
-          .fillMaxWidth()
-          .padding(horizontal = 8.dp, vertical = 4.dp)
-          .border(
-              1.dp,
-              MixDrinksColors.Main.copy(alpha = 0.8F),
-              shape = RoundedCornerShape(8.dp),
-          ),
-      shape = RoundedCornerShape(8.dp),
-  ) {
-    Box {
-      Row {
-        Image(
-            painter = rememberAsyncImagePainter(cocktail.url),
-            contentDescription = "Коктейль ${cocktail.name}",
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier.width(96.dp),
-        )
+    Card(
+        modifier = Modifier
+            .animateItemPlacement()
+            .clickable { onClick(cocktail.id) }
+            .height(96.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .border(
+                1.dp,
+                MixDrinksColors.Main.copy(alpha = 0.8F),
+                shape = RoundedCornerShape(8.dp),
+            ),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Box {
+            Row {
+                Image(
+                    painter = rememberAsyncImagePainter(cocktail.url),
+                    contentDescription = "Коктейль ${cocktail.name}",
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier.width(96.dp),
+                )
 
-        Column {
-          Text(
-              modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-              text = cocktail.name,
-              color = MixDrinksColors.Main,
-              style = MixDrinksTextStyles.H5,
-          )
+                Column {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        text = cocktail.name,
+                        color = MixDrinksColors.Main,
+                        style = MixDrinksTextStyles.H5,
+                    )
 
-          LazyRow(
-              modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-              horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            items(cocktail.tags) {
-              Text(
-                  modifier = Modifier
-                      .background(MixDrinksColors.Grey.copy(alpha = 0.8F), shape = RoundedCornerShape(2.dp))
-                      .padding(4.dp),
-                  text = it,
-                  color = MixDrinksColors.Black,
-                  style = MixDrinksTextStyles.H6,
-              )
+                    LazyRow(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        items(cocktail.tags) {
+                            Text(
+                                modifier = Modifier
+                                    .background(MixDrinksColors.Grey.copy(alpha = 0.8F), shape = RoundedCornerShape(2.dp))
+                                    .padding(4.dp),
+                                text = it,
+                                color = MixDrinksColors.Black,
+                                style = MixDrinksTextStyles.H6,
+                            )
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 }

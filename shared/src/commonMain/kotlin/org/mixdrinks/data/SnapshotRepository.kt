@@ -15,23 +15,23 @@ internal class SnapshotRepository(
     private val json: Json,
 ) {
 
-  private val snapshot = LazySuspend {
-    val cacheValue = settings.getStringOrNull(SNAPSHOT_KEY)
-    if (cacheValue != null) {
-      json.decodeFromString(cacheValue)
-    } else {
-      val snapshot = mixDrinksService.getSnapshot()
-      settings[SNAPSHOT_KEY] = json.encodeToString(snapshot)
-      snapshot
+    private val snapshot = LazySuspend {
+        val cacheValue = settings.getStringOrNull(SNAPSHOT_KEY)
+        if (cacheValue != null) {
+            json.decodeFromString(cacheValue)
+        } else {
+            val snapshot = mixDrinksService.getSnapshot()
+            settings[SNAPSHOT_KEY] = json.encodeToString(snapshot)
+            snapshot
+        }
     }
-  }
 
-  suspend fun get(): SnapshotDto {
-    return snapshot()
-  }
+    suspend fun get(): SnapshotDto {
+        return snapshot()
+    }
 
-  companion object {
-    private const val SNAPSHOT_KEY = "SNAPSHOT_KEY"
-    private const val SNAPSHOW_VERSION_KEY = "SNAPSHOW_VERSION_KEY"
-  }
+    companion object {
+        private const val SNAPSHOT_KEY = "SNAPSHOT_KEY"
+        private const val SNAPSHOW_VERSION_KEY = "SNAPSHOW_VERSION_KEY"
+    }
 }

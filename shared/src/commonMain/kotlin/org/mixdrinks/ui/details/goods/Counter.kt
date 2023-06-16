@@ -26,53 +26,53 @@ internal fun Counter(
     onPlus: () -> Unit,
     onMinus: () -> Unit,
 ) {
-  val counterHeight = 40.dp
-  Row {
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-        onClick = onMinus,
-        contentPadding = PaddingValues(0.dp),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier
-            .size(counterHeight)
-    ) {
-      Text("-", color = MixDrinksColors.White, fontSize = 28.sp)
+    val counterHeight = 40.dp
+    Row {
+        Button(
+            colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
+            onClick = onMinus,
+            contentPadding = PaddingValues(0.dp),
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .size(counterHeight)
+        ) {
+            Text("-", color = MixDrinksColors.White, fontSize = 28.sp)
+        }
+
+        Spacer(
+            modifier = Modifier.width(4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .size(counterHeight)
+                .border(1.dp, Color.Black, RoundedCornerShape(4.dp)),
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = count.toString(),
+                style = MixDrinksTextStyles.H4,
+                color = MixDrinksColors.Black,
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.width(4.dp)
+        )
+
+        Button(
+            colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
+            onClick = onPlus,
+            contentPadding = PaddingValues(0.dp),
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .size(counterHeight)
+        ) {
+            Text("+", color = MixDrinksColors.White, fontSize = 28.sp)
+        }
+
+        Spacer(
+            modifier = Modifier.width(4.dp)
+        )
     }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-
-    Box(
-        modifier = Modifier
-            .size(counterHeight)
-            .border(1.dp, Color.Black, RoundedCornerShape(4.dp)),
-    ) {
-      Text(
-          modifier = Modifier.align(Alignment.Center),
-          text = count.toString(),
-          style = MixDrinksTextStyles.H4,
-          color = MixDrinksColors.Black,
-      )
-    }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-        onClick = onPlus,
-        contentPadding = PaddingValues(0.dp),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier
-            .size(counterHeight)
-    ) {
-      Text("+", color = MixDrinksColors.White, fontSize = 28.sp)
-    }
-
-    Spacer(
-        modifier = Modifier.width(4.dp)
-    )
-  }
 }

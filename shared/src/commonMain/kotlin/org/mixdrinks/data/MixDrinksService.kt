@@ -5,7 +5,7 @@ import org.mixdrinks.dto.SnapshotDto
 
 internal interface MixDrinksService {
 
-  @GET("/snapshot")
-  suspend fun getSnapshot(): SnapshotDto
+    @GET("/snapshot")
+    suspend fun getSnapshot(): SnapshotDto
 
 }
