@@ -26,7 +26,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun Counter(
     count: Int,
@@ -99,7 +98,7 @@ internal fun ChangeCountButton(
                 .padding(4.dp)
                 .fillMaxSize(),
             painter = painterResource(resource),
-            contentDescription = "Більше",
+            contentDescription = contentDescription,
             contentScale = ContentScale.Fit,
         )
     }
