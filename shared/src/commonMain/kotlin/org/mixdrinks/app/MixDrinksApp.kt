@@ -8,8 +8,8 @@ import org.mixdrinks.ui.RootContent
 
 @Composable
 internal fun MixDrinksApp(contextComponent: DefaultComponentContext) {
-  val rootComponent = remember {
-    RootComponent(contextComponent)
-  }
-  RootContent(rootComponent)
+    val rootComponent = remember {
+        RootComponent(contextComponent)
+    }
+    RootContent(rootComponent)
 }

@@ -10,12 +10,12 @@ import org.mixdrinks.app.styles.MixDrinksColors
 
 @Composable
 internal fun Loader() {
-  Box(
-      modifier = Modifier.fillMaxSize()
-  ) {
-    CircularProgressIndicator(
-        color = MixDrinksColors.Main,
-        modifier = Modifier.align(Alignment.Center)
-    )
-  }
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator(
+            color = MixDrinksColors.Main,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
 }

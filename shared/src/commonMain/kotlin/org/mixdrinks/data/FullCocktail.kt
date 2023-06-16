@@ -15,23 +15,23 @@ internal data class FullCocktail(
     val tastes: List<Taste>,
     val glassware: Glassware,
 ) {
-  data class Tool(
-      val toolId: ToolId,
-      val name: String,
-  )
+    data class Tool(
+        val toolId: ToolId,
+        val name: String,
+    )
 
-  data class Tag(
-      val id: TagId,
-      val name: String,
-  )
+    data class Tag(
+        val id: TagId,
+        val name: String,
+    )
 
-  data class Taste(
-      val id: TasteId,
-      val name: String,
-  )
+    data class Taste(
+        val id: TasteId,
+        val name: String,
+    )
 
-  data class Glassware(
-      val id: GlasswareId,
-      val name: String,
-  )
+    data class Glassware(
+        val id: GlasswareId,
+        val name: String,
+    )
 }

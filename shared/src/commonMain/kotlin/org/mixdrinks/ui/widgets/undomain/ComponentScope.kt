@@ -9,11 +9,11 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 internal fun ComponentContext.launch(block: suspend () -> Unit) {
-  val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-  lifecycle.doOnDestroy {
-    scope.cancel()
-  }
-  scope.launch {
-    block()
-  }
+    val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    lifecycle.doOnDestroy {
+        scope.cancel()
+    }
+    scope.launch {
+        block()
+    }
 }

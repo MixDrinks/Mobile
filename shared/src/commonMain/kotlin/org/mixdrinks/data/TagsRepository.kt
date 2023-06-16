@@ -8,7 +8,7 @@ class TagsRepository(
     private val snapshot: suspend () -> SnapshotDto,
 ) {
 
-  suspend fun getTags(tagId: List<TagId>): List<TagDto> {
-    return snapshot().tags.filter { tagDto -> tagId.contains(tagDto.id) }
-  }
+    suspend fun getTags(tagId: List<TagId>): List<TagDto> {
+        return snapshot().tags.filter { tagDto -> tagId.contains(tagDto.id) }
+    }
 }

@@ -5,9 +5,9 @@ import org.mixdrinks.dto.FilterId
 
 internal interface FilterValueChangeDelegate {
 
-  fun onFilterStateChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean)
+    fun onFilterStateChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean)
 
-  fun onFilterStateChange(filterItemUiModel: FilterItemUiModel, isSelect: Boolean) {
-    onFilterStateChange(filterItemUiModel.groupId, filterItemUiModel.id, isSelect)
-  }
+    fun onFilterStateChange(filterItemUiModel: FilterItemUiModel, isSelect: Boolean) {
+        onFilterStateChange(filterItemUiModel.groupId, filterItemUiModel.id, isSelect)
+    }
 }

@@ -31,62 +31,62 @@ internal class ListComponent(
 ) : ComponentContext by componentContext,
     FilterValueChangeDelegate by filterRepository {
 
-  val state: StateFlow<UiState<CocktailsListState>> = flow {
-    emitAll(cocktailListRepository.getCocktails()
-        .map { cocktails ->
-          map(cocktails)
-        })
-  }
-      .flowOn(Dispatchers.Default)
-      .stateInWhileSubscribe()
+    val state: StateFlow<UiState<CocktailsListState>> = flow {
+        emitAll(cocktailListRepository.getCocktails()
+            .map { cocktails ->
+                map(cocktails)
+            })
+    }
+        .flowOn(Dispatchers.Default)
+        .stateInWhileSubscribe()
 
-  private suspend fun map(cocktails: List<CocktailDto>): UiState.Data<CocktailsListState> {
-    return UiState.Data(
-        if (cocktails.isEmpty()) {
-          CocktailsListState.PlaceHolder(
-              selectedFilterProvider.getSelectedFiltersWithData()
-          )
-        } else {
-          CocktailsListState.Cocktails(
-              cocktails.map { cocktail ->
-                CocktailsListState.Cocktails.Cocktail(
-                    id = cocktail.id,
-                    url = ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_400),
-                    name = cocktail.name,
-                    tags = tagsRepository.getTags(cocktail.tags).map { it.name },
+    private suspend fun map(cocktails: List<CocktailDto>): UiState.Data<CocktailsListState> {
+        return UiState.Data(
+            if (cocktails.isEmpty()) {
+                CocktailsListState.PlaceHolder(
+                    selectedFilterProvider.getSelectedFiltersWithData()
                 )
-              }
-          )
-        }
-    )
-  }
+            } else {
+                CocktailsListState.Cocktails(
+                    cocktails.map { cocktail ->
+                        CocktailsListState.Cocktails.Cocktail(
+                            id = cocktail.id,
+                            url = ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_400),
+                            name = cocktail.name,
+                            tags = tagsRepository.getTags(cocktail.tags).map { it.name },
+                        )
+                    }
+                )
+            }
+        )
+    }
 
-  fun openFilters() {
-    navigation.push(RootComponent.Config.FilterConfig)
-  }
+    fun openFilters() {
+        navigation.push(RootComponent.Config.FilterConfig)
+    }
 
-  fun onCocktailClick(cocktailId: CocktailId) {
-    navigation.push(RootComponent.Config.DetailsConfig(id = cocktailId.id))
-  }
-
-  @Immutable
-  sealed class CocktailsListState {
-    @Immutable
-    data class Cocktails(
-        val list: List<Cocktail>,
-    ) : CocktailsListState() {
-      @Immutable
-      data class Cocktail(
-          val id: CocktailId,
-          val url: String,
-          val name: String,
-          val tags: List<String>,
-      )
+    fun onCocktailClick(cocktailId: CocktailId) {
+        navigation.push(RootComponent.Config.DetailsConfig(id = cocktailId.id))
     }
 
     @Immutable
-    data class PlaceHolder(
-        val filters: List<FilterItemUiModel>,
-    ) : CocktailsListState()
-  }
+    sealed class CocktailsListState {
+        @Immutable
+        data class Cocktails(
+            val list: List<Cocktail>,
+        ) : CocktailsListState() {
+            @Immutable
+            data class Cocktail(
+                val id: CocktailId,
+                val url: String,
+                val name: String,
+                val tags: List<String>,
+            )
+        }
+
+        @Immutable
+        data class PlaceHolder(
+            val filters: List<FilterItemUiModel>,
+        ) : CocktailsListState()
+    }
 }
