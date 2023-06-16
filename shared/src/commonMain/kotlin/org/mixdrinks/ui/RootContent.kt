@@ -13,6 +13,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import org.mixdrinks.ui.goods.AccessoriesView
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
@@ -51,6 +52,7 @@ internal fun RootContent(component: RootComponent) {
       content = {
         when (val child = it.instance) {
           is RootComponent.Child.List -> CocktailListView(child.component)
+          is RootComponent.Child.Goods -> AccessoriesView(child.component)
           is RootComponent.Child.Details -> DetailView(child.component)
           is RootComponent.Child.Filters -> FilterView(child.component)
           is RootComponent.Child.ItemSearch -> SearchItemView(child.component)

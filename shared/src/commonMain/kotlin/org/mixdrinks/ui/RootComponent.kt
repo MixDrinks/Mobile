@@ -17,6 +17,7 @@ import kotlinx.serialization.json.Json
 import org.mixdrinks.data.CocktailListRepository
 import org.mixdrinks.data.FilterRepository
 import org.mixdrinks.data.FutureCocktailSelector
+import org.mixdrinks.data.GoodsType
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.domain.CocktailSelector
@@ -27,6 +28,8 @@ import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
+import org.mixdrinks.ui.goods.GoodsComponent
+import org.mixdrinks.ui.goods.ItemGoodsRepository
 import org.mixdrinks.ui.list.ListComponent
 import org.mixdrinks.ui.list.SelectedFilterProvider
 
@@ -48,7 +51,6 @@ internal object Graph {
       .baseUrl("https://api.mixdrinks.org/")
       .build()
       .create<MixDrinksService>()
-
 
   val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit, settings, json)
 
@@ -81,6 +83,7 @@ internal class RootComponent(
         is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
         Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
         is Config.SearchItemConfig -> Child.ItemSearch(searchItemScreen(componentContext, config.searchItemType))
+        is Config.GoodsConfig -> Child.Goods(detailGoodsScreen(componentContext, config.id, config.typeGoods))
       }
 
   private fun listScreen(componentContext: ComponentContext): ListComponent =
@@ -97,7 +100,14 @@ internal class RootComponent(
           ),
           navigation = navigation,
       )
-
+  private fun detailGoodsScreen(componentContext: ComponentContext, id:Int, type: String): GoodsComponent {
+        return GoodsComponent(
+            componentContext,
+            ItemGoodsRepository { Graph.snapshotRepository.get() },
+            navigation,
+            GoodsType(id, GoodsType.Type.fromString(type))
+        )
+    }
   private fun detailsScreen(componentContext: ComponentContext, config: Config.DetailsConfig): DetailsComponent {
     return DetailsComponent(
         componentContext,
@@ -148,20 +158,19 @@ internal class RootComponent(
     class List(val component: ListComponent) : Child()
     class Details(val component: DetailsComponent) : Child()
     class Filters(val component: FilterComponent) : Child()
-
+    class Goods(val component: GoodsComponent) : Child()
     class ItemSearch(val component: SearchItemComponent) : Child()
   }
 
   sealed class Config : Parcelable {
     @Parcelize
     object ListConfig : Config()
-
     @Parcelize
     object FilterConfig : Config()
-
     @Parcelize
     data class DetailsConfig(val id: Int) : Config()
-
+    @Parcelize
+    data class GoodsConfig(val id: Int, val typeGoods: String) : Config()
     @Parcelize
     data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) : Config()
   }

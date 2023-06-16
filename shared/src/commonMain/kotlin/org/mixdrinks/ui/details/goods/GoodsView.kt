@@ -2,6 +2,7 @@ package org.mixdrinks.ui.details.goods
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,11 +25,13 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
+import org.mixdrinks.dto.GoodId
 import org.mixdrinks.ui.widgets.undomain.UiState
 
 @Composable
 internal fun GoodsView(
     goodsSubComponent: GoodsSubComponent,
+    onGoodClick: (goodId: GoodId) -> Unit
 ) {
 
   val state by goodsSubComponent.state.collectAsState()
@@ -59,17 +62,17 @@ internal fun GoodsView(
       }
 
       safeState.goods.forEach {
-        Good(it)
+        Good(it, onGoodClick)
       }
     }
   }
 }
 
-
 @Composable
-internal fun Good(good: GoodsSubComponent.GoodUi) {
+internal fun Good(good: GoodsSubComponent.GoodUi, onGoodClick: (goodId: GoodId) -> Unit) {
   Card(
       modifier = Modifier
+          .clickable { onGoodClick(good.goodId) }
           .height(64.dp)
           .fillMaxWidth()
           .padding(horizontal = 12.dp, vertical = 2.dp)
