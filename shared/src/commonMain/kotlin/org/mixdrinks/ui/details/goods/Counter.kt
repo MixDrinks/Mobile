@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -35,24 +36,12 @@ internal fun Counter(
 
     val counterHeight = 40.dp
     Row {
-        Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-            onClick = onMinus,
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .size(counterHeight)
-        ) {
-            Image(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(4.dp)
-                    .fillMaxSize(),
-                painter = painterResource("minus.xml"),
-                contentDescription = "Менше",
-                contentScale = ContentScale.Fit,
-            )
-        }
+        ChangeCountButton(
+            counterHeight = counterHeight,
+            resource = "minus.xml",
+            contentDescription = "Менше",
+            onClick = onMinus
+        )
 
         Spacer(
             modifier = Modifier.width(4.dp)
@@ -75,27 +64,43 @@ internal fun Counter(
             modifier = Modifier.width(4.dp)
         )
 
-        Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
-            onClick = onPlus,
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .size(counterHeight)
-        ) {
-            Image(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(4.dp)
-                    .fillMaxSize(),
-                painter = painterResource("plus.xml"),
-                contentDescription = "Більше",
-                contentScale = ContentScale.Fit,
-            )
-        }
+        ChangeCountButton(
+            counterHeight = counterHeight,
+            resource = "plus.xml",
+            contentDescription = "Більше",
+            onClick = onPlus
+        )
 
         Spacer(
             modifier = Modifier.width(4.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+internal fun ChangeCountButton(
+    counterHeight: Dp,
+    resource: String,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        colors = ButtonDefaults.buttonColors(backgroundColor = MixDrinksColors.Main),
+        onClick = onClick,
+        contentPadding = PaddingValues(0.dp),
+        shape = RoundedCornerShape(4.dp),
+        modifier = Modifier
+            .size(counterHeight)
+    ) {
+        Image(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(4.dp)
+                .fillMaxSize(),
+            painter = painterResource(resource),
+            contentDescription = "Більше",
+            contentScale = ContentScale.Fit,
         )
     }
 }
