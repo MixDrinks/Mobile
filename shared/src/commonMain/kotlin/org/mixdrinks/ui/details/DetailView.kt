@@ -75,7 +75,7 @@ internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: Details
                 .size(32.dp)
                 .padding(start = 12.dp),
             painter = painterResource("ic_arrow_back.xml"),
-            contentDescription = "Test"
+            contentDescription = "Назад"
         )
       }
       Text(
@@ -110,7 +110,7 @@ internal fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: Deta
     GoodsView(component.goodsSubComponent)
 
     Text(
-        modifier = Modifier.padding(start = 12.dp, bottom = 12.dp),
+        modifier = Modifier.padding(12.dp),
         color = MixDrinksColors.Black,
         text = "Рецепт",
         style = MixDrinksTextStyles.H1,

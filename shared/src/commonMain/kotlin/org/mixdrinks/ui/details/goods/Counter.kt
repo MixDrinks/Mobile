@@ -1,10 +1,13 @@
 package org.mixdrinks.ui.details.goods
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,11 +18,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun Counter(
     count: Int,
@@ -36,7 +43,15 @@ internal fun Counter(
         modifier = Modifier
             .size(counterHeight)
     ) {
-      Text("-", color = MixDrinksColors.White, fontSize = 28.sp)
+      Image(
+              modifier = Modifier
+                      .align(Alignment.CenterVertically)
+                      .padding(4.dp)
+                      .fillMaxSize(),
+              painter = painterResource("minus.xml"),
+              contentDescription = "Менше",
+              contentScale = ContentScale.Fit,
+      )
     }
 
     Spacer(
