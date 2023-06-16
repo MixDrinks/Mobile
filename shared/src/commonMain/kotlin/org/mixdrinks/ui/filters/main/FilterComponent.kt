@@ -32,136 +32,137 @@ internal class FilterComponent(
 ) : ComponentContext by componentContext,
     FilterValueChangeDelegate by filterRepository {
 
-  val state: StateFlow<UiState<List<FilterScreenElement>>> = filterRepository.selected
-      .transform { selected ->
-        this.emit(
-            UiState.Data(filterRepository.getFilterGroups()
-                .flatMap { filterGroupDto ->
-                  flatMapFilterGroup(filterGroupDto, selected)
-                })
-        )
-      }
-      .flowOn(Dispatchers.Default)
-      .stateInWhileSubscribe()
-
-  private suspend fun flatMapFilterGroup(
-      filterGroupDto: FilterGroupDto,
-      selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
-  ): List<FilterScreenElement> {
-    val list = listOf<FilterScreenElement>(
-        FilterScreenElement.Title(filterGroupDto.name),
-    )
-
-    return when (filterGroupDto.id) {
-      FilterGroups.TAGS.id -> emptyList()
-      !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id) -> {
-        list.plus(
-            FilterScreenElement.FilterGroupUi(
-                filterGroupId = filterGroupDto.id,
-                filterItems = buildFilterItems(filterGroupDto, selected)
+    val state: StateFlow<UiState<List<FilterScreenElement>>> = filterRepository.selected
+        .transform { selected ->
+            this.emit(
+                UiState.Data(filterRepository.getFilterGroups()
+                    .flatMap { filterGroupDto ->
+                        flatMapFilterGroup(filterGroupDto, selected)
+                    })
             )
+        }
+        .flowOn(Dispatchers.Default)
+        .stateInWhileSubscribe()
+
+    private suspend fun flatMapFilterGroup(
+        filterGroupDto: FilterGroupDto,
+        selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
+    ): List<FilterScreenElement> {
+        val list = listOf<FilterScreenElement>(
+            FilterScreenElement.Title(filterGroupDto.name),
         )
-      }
-      else -> {
-        list
-            .plus(
-                FilterScreenElement.FilterGroupUi(
-                    filterGroupId = filterGroupDto.id,
-                    filterItems = buildSelectedFilterItems(
-                        filterGroupDto,
-                        selected[filterGroupDto.id].orEmpty().map { it.filterId }
+
+        return when (filterGroupDto.id) {
+            FilterGroups.TAGS.id -> emptyList()
+            !in listOf(FilterGroups.GOODS.id, FilterGroups.TOOLS.id) -> {
+                list.plus(
+                    FilterScreenElement.FilterGroupUi(
+                        filterGroupId = filterGroupDto.id,
+                        filterItems = buildFilterItems(filterGroupDto, selected)
                     )
                 )
-            )
-            .plus(
-                FilterScreenElement.FilterOpenSearch(
-                    filterGroupDto.id,
-                    "Додати ${filterGroupDto.name.lowercase()} до фільтру"
-                )
-            )
-      }
-    }
-  }
+            }
 
-  private fun buildSelectedFilterItems(
-      filterGroupDto: FilterGroupDto,
-      filters: List<FilterId>,
-  ): List<FilterItemUiModel> {
-    return filterGroupDto.filters
-        .filter { it.id in filters }
-        .map { filter ->
-          FilterItemUiModel(
-              groupId = filterGroupDto.id,
-              id = filter.id,
-              name = filter.name,
-              isSelect = true,
-              isEnable = true,
-          )
+            else -> {
+                list
+                    .plus(
+                        FilterScreenElement.FilterGroupUi(
+                            filterGroupId = filterGroupDto.id,
+                            filterItems = buildSelectedFilterItems(
+                                filterGroupDto,
+                                selected[filterGroupDto.id].orEmpty().map { it.filterId }
+                            )
+                        )
+                    )
+                    .plus(
+                        FilterScreenElement.FilterOpenSearch(
+                            filterGroupDto.id,
+                            "Додати ${filterGroupDto.name.lowercase()} до фільтру"
+                        )
+                    )
+            }
         }
-  }
-
-  private suspend fun buildFilterItems(
-      filterGroupDto: FilterGroupDto,
-      selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
-  ): List<FilterItemUiModel> {
-    val filters = filterGroupDto.filters.map { filter ->
-      val cocktailCount = futureCocktailSelector.getCocktailIds(
-          filterGroupDto.id,
-          filter.id,
-      )
-          .size
-
-      val isSelected = selected[filterGroupDto.id].orEmpty().map { it.filterId }.contains(filter.id)
-      val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
-
-      FilterItemUiModel(
-          groupId = filterGroupDto.id,
-          id = filter.id,
-          name = filter.name,
-          isSelect = isSelected,
-          isEnable = isEnable,
-      )
     }
 
-    return filters
-  }
-
-  fun clear() = launch {
-    filterRepository.clear()
-  }
-
-  fun close() {
-    navigation.pop()
-  }
-
-  fun openDetailSearch(filterGroupId: FilterGroupId) {
-    val searchItemType = when (filterGroupId) {
-      FilterGroups.GOODS.id -> SearchItemComponent.SearchItemType.GOODS
-      FilterGroups.TOOLS.id -> SearchItemComponent.SearchItemType.TOOLS
-      else -> error("Unknown filter group id: $filterGroupId")
+    private fun buildSelectedFilterItems(
+        filterGroupDto: FilterGroupDto,
+        filters: List<FilterId>,
+    ): List<FilterItemUiModel> {
+        return filterGroupDto.filters
+            .filter { it.id in filters }
+            .map { filter ->
+                FilterItemUiModel(
+                    groupId = filterGroupDto.id,
+                    id = filter.id,
+                    name = filter.name,
+                    isSelect = true,
+                    isEnable = true,
+                )
+            }
     }
 
-    navigation.push(RootComponent.Config.SearchItemConfig(searchItemType))
-  }
+    private suspend fun buildFilterItems(
+        filterGroupDto: FilterGroupDto,
+        selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
+    ): List<FilterItemUiModel> {
+        val filters = filterGroupDto.filters.map { filter ->
+            val cocktailCount = futureCocktailSelector.getCocktailIds(
+                filterGroupDto.id,
+                filter.id,
+            )
+                .size
 
-  @Immutable
-  sealed class FilterScreenElement(val key: Int) {
-    @Immutable
-    data class Title(
-        val name: String,
-    ) : FilterScreenElement(name.hashCode())
+            val isSelected = selected[filterGroupDto.id].orEmpty().map { it.filterId }.contains(filter.id)
+            val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
+
+            FilterItemUiModel(
+                groupId = filterGroupDto.id,
+                id = filter.id,
+                name = filter.name,
+                isSelect = isSelected,
+                isEnable = isEnable,
+            )
+        }
+
+        return filters
+    }
+
+    fun clear() = launch {
+        filterRepository.clear()
+    }
+
+    fun close() {
+        navigation.pop()
+    }
+
+    fun openDetailSearch(filterGroupId: FilterGroupId) {
+        val searchItemType = when (filterGroupId) {
+            FilterGroups.GOODS.id -> SearchItemComponent.SearchItemType.GOODS
+            FilterGroups.TOOLS.id -> SearchItemComponent.SearchItemType.TOOLS
+            else -> error("Unknown filter group id: $filterGroupId")
+        }
+
+        navigation.push(RootComponent.Config.SearchItemConfig(searchItemType))
+    }
 
     @Immutable
-    data class FilterGroupUi(
-        val filterGroupId: FilterGroupId,
-        val filterItems: List<FilterItemUiModel>,
-    ) : FilterScreenElement(filterGroupId.value)
+    sealed class FilterScreenElement(val key: Int) {
+        @Immutable
+        data class Title(
+            val name: String,
+        ) : FilterScreenElement(name.hashCode())
 
-    @Immutable
-    data class FilterOpenSearch(
-        val filterGroupId: FilterGroupId,
-        val text: String,
-    ) : FilterScreenElement(-filterGroupId.value /*Use - for make key difference from Title element*/)
-  }
+        @Immutable
+        data class FilterGroupUi(
+            val filterGroupId: FilterGroupId,
+            val filterItems: List<FilterItemUiModel>,
+        ) : FilterScreenElement(filterGroupId.value)
+
+        @Immutable
+        data class FilterOpenSearch(
+            val filterGroupId: FilterGroupId,
+            val text: String,
+        ) : FilterScreenElement(-filterGroupId.value /*Use - for make key difference from Title element*/)
+    }
 
 }

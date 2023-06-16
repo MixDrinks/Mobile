@@ -48,154 +48,154 @@ import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
 internal fun SearchItemView(searchItemComponent: SearchItemComponent) {
-  Box(
-      modifier = Modifier
-          .background(MixDrinksColors.White)
-          .fillMaxSize()
-  ) {
-    Card(
-        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
-        backgroundColor = MixDrinksColors.White,
-        elevation = 4.dp,
+    Box(
         modifier = Modifier
-            .padding(top = 24.dp)
             .background(MixDrinksColors.White)
             .fillMaxSize()
     ) {
-      Column {
-        val textState by searchItemComponent.textState.collectAsState()
-        TextField(
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MixDrinksColors.White,
-                textColor = MixDrinksColors.Main,
-                cursorColor = MixDrinksColors.Main,
-                focusedIndicatorColor = MixDrinksColors.Main,
-                unfocusedIndicatorColor = MixDrinksColors.Main,
-                focusedLabelColor = MixDrinksColors.Main,
-            ),
-            value = textState,
-            onValueChange = { searchItemComponent.onSearchQueryChanged(it) },
-            label = { Text("Пошук") },
+        Card(
+            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+            backgroundColor = MixDrinksColors.White,
+            elevation = 4.dp,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            singleLine = true,
-            trailingIcon = {
-              Icon(
-                  Icons.Filled.Clear,
-                  contentDescription = "Clear search",
-                  modifier = Modifier
-                      .offset(x = 12.dp)
-                      .clickable { searchItemComponent.onSearchQueryChanged("") }
-              )
-            }
-        )
-        Box(modifier = Modifier.weight(1F)) {
-          ItemList(searchItemComponent)
-        }
-        Box(
-            modifier = Modifier
-                .background(Color.White)
-                .height(56.dp)
-                .padding(horizontal = 12.dp)
-                .fillMaxWidth()
+                .padding(top = 24.dp)
+                .background(MixDrinksColors.White)
+                .fillMaxSize()
         ) {
-          CustomButton(Modifier.align(Alignment.Center), ResString.apply, searchItemComponent::close)
+            Column {
+                val textState by searchItemComponent.textState.collectAsState()
+                TextField(
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = MixDrinksColors.White,
+                        textColor = MixDrinksColors.Main,
+                        cursorColor = MixDrinksColors.Main,
+                        focusedIndicatorColor = MixDrinksColors.Main,
+                        unfocusedIndicatorColor = MixDrinksColors.Main,
+                        focusedLabelColor = MixDrinksColors.Main,
+                    ),
+                    value = textState,
+                    onValueChange = { searchItemComponent.onSearchQueryChanged(it) },
+                    label = { Text("Пошук") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    singleLine = true,
+                    trailingIcon = {
+                        Icon(
+                            Icons.Filled.Clear,
+                            contentDescription = "Clear search",
+                            modifier = Modifier
+                                .offset(x = 12.dp)
+                                .clickable { searchItemComponent.onSearchQueryChanged("") }
+                        )
+                    }
+                )
+                Box(modifier = Modifier.weight(1F)) {
+                    ItemList(searchItemComponent)
+                }
+                Box(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .height(56.dp)
+                        .padding(horizontal = 12.dp)
+                        .fillMaxWidth()
+                ) {
+                    CustomButton(Modifier.align(Alignment.Center), ResString.apply, searchItemComponent::close)
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 internal fun ItemList(searchItemComponent: SearchItemComponent) {
-  ContentHolder(
-      stateflow = searchItemComponent.state,
-  ) {
-    LazyColumn {
-      items(items = it, key = { it.id.value }) { item ->
-        Item(item = item, searchItemComponent)
-      }
+    ContentHolder(
+        stateflow = searchItemComponent.state,
+    ) {
+        LazyColumn {
+            items(items = it, key = { it.id.value }) { item ->
+                Item(item = item, searchItemComponent)
+            }
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun LazyItemScope.Item(item: SearchItemComponent.ItemUiModel, searchItemComponent: SearchItemComponent) {
-  val color = updateTransition(item.isSelected, label = "Checked indicator")
+    val color = updateTransition(item.isSelected, label = "Checked indicator")
 
-  val backgroundColor by color.animateColor(
-      label = "BackgroundColor"
-  ) { isSelect ->
-    if (isSelect) {
-      MixDrinksColors.Main
-    } else {
-      MixDrinksColors.White
+    val backgroundColor by color.animateColor(
+        label = "BackgroundColor"
+    ) { isSelect ->
+        if (isSelect) {
+            MixDrinksColors.Main
+        } else {
+            MixDrinksColors.White
+        }
     }
-  }
 
-  Card(
-      modifier = Modifier
-          .animateItemPlacement(tween())
-          .height(64.dp)
-          .fillMaxWidth()
-          .padding(horizontal = 12.dp, vertical = 2.dp)
-          .toggleable(
-              value = item.isSelected,
-              enabled = true,
-              onValueChange = { searchItemComponent.onItemClicked(item.id, it) },
-              interactionSource = remember { MutableInteractionSource() },
-              indication = null,
-          )
-          .border(
-              1.dp,
-              MixDrinksColors.Main,
-              shape = RoundedCornerShape(8.dp),
-          ),
-      shape = RoundedCornerShape(8.dp),
-      backgroundColor = backgroundColor,
-  ) {
-    ItemContent(item)
-  }
+    Card(
+        modifier = Modifier
+            .animateItemPlacement(tween())
+            .height(64.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 2.dp)
+            .toggleable(
+                value = item.isSelected,
+                enabled = true,
+                onValueChange = { searchItemComponent.onItemClicked(item.id, it) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            )
+            .border(
+                1.dp,
+                MixDrinksColors.Main,
+                shape = RoundedCornerShape(8.dp),
+            ),
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = backgroundColor,
+    ) {
+        ItemContent(item)
+    }
 }
 
 @Composable
 private fun ItemContent(item: SearchItemComponent.ItemUiModel) {
-  val color = updateTransition(item.isSelected, label = "Checked indicator")
-  val textColor by color.animateColor(
-      label = "TextColor"
-  ) { isSelect ->
-    if (isSelect) {
-      MixDrinksColors.White
-    } else {
-      MixDrinksColors.Main
+    val color = updateTransition(item.isSelected, label = "Checked indicator")
+    val textColor by color.animateColor(
+        label = "TextColor"
+    ) { isSelect ->
+        if (isSelect) {
+            MixDrinksColors.White
+        } else {
+            MixDrinksColors.Main
+        }
     }
-  }
 
-  Row {
-    Image(
-        painter = rememberAsyncImagePainter(item.imageUrl),
-        contentDescription = item.name,
-        contentScale = ContentScale.FillWidth,
-        modifier = Modifier.size(64.dp)
-    )
-    Text(
-        modifier = Modifier
-            .weight(1F)
-            .align(Alignment.CenterVertically)
-            .padding(start = 8.dp),
-        text = item.name,
-        style = MixDrinksTextStyles.H5,
-        color = textColor,
-    )
-    Text(
-        modifier = Modifier
-            .align(Alignment.CenterVertically)
-            .padding(horizontal = 8.dp),
-        text = item.count.toString(),
-        style = MixDrinksTextStyles.H4,
-        color = textColor,
-    )
-  }
+    Row {
+        Image(
+            painter = rememberAsyncImagePainter(item.imageUrl),
+            contentDescription = item.name,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.size(64.dp)
+        )
+        Text(
+            modifier = Modifier
+                .weight(1F)
+                .align(Alignment.CenterVertically)
+                .padding(start = 8.dp),
+            text = item.name,
+            style = MixDrinksTextStyles.H5,
+            color = textColor,
+        )
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(horizontal = 8.dp),
+            text = item.count.toString(),
+            style = MixDrinksTextStyles.H4,
+            color = textColor,
+        )
+    }
 }

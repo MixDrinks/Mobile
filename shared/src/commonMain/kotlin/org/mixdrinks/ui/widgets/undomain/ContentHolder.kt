@@ -13,31 +13,33 @@ internal fun <T> ContentHolder(
     stateflow: StateFlow<UiState<T>>,
     content: @Composable (T) -> Unit,
 ) {
-  val state by stateflow.collectAsState()
+    val state by stateflow.collectAsState()
 
-  when (val safeState = state) {
-    is UiState.Data<T> -> {
-      content(safeState.data)
+    when (val safeState = state) {
+        is UiState.Data<T> -> {
+            content(safeState.data)
+        }
+
+        is UiState.Error -> {
+            Text(safeState.reason)
+        }
+
+        UiState.Loading -> {
+            Loader()
+        }
     }
-    is UiState.Error -> {
-      Text(safeState.reason)
-    }
-    UiState.Loading -> {
-      Loader()
-    }
-  }
 }
 
 @Immutable
 internal sealed class UiState<out T> {
-  @Immutable
-  object Loading : UiState<Nothing>()
+    @Immutable
+    object Loading : UiState<Nothing>()
 
-  @Immutable
-  data class Error(
-      val reason: String,
-  ) : UiState<Nothing>()
+    @Immutable
+    data class Error(
+        val reason: String,
+    ) : UiState<Nothing>()
 
-  @Immutable
-  data class Data<T>(val data: T) : UiState<T>()
+    @Immutable
+    data class Data<T>(val data: T) : UiState<T>()
 }

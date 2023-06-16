@@ -31,56 +31,56 @@ internal fun FilterItem(
     filterUi: FilterItemUiModel,
     onValue: (FilterItemUiModel, Boolean) -> Unit,
 ) {
-  val color = updateTransition(filterUi, label = "Checked indicator")
+    val color = updateTransition(filterUi, label = "Checked indicator")
 
-  val backgroundColor by color.animateColor(
-      label = "BackgroundColor"
-  ) { filter ->
-    when {
-      filter.isSelect -> MixDrinksColors.Main
-      !filter.isEnable -> Color.Transparent
-      else -> MixDrinksColors.White
+    val backgroundColor by color.animateColor(
+        label = "BackgroundColor"
+    ) { filter ->
+        when {
+            filter.isSelect -> MixDrinksColors.Main
+            !filter.isEnable -> Color.Transparent
+            else -> MixDrinksColors.White
+        }
     }
-  }
 
-  val textColor by color.animateColor(
-      label = "TextColor"
-  ) { filter ->
-    when {
-      filter.isSelect -> MixDrinksColors.White
-      !filter.isEnable -> MixDrinksColors.Grey
-      else -> MixDrinksColors.Main
+    val textColor by color.animateColor(
+        label = "TextColor"
+    ) { filter ->
+        when {
+            filter.isSelect -> MixDrinksColors.White
+            !filter.isEnable -> MixDrinksColors.Grey
+            else -> MixDrinksColors.Main
+        }
     }
-  }
 
-  Card(
-      modifier = modifier
-          .height(32.dp),
-      shape = RoundedCornerShape(16.dp),
-      backgroundColor = backgroundColor,
-      border = BorderStroke(1.dp, MixDrinksColors.Main)
-  ) {
-    Box(
-        modifier = Modifier
-            .toggleable(
-                value = filterUi.isSelect,
-                enabled = filterUi.isEnable,
-                onValueChange = { onValue(filterUi, it) },
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            )
-            .fillMaxHeight()
+    Card(
+        modifier = modifier
+            .height(32.dp),
+        shape = RoundedCornerShape(16.dp),
+        backgroundColor = backgroundColor,
+        border = BorderStroke(1.dp, MixDrinksColors.Main)
     ) {
-      Text(
-          modifier = Modifier
-              .padding(horizontal = 16.dp)
-              .align(Alignment.Center),
-          text = filterUi.name,
-          color = textColor,
-          style = MixDrinksTextStyles.H6,
-      )
+        Box(
+            modifier = Modifier
+                .toggleable(
+                    value = filterUi.isSelect,
+                    enabled = filterUi.isEnable,
+                    onValueChange = { onValue(filterUi, it) },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                )
+                .fillMaxHeight()
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.Center),
+                text = filterUi.name,
+                color = textColor,
+                style = MixDrinksTextStyles.H6,
+            )
+        }
     }
-  }
 }
 
 @Immutable
