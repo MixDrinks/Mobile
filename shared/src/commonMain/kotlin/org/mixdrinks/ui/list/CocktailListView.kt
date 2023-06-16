@@ -181,7 +181,10 @@ internal fun LazyItemScope.Cocktail(
                         items(cocktail.tags) {
                             Text(
                                 modifier = Modifier
-                                    .background(MixDrinksColors.Grey.copy(alpha = 0.8F), shape = RoundedCornerShape(2.dp))
+                                    .background(
+                                        MixDrinksColors.Grey.copy(alpha = 0.8F),
+                                        shape = RoundedCornerShape(2.dp)
+                                    )
                                     .padding(4.dp),
                                 text = it,
                                 color = MixDrinksColors.Black,
