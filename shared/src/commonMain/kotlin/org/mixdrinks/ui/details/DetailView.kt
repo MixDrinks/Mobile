@@ -110,10 +110,10 @@ internal fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: Deta
         GoodsView(component.goodsSubComponent, onGoodClick = { component.onGoodClick(it) })
 
         Text(
-            modifier = Modifier.padding(start = 12.dp, bottom = 12.dp),
+            modifier = Modifier.padding(12.dp),
             color = MixDrinksColors.Black,
             text = "Рецепт",
-            style = MixDrinksTextStyles.H1,
+            style = MixDrinksTextStyles.H2,
         )
         cocktail.receipt.forEachIndexed { index, text ->
             Receipt(index + 1, text)
@@ -127,7 +127,7 @@ internal fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: Deta
                 )
             }
         }
-        Spacer(modifier = Modifier.height(4.dp).fillMaxWidth())
+        Spacer(modifier = Modifier.height(16.dp).fillMaxWidth())
         Tools(cocktail, component)
         Spacer(modifier = Modifier.height(12.dp).fillMaxWidth())
     }

@@ -31,7 +31,7 @@ internal class GoodsSubComponent(
                     goods = goods.map { good ->
                         GoodUi(
                             goodId = good.goodId,
-                            url = ImageUrlCreators.createUrl(good.goodId, ImageUrlCreators.Size.SIZE_320),
+                            url = ImageUrlCreators.createUrl(good.goodId, ImageUrlCreators.Size.SIZE_400),
                             name = good.name,
                             amount = "${good.amount * count} ${good.unit}"
                         )
