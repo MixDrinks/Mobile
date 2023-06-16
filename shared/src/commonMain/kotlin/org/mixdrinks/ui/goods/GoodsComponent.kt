@@ -53,3 +53,4 @@ internal class GoodsComponent(
         navigation.pop()
     }
 }
+
