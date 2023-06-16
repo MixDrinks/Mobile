@@ -84,7 +84,15 @@ internal fun Counter(
             modifier = Modifier
                 .size(counterHeight)
         ) {
-            Text("+", color = MixDrinksColors.White, fontSize = 28.sp)
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(4.dp)
+                    .fillMaxSize(),
+                painter = painterResource("plus.xml"),
+                contentDescription = "Більше",
+                contentScale = ContentScale.Fit,
+            )
         }
 
         Spacer(
