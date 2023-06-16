@@ -6,6 +6,6 @@ import org.mixdrinks.app.MixDrinksApp
 
 @Composable
 fun MainView() {
-  val context = (LocalContext.current as AppCompatActivity).defaultComponentContext()
-  MixDrinksApp(context)
+    val context = (LocalContext.current as AppCompatActivity).defaultComponentContext()
+    MixDrinksApp(context)
 }
