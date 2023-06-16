@@ -13,7 +13,7 @@ internal class ItemGoodsRepository(
 ) {
     suspend fun getDetailGood(goodId: GoodId): DetailGoodsUiModel {
         val good = snapshot().goods.find { it.id.id == goodId.id }
-            ?: error("Goods ${goodId.id} not found");
+            ?: error("Goods ${goodId.id} not found")
         return DetailGoodsUiModel(
             good.id.id, good.name, good.about,
             ImageUrlCreators.createUrl(
@@ -25,7 +25,7 @@ internal class ItemGoodsRepository(
 
     suspend fun getDetailGood(toolId: ToolId): DetailGoodsUiModel {
         val tool = snapshot().tools.find { it.id.id == toolId.id }
-            ?: error("Tool ${toolId.id} not found");
+            ?: error("Tool ${toolId.id} not found")
         return DetailGoodsUiModel(
             tool.id.id, tool.name, tool.about,
             ImageUrlCreators.createUrl(
@@ -37,7 +37,7 @@ internal class ItemGoodsRepository(
 
     suspend fun getDetailGood(glasswareId: GlasswareId): DetailGoodsUiModel {
         val glassware = snapshot().glassware.find { it.id == glasswareId }
-            ?: error("Glassware $glasswareId not found");
+            ?: error("Glassware $glasswareId not found")
         return DetailGoodsUiModel(
             glassware.id.value, glassware.name, glassware.about,
             ImageUrlCreators.createUrl(

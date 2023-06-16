@@ -26,20 +26,13 @@ internal class GoodsComponent(
 
     val state: StateFlow<UiState<DetailGoodsUiModel>> = when (goodsType.type) {
         GoodsType.Type.GOODS -> flow {
-            goodsRepository.getDetailGood(GoodId(goodsType.id))?.let {
-                emit(it)
-            }
+            emit(goodsRepository.getDetailGood(GoodId(goodsType.id)))
         }
         GoodsType.Type.TOOL -> flow {
-            goodsRepository.getDetailGood(ToolId(goodsType.id))?.let {
-                emit(it)
-            }
+            emit(goodsRepository.getDetailGood(ToolId(goodsType.id)))
         }
-
         GoodsType.Type.GLASSWARE -> flow {
-            goodsRepository.getDetailGood(GlasswareId(goodsType.id))?.let {
-                emit(it)
-            }
+            emit(goodsRepository.getDetailGood(GlasswareId(goodsType.id)))
         }
     }
         .map { good: DetailGoodsUiModel ->
