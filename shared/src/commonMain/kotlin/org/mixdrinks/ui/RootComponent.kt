@@ -20,6 +20,7 @@ import org.mixdrinks.data.FutureCocktailSelector
 import org.mixdrinks.data.GoodsType
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
+import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.details.DetailsComponent
@@ -98,6 +99,7 @@ internal class RootComponent(
               suspend { Graph.snapshotRepository.get() },
               suspend { Graph.filterRepository }
           ),
+          tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() }),
           navigation = navigation,
       )
   private fun detailGoodsScreen(componentContext: ComponentContext, id:Int, type: String): GoodsComponent {

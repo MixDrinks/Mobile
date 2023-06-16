@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - try_new_version_code_generator
   workflow_dispatch:
 
 jobs:
@@ -26,7 +27,10 @@ jobs:
         id: set-output
         run: |
           echo "mix_drinks_mobile_version_name=${{ steps.bump-semver.outputs.new_version }}" >> $GITHUB_OUTPUT
-          mix_drinks_mobile_version_code=$(echo ${{ steps.bump-semver.outputs.new_version }} | sed 's/\.//g' | sed "s/^0*//")
+          
+          IFS='.' read -r major minor patch <<< "${{ steps.bump-semver.outputs.new_version }}"
+          mix_drinks_mobile_version_code=$((major * 10000 + minor * 100 + patch))
+
           echo "mix_drinks_mobile_version_code=${mix_drinks_mobile_version_code}" >> $GITHUB_OUTPUT
       - name: "Print output"
         run: |
