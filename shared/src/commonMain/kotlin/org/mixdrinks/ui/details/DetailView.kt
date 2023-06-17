@@ -2,7 +2,6 @@ package org.mixdrinks.ui.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +35,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.ui.details.goods.GoodsView
+import org.mixdrinks.ui.tag.Tag
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
@@ -156,12 +156,7 @@ internal fun Tool(toolUi: FullCocktailUiModel.ToolUi, component: DetailsComponen
             .width(100.dp)
             .height(124.dp)
             .fillMaxWidth()
-            .padding(horizontal = 2.dp)
-            .border(
-                1.dp,
-                MixDrinksColors.Main,
-                shape = RoundedCornerShape(8.dp),
-            ),
+            .padding(horizontal = 4.dp),
         shape = RoundedCornerShape(8.dp),
     ) {
         ToolContent(toolUi.name, toolUi.url)
@@ -176,12 +171,7 @@ internal fun Tool(glasswareUi: FullCocktailUiModel.GlasswareUi, component: Detai
             .width(100.dp)
             .height(124.dp)
             .fillMaxWidth()
-            .padding(horizontal = 2.dp)
-            .border(
-                1.dp,
-                MixDrinksColors.Main,
-                shape = RoundedCornerShape(8.dp),
-            ),
+            .padding(horizontal = 4.dp),
         shape = RoundedCornerShape(8.dp),
     ) {
         ToolContent(glasswareUi.name, glasswareUi.url)
@@ -195,7 +185,7 @@ internal fun ToolContent(name: String, url: String) {
             painter = rememberAsyncImagePainter(url),
             contentDescription = name,
             contentScale = ContentScale.Fit,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(100.dp).padding(2.dp)
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -240,32 +230,12 @@ internal fun Tags(cocktail: FullCocktailUiModel, component: DetailsComponent) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(cocktail.tags) {
-            Tag(it) {
+            Tag(it.name) {
                 when (it) {
                     is FullCocktailUiModel.TagUi.Tag -> component.onTagClick(it.id)
                     is FullCocktailUiModel.TagUi.Taste -> component.onTasteClick(it.id)
                 }
             }
         }
-    }
-}
-
-@Composable
-internal fun Tag(tag: FullCocktailUiModel.TagUi, onTagClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .height(32.dp)
-            .padding(horizontal = 4.dp)
-            .clickable { onTagClick() }
-            .background(MixDrinksColors.Main, shape = RoundedCornerShape(4.dp))
-    ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 8.dp),
-            text = tag.name,
-            color = MixDrinksColors.White,
-            style = MixDrinksTextStyles.H5,
-        )
     }
 }
