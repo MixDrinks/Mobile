@@ -9,6 +9,8 @@ internal object MixDrinksColors {
     @Stable
     val Main = Color(0xFF2B4718)
 
+    val Secondary = Color(0xFFe9f1e6)
+
     @Stable
     val White = Color(0xFFFFFFFF)
 
@@ -17,4 +19,7 @@ internal object MixDrinksColors {
 
     @Stable
     val Grey = Color(0xFF9C9C9C)
+
+    @Stable
+    val DarkGrey = Color(0xFF404040)
 }

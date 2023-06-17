@@ -1,6 +1,8 @@
 package org.mixdrinks.ui.list
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
@@ -51,9 +53,14 @@ internal class ListComponent(
                     cocktails.map { cocktail ->
                         CocktailsListState.Cocktails.Cocktail(
                             id = cocktail.id,
-                            url = ImageUrlCreators.createUrl(cocktail.id, ImageUrlCreators.Size.SIZE_400),
+                            url = ImageUrlCreators.createUrl(
+                                cocktail.id,
+                                ImageUrlCreators.Size.SIZE_400
+                            ),
                             name = cocktail.name,
-                            tags = tagsRepository.getTags(cocktail.tags).map { it.name },
+                            tags = tagsRepository.getTags(cocktail.tags).map {
+                                it.name.capitalize(Locale.current)
+                            },
                         )
                     }
                 )
