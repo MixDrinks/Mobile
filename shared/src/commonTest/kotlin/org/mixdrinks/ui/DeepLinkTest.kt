@@ -113,6 +113,7 @@ class DeepLinkTest {
         )
     }
 
+    @Suppress("LongMethod")
     private fun createSnapshot(): SnapshotDto {
         return SnapshotDto(
             cocktails = listOf(
