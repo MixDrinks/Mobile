@@ -1,114 +1,115 @@
 @file:Suppress("UnusedPrivateMember", "MaxLineLength")
 
 plugins {
-  kotlin("multiplatform")
-  kotlin("native.cocoapods")
-  id("com.android.library")
-  id("org.jetbrains.compose")
-  kotlin("plugin.serialization")
-  id("com.google.devtools.ksp")
-  id("de.jensklingenberg.ktorfit")
-  id("kotlin-parcelize")
+    kotlin("multiplatform")
+    kotlin("native.cocoapods")
+    id("com.android.library")
+    id("org.jetbrains.compose")
+    kotlin("plugin.serialization")
+    id("com.google.devtools.ksp")
+    id("de.jensklingenberg.ktorfit")
+    id("kotlin-parcelize")
 }
 
 val ktorVersion = "2.2.4"
 val ktorfitVersion = "1.0.1"
 
 kotlin {
-  android()
+    android()
 
-  iosX64()
-  iosArm64()
-  iosSimulatorArm64()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-  cocoapods {
-    version = "1.0.0"
-    summary = "Some description for the Shared Module"
-    homepage = "Link to the Shared Module homepage"
-    ios.deploymentTarget = "14.1"
-    podfile = project.file("../iosApp/Podfile")
-    framework {
-      baseName = "shared"
-      isStatic = true
+    cocoapods {
+        version = "1.0.0"
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.1"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "shared"
+            isStatic = true
+        }
+        extraSpecAttributes["resources"] =
+            "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
-    extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
-  }
 
-  sourceSets {
-    val commonMain by getting {
-      dependencies {
-        implementation(compose.ui)
-        implementation(compose.foundation)
-        implementation(compose.material)
-        implementation(compose.runtime)
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.ui)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.runtime)
 
-        implementation("org.jetbrains.compose.components:components-resources:${org.jetbrains.compose.ComposeBuildConfig.composeVersion}")
+                implementation("org.jetbrains.compose.components:components-resources:${org.jetbrains.compose.ComposeBuildConfig.composeVersion}")
 
-        implementation("org.mixdrinks:core:1.8.1")
+                implementation("org.mixdrinks:core:1.8.7")
 
-        implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.1")
+                implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.0.1")
 
-        implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-        implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-        implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-        implementation("com.arkivanov.decompose:decompose:2.0.0-compose-experimental-alpha-02")
-        implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-compose-experimental-alpha-02")
+                implementation("com.arkivanov.decompose:decompose:2.0.0-compose-experimental-alpha-02")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-compose-experimental-alpha-02")
 
-        implementation("io.github.qdsfdhvh:image-loader:1.2.10")
+                implementation("io.github.qdsfdhvh:image-loader:1.2.10")
 
-        implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
-      }
+                implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                api("androidx.activity:activity-compose:1.7.1")
+                api("androidx.appcompat:appcompat:1.6.1")
+                api("androidx.core:core-ktx:1.10.1")
+            }
+        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
     }
-    val commonTest by getting {
-      dependencies {
-        implementation(kotlin("test"))
-      }
-    }
-    val androidMain by getting {
-      dependencies {
-        api("androidx.activity:activity-compose:1.7.1")
-        api("androidx.appcompat:appcompat:1.6.1")
-        api("androidx.core:core-ktx:1.10.1")
-      }
-    }
-    val iosX64Main by getting
-    val iosArm64Main by getting
-    val iosSimulatorArm64Main by getting
-    val iosMain by creating {
-      dependsOn(commonMain)
-      iosX64Main.dependsOn(this)
-      iosArm64Main.dependsOn(this)
-      iosSimulatorArm64Main.dependsOn(this)
-    }
-  }
 }
 
 android {
-  compileSdk = (findProperty("android.compileSdk") as String).toInt()
-  namespace = "com.myapplication.common"
+    compileSdk = (findProperty("android.compileSdk") as String).toInt()
+    namespace = "com.myapplication.common"
 
-  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-  sourceSets["main"].res.srcDirs("src/androidMain/res")
-  sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
-  defaultConfig {
-    minSdk = (findProperty("android.minSdk") as String).toInt()
-    targetSdk = (findProperty("android.targetSdk") as String).toInt()
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-  kotlin {
-    jvmToolchain(11)
-  }
+    defaultConfig {
+        minSdk = (findProperty("android.minSdk") as String).toInt()
+        targetSdk = (findProperty("android.targetSdk") as String).toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlin {
+        jvmToolchain(11)
+    }
 }
 
 dependencies {
-  add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-  add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-  add("kspIosX64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-  add("kspIosArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-  add("kspIosSimulatorArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspIosX64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspIosArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
+    add("kspIosSimulatorArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
 }

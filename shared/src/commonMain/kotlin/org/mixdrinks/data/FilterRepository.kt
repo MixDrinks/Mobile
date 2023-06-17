@@ -6,6 +6,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.dto.FilterGroupDto
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
@@ -27,10 +28,24 @@ internal class FilterRepository(
     private val _selected = MutableStateFlow<Map<FilterGroupId, List<FilterSelected>>>(mapOf())
     val selected: StateFlow<Map<FilterGroupId, List<FilterSelected>>> = _selected
 
-    override fun onFilterStateChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean) {
+    override fun onFilterStateChange(
+        filterGroupId: FilterGroupId,
+        id: FilterId,
+        isSelect: Boolean
+    ) {
         CoroutineScope(Dispatchers.Main + SupervisorJob()).launch {
             onValueChange(filterGroupId, id, isSelect)
         }
+    }
+
+    suspend fun selectMany(newFilters: Map<FilterGroups, List<FilterId>>) {
+        val newMap = buildMap {
+            newFilters.forEach { (filterGroupId, ids) ->
+                this[filterGroupId.id] = ids.map { FilterSelected(it, operationCount++) }
+            }
+        }
+
+        _selected.emit(newMap)
     }
 
     suspend fun onValueChange(filterGroupId: FilterGroupId, id: FilterId, isSelect: Boolean) {

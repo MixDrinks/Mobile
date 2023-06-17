@@ -5,5 +5,5 @@ import org.mixdrinks.app.MixDrinksApp
 
 @Suppress("FunctionNaming")
 fun MainViewController() = ComposeUIViewController {
-    MixDrinksApp(DefaultComponentContext(LifecycleRegistry()))
+    MixDrinksApp(DefaultComponentContext(LifecycleRegistry()), null)
 }

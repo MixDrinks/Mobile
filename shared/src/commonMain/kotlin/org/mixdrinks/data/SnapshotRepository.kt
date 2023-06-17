@@ -2,7 +2,6 @@ package org.mixdrinks.data
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.mixdrinks.app.utils.undomain.LazySuspend
@@ -18,7 +17,14 @@ internal class SnapshotRepository(
     private val snapshot = LazySuspend {
         val cacheValue = settings.getStringOrNull(SNAPSHOT_KEY)
         if (cacheValue != null) {
-            json.decodeFromString(cacheValue)
+            try {
+                json.decodeFromString(cacheValue)
+            } catch (_: Exception) {
+                settings.remove(SNAPSHOT_KEY)
+                val snapshot = mixDrinksService.getSnapshot()
+                settings[SNAPSHOT_KEY] = json.encodeToString(snapshot)
+                snapshot
+            }
         } else {
             val snapshot = mixDrinksService.getSnapshot()
             settings[SNAPSHOT_KEY] = json.encodeToString(snapshot)
