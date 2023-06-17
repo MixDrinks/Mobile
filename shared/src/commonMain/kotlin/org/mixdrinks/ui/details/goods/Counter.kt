@@ -37,7 +37,7 @@ internal fun Counter(
     Row {
         ChangeCountButton(
             counterHeight = counterHeight,
-            resource = "minus.xml",
+            resource = "ic_minus.xml",
             contentDescription = "Менше",
             onClick = onMinus
         )
@@ -65,7 +65,7 @@ internal fun Counter(
 
         ChangeCountButton(
             counterHeight = counterHeight,
-            resource = "plus.xml",
+            resource = "ic_plus.xml",
             contentDescription = "Більше",
             onClick = onPlus
         )

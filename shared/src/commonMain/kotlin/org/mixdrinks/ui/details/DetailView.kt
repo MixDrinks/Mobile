@@ -75,7 +75,7 @@ internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: Details
                         .size(32.dp)
                         .padding(start = 12.dp),
                     painter = painterResource("ic_arrow_back.xml"),
-                    contentDescription = "Test"
+                    contentDescription = "Назад"
                 )
             }
             Text(

@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
@@ -13,6 +14,9 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.mixdrinks.data.CocktailListRepository
 import org.mixdrinks.data.FilterRepository
@@ -22,6 +26,7 @@ import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.CocktailSelector
+import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.details.FullCocktailRepository
@@ -33,6 +38,7 @@ import org.mixdrinks.ui.goods.GoodsComponent
 import org.mixdrinks.ui.goods.ItemGoodsRepository
 import org.mixdrinks.ui.list.ListComponent
 import org.mixdrinks.ui.list.SelectedFilterProvider
+import org.mixdrinks.ui.widgets.undomain.launch
 
 internal object Graph {
 
@@ -43,15 +49,11 @@ internal object Graph {
         ignoreUnknownKeys = true
     }
 
-    private val ktorfit = Ktorfit.Builder()
-        .httpClient(HttpClient {
-            install(ContentNegotiation) {
-                json(json)
-            }
-        })
-        .baseUrl("https://api.mixdrinks.org/")
-        .build()
-        .create<MixDrinksService>()
+    private val ktorfit = Ktorfit.Builder().httpClient(HttpClient {
+        install(ContentNegotiation) {
+            json(json)
+        }
+    }).baseUrl("https://api.mixdrinks.org/").build().create<MixDrinksService>()
 
     val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit, settings, json)
 
@@ -64,15 +66,39 @@ internal class RootComponent(
 
     private val navigation = StackNavigation<Config>()
 
-    private val _stack: Value<ChildStack<Config, Child>> =
-        childStack(
-            source = navigation,
-            initialConfiguration = Config.ListConfig,
-            handleBackButton = true,
-            childFactory = ::createChild
-        )
+    private val _stack: Value<ChildStack<Config, Child>> = childStack(
+        source = navigation,
+        initialConfiguration = Config.ListConfig,
+        handleBackButton = true,
+        childFactory = ::createChild
+    )
 
     val stack: Value<ChildStack<Config, Child>> = _stack
+
+    private val deepLinkParser = DeepLinkParser(
+        suspend { Graph.snapshotRepository.get() },
+        FilterPathParser(),
+    )
+
+    fun onDeepLink(deepLink: String) {
+        launch {
+            deepLinkParser.parseDeepLink(deepLink)?.let { deepLinkAction ->
+                val config = when (deepLinkAction) {
+                    is DeepLinkParser.DeepLinkAction.Cocktail -> Config.DetailsConfig(deepLinkAction.id)
+                    is DeepLinkParser.DeepLinkAction.Filters -> {
+                        Graph.filterRepository.selectMany(deepLinkAction.selectedFilters)
+                        Config.ListConfig
+                    }
+                }
+
+                coroutineScope {
+                    this.launch(Dispatchers.Main) {
+                        navigation.replaceCurrent(config)
+                    }
+                }
+            }
+        }
+    }
 
     fun onBack() {
         navigation.pop()
@@ -83,27 +109,38 @@ internal class RootComponent(
             Config.ListConfig -> Child.List(listScreen(componentContext))
             is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
             Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
-            is Config.SearchItemConfig -> Child.ItemSearch(searchItemScreen(componentContext, config.searchItemType))
-            is Config.GoodsConfig -> Child.Goods(detailGoodsScreen(componentContext, config.id, config.typeGoods))
+            is Config.SearchItemConfig -> Child.ItemSearch(
+                searchItemScreen(
+                    componentContext, config.searchItemType
+                )
+            )
+
+            is Config.GoodsConfig -> Child.Goods(
+                detailGoodsScreen(
+                    componentContext, config.id, config.typeGoods
+                )
+            )
         }
 
-    private fun listScreen(componentContext: ComponentContext): ListComponent =
-        ListComponent(
-            componentContext = componentContext,
-            cocktailListRepository = CocktailListRepository(
-                suspend { Graph.snapshotRepository.get() },
-                Graph.filterRepository,
-                suspend { CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() }) },
-            ),
-            selectedFilterProvider = SelectedFilterProvider(
-                suspend { Graph.snapshotRepository.get() },
-                suspend { Graph.filterRepository }
-            ),
-            tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() }),
-            navigation = navigation,
-        )
+    private fun listScreen(componentContext: ComponentContext): ListComponent = ListComponent(
+        componentContext = componentContext,
+        cocktailListRepository = CocktailListRepository(
+            suspend { Graph.snapshotRepository.get() },
+            Graph.filterRepository,
+            suspend {
+                CocktailSelector(Graph.filterRepository.getFilterGroups()
+                    .map { it.toFilterGroup() })
+            },
+        ),
+        selectedFilterProvider = SelectedFilterProvider(suspend { Graph.snapshotRepository.get() },
+            suspend { Graph.filterRepository }),
+        tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() }),
+        navigation = navigation,
+    )
 
-    private fun detailGoodsScreen(componentContext: ComponentContext, id: Int, type: String): GoodsComponent {
+    private fun detailGoodsScreen(
+        componentContext: ComponentContext, id: Int, type: String
+    ): GoodsComponent {
         return GoodsComponent(
             componentContext,
             ItemGoodsRepository { Graph.snapshotRepository.get() },
@@ -112,14 +149,14 @@ internal class RootComponent(
         )
     }
 
-    private fun detailsScreen(componentContext: ComponentContext, config: Config.DetailsConfig): DetailsComponent {
-        return DetailsComponent(
-            componentContext,
+    private fun detailsScreen(
+        componentContext: ComponentContext, config: Config.DetailsConfig
+    ): DetailsComponent {
+        return DetailsComponent(componentContext,
             FullCocktailRepository { Graph.snapshotRepository.get() },
             CocktailId(config.id),
             navigation,
-            GoodsRepository { Graph.snapshotRepository.get() }
-        )
+            GoodsRepository { Graph.snapshotRepository.get() })
     }
 
     private fun filterScreen(componentContext: ComponentContext): FilterComponent {
@@ -135,7 +172,8 @@ internal class RootComponent(
         return FutureCocktailSelector(
             snapshot = { Graph.snapshotRepository.get() },
             cocktailSelector = {
-                CocktailSelector(Graph.filterRepository.getFilterGroups().map { it.toFilterGroup() })
+                CocktailSelector(Graph.filterRepository.getFilterGroups()
+                    .map { it.toFilterGroup() })
             },
             filterRepository = { Graph.filterRepository },
         )
@@ -146,8 +184,7 @@ internal class RootComponent(
         searchItemType: SearchItemComponent.SearchItemType,
     ): SearchItemComponent {
         val itemRepository = ItemRepository(
-            suspend { Graph.snapshotRepository.get() },
-            getFutureCocktail()
+            suspend { Graph.snapshotRepository.get() }, getFutureCocktail()
         )
         return SearchItemComponent(
             component,
@@ -180,6 +217,7 @@ internal class RootComponent(
         data class GoodsConfig(val id: Int, val typeGoods: String) : Config()
 
         @Parcelize
-        data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) : Config()
+        data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) :
+            Config()
     }
 }

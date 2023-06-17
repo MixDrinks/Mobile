@@ -5,7 +5,7 @@ import com.arkivanov.decompose.defaultComponentContext
 import org.mixdrinks.app.MixDrinksApp
 
 @Composable
-fun MainView() {
+fun MainView(deepLink : String?) {
     val context = (LocalContext.current as AppCompatActivity).defaultComponentContext()
-    MixDrinksApp(context)
+    MixDrinksApp(context, deepLink)
 }

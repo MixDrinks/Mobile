@@ -108,8 +108,7 @@ Gradle
 
 - Якщо ваші зміни в код відбуваються в файлі `iosApp/Configuration/Config.xcconfig` то закрийте
   Android studio та зробіть зміни в іншому редакторі, далі запустіть `./cleanup.sh` після чого
-  проект
-  знову можна відкривати в Android Studio.
+  проект знову можна відкривати в Android Studio.
 
 ```shell
 ./cleanup.sh

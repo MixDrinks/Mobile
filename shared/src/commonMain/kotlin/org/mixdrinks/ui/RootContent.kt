@@ -2,6 +2,7 @@ package org.mixdrinks.ui
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +21,7 @@ import org.mixdrinks.ui.goods.AccessoriesView
 import org.mixdrinks.ui.list.CocktailListView
 
 @Composable
-internal fun RootContent(component: RootComponent) {
+internal fun RootContent(component: RootComponent, deepLink: String?) {
     var lastTouch by remember { mutableStateOf(Offset.Infinite) }
     Children(
         modifier = Modifier.pointerInput(Unit) {
@@ -59,6 +60,11 @@ internal fun RootContent(component: RootComponent) {
             }
         }
     )
+    LaunchedEffect(deepLink) {
+        if (deepLink != null) {
+            component.onDeepLink(deepLink)
+        }
+    }
 }
 
 private const val CLOSE_ANIMATION_DURACIOTN_TRIGGER = 300
