@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.data.DetailGoodsUiModel
-import org.mixdrinks.ui.list.CocktailListInserter
+import org.mixdrinks.ui.list.cocktailListInserter
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
@@ -88,12 +88,12 @@ internal fun GoodsViewContent(
                 )
             }
         }
-        GoodsViewScrollContent(Modifier.padding(horizontal = 8.dp), good)
-        CocktailListInserter(cocktails, predefineComponent::onCocktailClick)
+        goodsViewScrollContent(Modifier.padding(horizontal = 8.dp), good)
+        cocktailListInserter(cocktails, predefineComponent::onCocktailClick)
     }
 }
 
-internal fun LazyListScope.GoodsViewScrollContent(modifier: Modifier, good: DetailGoodsUiModel) {
+internal fun LazyListScope.goodsViewScrollContent(modifier: Modifier, good: DetailGoodsUiModel) {
     item {
         Image(
             painter = rememberAsyncImagePainter(good.url),

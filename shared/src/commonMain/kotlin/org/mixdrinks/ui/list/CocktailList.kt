@@ -40,7 +40,7 @@ internal fun CocktailList(
     }
 }
 
-internal fun LazyListScope.CocktailListInserter(
+internal fun LazyListScope.cocktailListInserter(
     cocktails: CocktailsListState.Cocktails,
     onClick: (CocktailId) -> Unit,
 ) {
