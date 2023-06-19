@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,11 +27,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
-import org.mixdrinks.data.DetailGoodsUiModel
+import org.mixdrinks.data.DetailItemsUiModel
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
-internal fun AccessoriesView(component: GoodsComponent) {
+internal fun AccessoriesView(component: ItemsComponent) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,8 +48,8 @@ internal fun AccessoriesView(component: GoodsComponent) {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun GoodsViewContent(
-    good: DetailGoodsUiModel,
-    component: GoodsComponent
+    item: DetailItemsUiModel,
+    component: ItemsComponent
 ) {
     Column {
         Row(
@@ -77,20 +77,20 @@ internal fun GoodsViewContent(
                 modifier = Modifier.padding(start = 4.dp)
                     .align(Alignment.CenterVertically),
                 color = MixDrinksColors.White,
-                text = good.name,
+                text = item.name,
                 style = MixDrinksTextStyles.H2,
                 softWrap = false,
                 maxLines = 1,
             )
         }
         Spacer(modifier = Modifier.height(4.dp).fillMaxWidth())
-        GoodsViewScrollContent(Modifier, good)
+        GoodsViewScrollContent(Modifier, item)
     }
 }
 
 @Composable
 internal fun GoodsViewScrollContent(
-    modifier: Modifier, good: DetailGoodsUiModel,
+    modifier: Modifier,     item: DetailItemsUiModel
 ) {
     Column(
         modifier = modifier
@@ -101,8 +101,8 @@ internal fun GoodsViewScrollContent(
     ) {
         Spacer(modifier = modifier.padding(5.dp))
         Image(
-            painter = rememberAsyncImagePainter(good.url),
-            contentDescription = "Продукт ${good.name}",
+            painter = rememberAsyncImagePainter(item.url),
+            contentDescription = "Продукт ${item.name}",
             contentScale = ContentScale.FillHeight,
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -118,7 +118,7 @@ internal fun GoodsViewScrollContent(
         ) {
             Text(
                 style = MixDrinksTextStyles.H2,
-                text = "Опис ${good.name}"
+                text = "Опис ${item.name}"
             )
         }
         Spacer(modifier = modifier.padding(15.dp))
@@ -130,7 +130,7 @@ internal fun GoodsViewScrollContent(
         ) {
             Text(
                 style = MixDrinksTextStyles.H4,
-                text = good.about,
+                text = item.about,
             )
         }
     }

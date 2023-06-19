@@ -1,13 +1,13 @@
 package org.mixdrinks.data
 
-data class DetailGoodsUiModel(
+data class DetailItemsUiModel(
     val id: Int,
     val name: String,
     val about: String,
     val url: String
 )
 
-data class GoodsType(
+data class ItemsType(
     val id: Int,
     val type: Type
 ) {

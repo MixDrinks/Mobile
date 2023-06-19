@@ -1,6 +1,6 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
-import org.mixdrinks.data.DetailGoodsUiModel
+import org.mixdrinks.data.DetailItemsUiModel
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.GlasswareId
 import org.mixdrinks.dto.GoodId
@@ -8,13 +8,13 @@ import org.mixdrinks.dto.SnapshotDto
 import org.mixdrinks.dto.ToolId
 
 
-internal class ItemGoodsRepository(
+internal class ItemsRepository(
     private val snapshot: suspend () -> SnapshotDto,
 ) {
-    suspend fun getDetailGood(goodId: GoodId): DetailGoodsUiModel {
+    suspend fun getDetailItem(goodId: GoodId): DetailItemsUiModel {
         val good = snapshot().goods.find { it.id.id == goodId.id }
             ?: error("Goods ${goodId.id} not found")
-        return DetailGoodsUiModel(
+        return DetailItemsUiModel(
             good.id.id, good.name, good.about,
             ImageUrlCreators.createUrl(
                 good.id,
@@ -23,10 +23,10 @@ internal class ItemGoodsRepository(
         )
     }
 
-    suspend fun getDetailGood(toolId: ToolId): DetailGoodsUiModel {
+    suspend fun getDetailItem(toolId: ToolId): DetailItemsUiModel {
         val tool = snapshot().tools.find { it.id.id == toolId.id }
             ?: error("Tool ${toolId.id} not found")
-        return DetailGoodsUiModel(
+        return DetailItemsUiModel(
             tool.id.id, tool.name, tool.about,
             ImageUrlCreators.createUrl(
                 tool.id,
@@ -35,10 +35,10 @@ internal class ItemGoodsRepository(
         )
     }
 
-    suspend fun getDetailGood(glasswareId: GlasswareId): DetailGoodsUiModel {
+    suspend fun getDetailItem(glasswareId: GlasswareId): DetailItemsUiModel {
         val glassware = snapshot().glassware.find { it.id == glasswareId }
             ?: error("Glassware $glasswareId not found")
-        return DetailGoodsUiModel(
+        return DetailItemsUiModel(
             glassware.id.value, glassware.name, glassware.about,
             ImageUrlCreators.createUrl(
                 glassware.id,

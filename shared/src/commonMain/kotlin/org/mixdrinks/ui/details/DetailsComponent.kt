@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.mixdrinks.data.FullCocktail
-import org.mixdrinks.data.GoodsType
+import org.mixdrinks.data.ItemsType
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GlasswareId
@@ -99,27 +99,27 @@ internal class DetailsComponent(
 
     fun onGoodClick(goodId: GoodId) {
         navigation.push(
-            RootComponent.Config.GoodsConfig(
+            RootComponent.Config.ItemsConfig(
                 goodId.id,
-                GoodsType.Type.GOODS.toString()
+                ItemsType.Type.GOODS.toString()
             )
         )
     }
 
     fun onGlasswareClick(glasswareId: GlasswareId) {
         navigation.push(
-            RootComponent.Config.GoodsConfig(
+            RootComponent.Config.ItemsConfig(
                 glasswareId.value,
-                GoodsType.Type.GLASSWARE.toString()
+                ItemsType.Type.GLASSWARE.toString()
             )
         )
     }
 
     fun onToolClick(toolId: ToolId) {
         navigation.push(
-            RootComponent.Config.GoodsConfig(
+            RootComponent.Config.ItemsConfig(
                 toolId.id,
-                GoodsType.Type.TOOL.toString()
+                ItemsType.Type.TOOL.toString()
             )
         )
     }

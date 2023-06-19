@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import org.mixdrinks.data.DetailGoodsUiModel
-import org.mixdrinks.data.GoodsType
+import org.mixdrinks.data.DetailItemsUiModel
+import org.mixdrinks.data.ItemsType
 import org.mixdrinks.dto.GlasswareId
 import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.ToolId
@@ -17,28 +17,28 @@ import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
-internal class GoodsComponent(
+internal class ItemsComponent(
     private val componentContext: ComponentContext,
-    private val goodsRepository: ItemGoodsRepository,
+    private val itemsRepository: ItemsRepository,
     private val navigation: StackNavigation<RootComponent.Config>,
-    private val goodsType: GoodsType
+    private val itemsType: ItemsType
 ) : ComponentContext by componentContext {
 
-    val state: StateFlow<UiState<DetailGoodsUiModel>> = when (goodsType.type) {
-        GoodsType.Type.GOODS -> flow {
-            emit(goodsRepository.getDetailGood(GoodId(goodsType.id)))
+    val state: StateFlow<UiState<DetailItemsUiModel>> = when (itemsType.type) {
+        ItemsType.Type.GOODS -> flow {
+            emit(itemsRepository.getDetailItem(GoodId(itemsType.id)))
         }
 
-        GoodsType.Type.TOOL -> flow {
-            emit(goodsRepository.getDetailGood(ToolId(goodsType.id)))
+        ItemsType.Type.TOOL -> flow {
+            emit(itemsRepository.getDetailItem(ToolId(itemsType.id)))
         }
 
-        GoodsType.Type.GLASSWARE -> flow {
-            emit(goodsRepository.getDetailGood(GlasswareId(goodsType.id)))
+        ItemsType.Type.GLASSWARE -> flow {
+            emit(itemsRepository.getDetailItem(GlasswareId(itemsType.id)))
         }
     }
-        .map { good: DetailGoodsUiModel ->
-            UiState.Data(good)
+        .map { item: DetailItemsUiModel ->
+            UiState.Data(item)
         }
         .flowOn(Dispatchers.Default)
         .stateInWhileSubscribe()

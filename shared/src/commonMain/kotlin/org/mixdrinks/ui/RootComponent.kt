@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
 import org.mixdrinks.data.CocktailListRepository
 import org.mixdrinks.data.FilterRepository
 import org.mixdrinks.data.FutureCocktailSelector
-import org.mixdrinks.data.GoodsType
+import org.mixdrinks.data.ItemsType
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
@@ -29,8 +29,8 @@ import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
-import org.mixdrinks.ui.goods.GoodsComponent
-import org.mixdrinks.ui.goods.ItemGoodsRepository
+import org.mixdrinks.ui.items.ItemsComponent
+import org.mixdrinks.ui.items.ItemsRepository
 import org.mixdrinks.ui.list.ListComponent
 import org.mixdrinks.ui.list.SelectedFilterProvider
 
@@ -84,7 +84,7 @@ internal class RootComponent(
             is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
             Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
             is Config.SearchItemConfig -> Child.ItemSearch(searchItemScreen(componentContext, config.searchItemType))
-            is Config.GoodsConfig -> Child.Goods(detailGoodsScreen(componentContext, config.id, config.typeGoods))
+            is Config.ItemsConfig -> Child.Items(detailGoodsScreen(componentContext, config.id, config.itemsType))
         }
 
     private fun listScreen(componentContext: ComponentContext): ListComponent =
@@ -103,12 +103,12 @@ internal class RootComponent(
             navigation = navigation,
         )
 
-    private fun detailGoodsScreen(componentContext: ComponentContext, id: Int, type: String): GoodsComponent {
-        return GoodsComponent(
+    private fun detailGoodsScreen(componentContext: ComponentContext, id: Int, type: String): ItemsComponent {
+        return ItemsComponent(
             componentContext,
-            ItemGoodsRepository { Graph.snapshotRepository.get() },
+            ItemsRepository { Graph.snapshotRepository.get() },
             navigation,
-            GoodsType(id, GoodsType.Type.fromString(type))
+            ItemsType(id, ItemsType.Type.fromString(type))
         )
     }
 
@@ -162,7 +162,7 @@ internal class RootComponent(
         class List(val component: ListComponent) : Child()
         class Details(val component: DetailsComponent) : Child()
         class Filters(val component: FilterComponent) : Child()
-        class Goods(val component: GoodsComponent) : Child()
+        class Items(val component: ItemsComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
     }
 
@@ -177,7 +177,7 @@ internal class RootComponent(
         data class DetailsConfig(val id: Int) : Config()
 
         @Parcelize
-        data class GoodsConfig(val id: Int, val typeGoods: String) : Config()
+        data class ItemsConfig(val id: Int, val itemsType: String) : Config()
 
         @Parcelize
         data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) : Config()
