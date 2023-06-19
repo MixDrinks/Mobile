@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,6 +63,20 @@ internal fun MutableCocktailList(component: ListComponent) {
                     contentDescription = ResString.filters,
                     colorFilter = ColorFilter.tint(Color.White)
                 )
+                val counter by component.filterCountState.collectAsState()
+                if (counter != null) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .size(32.dp)
+                            .padding(4.dp)
+                            .background(MixDrinksColors.White, shape = RoundedCornerShape(16.dp)),
+                        text = counter.toString(),
+                        color = MixDrinksColors.Main,
+                        textAlign = TextAlign.Center,
+                        style = MixDrinksTextStyles.H4,
+                    )
+                }
             }
         }
 
