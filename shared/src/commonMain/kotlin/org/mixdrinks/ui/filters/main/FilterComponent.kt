@@ -2,40 +2,37 @@ package org.mixdrinks.ui.filters.main
 
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
-import org.mixdrinks.data.FilterRepository
 import org.mixdrinks.data.FutureCocktailSelector
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.dto.FilterGroupDto
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
 import org.mixdrinks.dto.SelectionType
-import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.filters.FilterItemUiModel
 import org.mixdrinks.ui.filters.FilterValueChangeDelegate
 import org.mixdrinks.ui.filters.search.SearchItemComponent
+import org.mixdrinks.ui.list.main.MutableFilterStorage
+import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.launch
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
 internal class FilterComponent(
     private val componentContext: ComponentContext,
-    private val filterRepository: FilterRepository,
+    private val mutableFilterStorage: MutableFilterStorage,
     private val futureCocktailSelector: FutureCocktailSelector,
-    private val navigation: StackNavigation<RootComponent.Config>,
+    private val navigator: Navigator,
 ) : ComponentContext by componentContext,
-    FilterValueChangeDelegate by filterRepository {
+    FilterValueChangeDelegate by mutableFilterStorage {
 
-    val state: StateFlow<UiState<List<FilterScreenElement>>> = filterRepository.selected
+    val state: StateFlow<UiState<List<FilterScreenElement>>> = mutableFilterStorage.selected
         .transform { selected ->
             this.emit(
-                UiState.Data(filterRepository.getFilterGroups()
+                UiState.Data(mutableFilterStorage.getFilterGroups()
                     .flatMap { filterGroupDto ->
                         flatMapFilterGroup(filterGroupDto, selected)
                     })
@@ -46,7 +43,7 @@ internal class FilterComponent(
 
     private suspend fun flatMapFilterGroup(
         filterGroupDto: FilterGroupDto,
-        selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
+        selected: Map<FilterGroupId, List<MutableFilterStorage.FilterSelected>>,
     ): List<FilterScreenElement> {
         val list = listOf<FilterScreenElement>(
             FilterScreenElement.Title(filterGroupDto.name),
@@ -103,7 +100,7 @@ internal class FilterComponent(
 
     private suspend fun buildFilterItems(
         filterGroupDto: FilterGroupDto,
-        selected: Map<FilterGroupId, List<FilterRepository.FilterSelected>>,
+        selected: Map<FilterGroupId, List<MutableFilterStorage.FilterSelected>>,
     ): List<FilterItemUiModel> {
         val filters = filterGroupDto.filters.map { filter ->
             val cocktailCount = futureCocktailSelector.getCocktailIds(
@@ -112,8 +109,10 @@ internal class FilterComponent(
             )
                 .size
 
-            val isSelected = selected[filterGroupDto.id].orEmpty().map { it.filterId }.contains(filter.id)
-            val isEnable = isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
+            val isSelected =
+                selected[filterGroupDto.id].orEmpty().map { it.filterId }.contains(filter.id)
+            val isEnable =
+                isSelected || filterGroupDto.selectionType == SelectionType.SINGLE || cocktailCount != 0
 
             FilterItemUiModel(
                 groupId = filterGroupDto.id,
@@ -128,11 +127,11 @@ internal class FilterComponent(
     }
 
     fun clear() = launch {
-        filterRepository.clear()
+        mutableFilterStorage.clear()
     }
 
     fun close() {
-        navigation.pop()
+        navigator.back()
     }
 
     fun openDetailSearch(filterGroupId: FilterGroupId) {
@@ -142,7 +141,7 @@ internal class FilterComponent(
             else -> error("Unknown filter group id: $filterGroupId")
         }
 
-        navigation.push(RootComponent.Config.SearchItemConfig(searchItemType))
+        navigator.navigateToSearchItem(searchItemType)
     }
 
     @Immutable

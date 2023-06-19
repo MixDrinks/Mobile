@@ -1,4 +1,4 @@
-package org.mixdrinks.ui
+package org.mixdrinks.ui.navigation
 
 import io.ktor.http.Url
 import org.mixdrinks.domain.FilterGroups

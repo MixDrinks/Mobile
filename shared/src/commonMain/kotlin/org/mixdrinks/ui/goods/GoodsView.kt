@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.data.DetailGoodsUiModel
+import org.mixdrinks.ui.list.predefine.PreDefineCocktailListView
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
@@ -85,6 +86,7 @@ internal fun GoodsViewContent(
         }
         Spacer(modifier = Modifier.height(4.dp).fillMaxWidth())
         GoodsViewScrollContent(Modifier, good)
+        PreDefineCocktailListView(component.getPredefineCocktailComponent())
     }
 }
 

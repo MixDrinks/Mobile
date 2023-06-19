@@ -11,6 +11,7 @@ import org.mixdrinks.dto.FilterWithCocktailIdsDto
 import org.mixdrinks.dto.GlasswareId
 import org.mixdrinks.dto.SelectionType
 import org.mixdrinks.dto.SnapshotDto
+import org.mixdrinks.ui.navigation.DeepLinkParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

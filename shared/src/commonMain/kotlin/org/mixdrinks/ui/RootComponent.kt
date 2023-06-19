@@ -4,11 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.parcelable.Parcelable
-import com.arkivanov.essenty.parcelable.Parcelize
 import com.russhwolf.settings.Settings
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
@@ -18,16 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.mixdrinks.data.CocktailListRepository
-import org.mixdrinks.data.FilterRepository
+import org.mixdrinks.data.CocktailsProvider
 import org.mixdrinks.data.FutureCocktailSelector
-import org.mixdrinks.data.GoodsType
+import org.mixdrinks.data.ItemsType
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.dto.FilterId
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.details.FullCocktailRepository
 import org.mixdrinks.ui.details.goods.GoodsRepository
@@ -36,8 +32,13 @@ import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
 import org.mixdrinks.ui.goods.GoodsComponent
 import org.mixdrinks.ui.goods.ItemGoodsRepository
-import org.mixdrinks.ui.list.ListComponent
 import org.mixdrinks.ui.list.SelectedFilterProvider
+import org.mixdrinks.ui.list.main.ListComponent
+import org.mixdrinks.ui.list.main.MutableFilterStorage
+import org.mixdrinks.ui.list.predefine.PreDefineCocktailsComponent
+import org.mixdrinks.ui.list.predefine.PreDefineFilterStorage
+import org.mixdrinks.ui.navigation.DeepLinkParser
+import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.launch
 
 internal object Graph {
@@ -57,23 +58,25 @@ internal object Graph {
 
     val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit, settings, json)
 
-    val filterRepository = FilterRepository { snapshotRepository.get() }
+    val mutableFilterStorage = MutableFilterStorage { snapshotRepository.get() }
 }
 
 internal class RootComponent(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext {
 
-    private val navigation = StackNavigation<Config>()
+    private val navigation = StackNavigation<Navigator.Config>()
 
-    private val _stack: Value<ChildStack<Config, Child>> = childStack(
+    private val navigator: Navigator = Navigator(navigation)
+
+    private val _stack: Value<ChildStack<Navigator.Config, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Config.ListConfig,
+        initialConfiguration = Navigator.Config.ListConfig,
         handleBackButton = true,
         childFactory = ::createChild
     )
 
-    val stack: Value<ChildStack<Config, Child>> = _stack
+    val stack: Value<ChildStack<Navigator.Config, Child>> = _stack
 
     private val deepLinkParser = DeepLinkParser(
         suspend { Graph.snapshotRepository.get() },
@@ -83,17 +86,20 @@ internal class RootComponent(
     fun onDeepLink(deepLink: String) {
         launch {
             deepLinkParser.parseDeepLink(deepLink)?.let { deepLinkAction ->
-                val config = when (deepLinkAction) {
-                    is DeepLinkParser.DeepLinkAction.Cocktail -> Config.DetailsConfig(deepLinkAction.id)
+                val config: Navigator.Config = when (deepLinkAction) {
+                    is DeepLinkParser.DeepLinkAction.Cocktail -> Navigator.Config.DetailsConfig(
+                        deepLinkAction.id, -1
+                    )
+
                     is DeepLinkParser.DeepLinkAction.Filters -> {
-                        Graph.filterRepository.selectMany(deepLinkAction.selectedFilters)
-                        Config.ListConfig
+                        Graph.mutableFilterStorage.selectMany(deepLinkAction.selectedFilters)
+                        Navigator.Config.ListConfig
                     }
                 }
 
                 coroutineScope {
                     this.launch(Dispatchers.Main) {
-                        navigation.replaceCurrent(config)
+                        navigator.openFromDeepLink(config)
                     }
                 }
             }
@@ -101,21 +107,49 @@ internal class RootComponent(
     }
 
     fun onBack() {
-        navigation.pop()
+        navigator.back()
     }
 
-    private fun createChild(config: Config, componentContext: ComponentContext): Child =
+    fun buildPreDefineCocktailsComponent(
+        componentContext: ComponentContext,
+        itemsType: ItemsType,
+    ): PreDefineCocktailsComponent {
+        return PreDefineCocktailsComponent(
+            componentContext = componentContext,
+            cocktailsProvider = CocktailsProvider(
+                snapshot = suspend { Graph.snapshotRepository.get() },
+                filterRepository = PreDefineFilterStorage(
+                    itemsType.type.getFilterGroup().id,
+                    FilterId(itemsType.id)
+                ),
+                cocktailSelector = suspend {
+                    CocktailSelector(Graph.mutableFilterStorage.getFilterGroups()
+                        .map { it.toFilterGroup() })
+                },
+                tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() })
+            ),
+            navigator = navigator,
+        )
+    }
+
+    private fun createChild(config: Navigator.Config, componentContext: ComponentContext): Child =
         when (config) {
-            Config.ListConfig -> Child.List(listScreen(componentContext))
-            is Config.DetailsConfig -> Child.Details(detailsScreen(componentContext, config))
-            Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
-            is Config.SearchItemConfig -> Child.ItemSearch(
+            Navigator.Config.ListConfig -> Child.List(listScreen(componentContext))
+            is Navigator.Config.DetailsConfig -> Child.Details(
+                detailsScreen(
+                    componentContext,
+                    config
+                )
+            )
+
+            Navigator.Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
+            is Navigator.Config.SearchItemConfig -> Child.ItemSearch(
                 searchItemScreen(
                     componentContext, config.searchItemType
                 )
             )
 
-            is Config.GoodsConfig -> Child.Goods(
+            is Navigator.Config.GoodsConfig -> Child.Goods(
                 detailGoodsScreen(
                     componentContext, config.id, config.typeGoods
                 )
@@ -124,18 +158,19 @@ internal class RootComponent(
 
     private fun listScreen(componentContext: ComponentContext): ListComponent = ListComponent(
         componentContext = componentContext,
-        cocktailListRepository = CocktailListRepository(
+        cocktailsProvider = CocktailsProvider(
             suspend { Graph.snapshotRepository.get() },
-            Graph.filterRepository,
+            Graph.mutableFilterStorage,
             suspend {
-                CocktailSelector(Graph.filterRepository.getFilterGroups()
+                CocktailSelector(Graph.mutableFilterStorage.getFilterGroups()
                     .map { it.toFilterGroup() })
             },
+            TagsRepository(suspend { Graph.snapshotRepository.get() }),
         ),
         selectedFilterProvider = SelectedFilterProvider(suspend { Graph.snapshotRepository.get() },
-            suspend { Graph.filterRepository }),
-        tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() }),
-        navigation = navigation,
+            suspend { Graph.mutableFilterStorage }),
+        navigator = navigator,
+        mutableFilterStorage = Graph.mutableFilterStorage,
     )
 
     private fun detailGoodsScreen(
@@ -144,27 +179,28 @@ internal class RootComponent(
         return GoodsComponent(
             componentContext,
             ItemGoodsRepository { Graph.snapshotRepository.get() },
-            navigation,
-            GoodsType(id, GoodsType.Type.fromString(type))
+            navigator,
+            ItemsType(id, ItemsType.Type.fromString(type)),
+            this,
         )
     }
 
     private fun detailsScreen(
-        componentContext: ComponentContext, config: Config.DetailsConfig
+        componentContext: ComponentContext, config: Navigator.Config.DetailsConfig
     ): DetailsComponent {
         return DetailsComponent(componentContext,
             FullCocktailRepository { Graph.snapshotRepository.get() },
             CocktailId(config.id),
-            navigation,
+            navigator,
             GoodsRepository { Graph.snapshotRepository.get() })
     }
 
     private fun filterScreen(componentContext: ComponentContext): FilterComponent {
         return FilterComponent(
             componentContext,
-            Graph.filterRepository,
+            Graph.mutableFilterStorage,
             getFutureCocktail(),
-            navigation,
+            navigator,
         )
     }
 
@@ -172,10 +208,10 @@ internal class RootComponent(
         return FutureCocktailSelector(
             snapshot = { Graph.snapshotRepository.get() },
             cocktailSelector = {
-                CocktailSelector(Graph.filterRepository.getFilterGroups()
+                CocktailSelector(Graph.mutableFilterStorage.getFilterGroups()
                     .map { it.toFilterGroup() })
             },
-            filterRepository = { Graph.filterRepository },
+            mutableFilterStorage = { Graph.mutableFilterStorage },
         )
     }
 
@@ -189,7 +225,7 @@ internal class RootComponent(
         return SearchItemComponent(
             component,
             searchItemType,
-            Graph.filterRepository,
+            Graph.mutableFilterStorage,
             itemRepository,
             navigation,
         )
@@ -201,23 +237,5 @@ internal class RootComponent(
         class Filters(val component: FilterComponent) : Child()
         class Goods(val component: GoodsComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
-    }
-
-    sealed class Config : Parcelable {
-        @Parcelize
-        object ListConfig : Config()
-
-        @Parcelize
-        object FilterConfig : Config()
-
-        @Parcelize
-        data class DetailsConfig(val id: Int) : Config()
-
-        @Parcelize
-        data class GoodsConfig(val id: Int, val typeGoods: String) : Config()
-
-        @Parcelize
-        data class SearchItemConfig(val searchItemType: SearchItemComponent.SearchItemType) :
-            Config()
     }
 }
