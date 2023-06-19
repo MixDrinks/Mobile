@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +27,7 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.tag.Tag
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun CocktailList(
     cocktails: CocktailsListState.Cocktails,
@@ -34,20 +35,30 @@ internal fun CocktailList(
 ) {
     LazyColumn {
         items(cocktails.list, key = { cocktail -> cocktail.id.id }) { cocktail ->
-            Cocktail(cocktail, onClick)
+            Cocktail(Modifier.animateItemPlacement(), cocktail, onClick)
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+internal fun LazyListScope.CocktailListInserter(
+    cocktails: CocktailsListState.Cocktails,
+    onClick: (CocktailId) -> Unit,
+) {
+    cocktails.list.forEach {
+        item(key = it.id.id) {
+            Cocktail(Modifier, it, onClick)
+        }
+    }
+}
+
 @Composable
-internal fun LazyItemScope.Cocktail(
+internal fun Cocktail(
+    modifier: Modifier,
     cocktail: CocktailsListState.Cocktails.Cocktail,
     onClick: (CocktailId) -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .animateItemPlacement()
+        modifier = modifier
             .height(100.dp)
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),

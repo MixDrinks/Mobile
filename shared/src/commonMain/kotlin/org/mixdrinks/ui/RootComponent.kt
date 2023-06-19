@@ -30,7 +30,7 @@ import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
-import org.mixdrinks.ui.goods.GoodsComponent
+import org.mixdrinks.ui.goods.ItemDetailComponent
 import org.mixdrinks.ui.goods.ItemGoodsRepository
 import org.mixdrinks.ui.list.SelectedFilterProvider
 import org.mixdrinks.ui.list.main.ListComponent
@@ -71,7 +71,7 @@ internal class RootComponent(
 
     private val _stack: Value<ChildStack<Navigator.Config, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Navigator.Config.ListConfig,
+        initialConfiguration = Navigator.Config.ListConfig(),
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -88,12 +88,12 @@ internal class RootComponent(
             deepLinkParser.parseDeepLink(deepLink)?.let { deepLinkAction ->
                 val config: Navigator.Config = when (deepLinkAction) {
                     is DeepLinkParser.DeepLinkAction.Cocktail -> Navigator.Config.DetailsConfig(
-                        deepLinkAction.id, -1
+                        deepLinkAction.id
                     )
 
                     is DeepLinkParser.DeepLinkAction.Filters -> {
                         Graph.mutableFilterStorage.selectMany(deepLinkAction.selectedFilters)
-                        Navigator.Config.ListConfig
+                        Navigator.Config.ListConfig()
                     }
                 }
 
@@ -134,7 +134,7 @@ internal class RootComponent(
 
     private fun createChild(config: Navigator.Config, componentContext: ComponentContext): Child =
         when (config) {
-            Navigator.Config.ListConfig -> Child.List(listScreen(componentContext))
+            is Navigator.Config.ListConfig -> Child.List(listScreen(componentContext))
             is Navigator.Config.DetailsConfig -> Child.Details(
                 detailsScreen(
                     componentContext,
@@ -142,14 +142,14 @@ internal class RootComponent(
                 )
             )
 
-            Navigator.Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
+            is Navigator.Config.FilterConfig -> Child.Filters(filterScreen(componentContext))
             is Navigator.Config.SearchItemConfig -> Child.ItemSearch(
                 searchItemScreen(
                     componentContext, config.searchItemType
                 )
             )
 
-            is Navigator.Config.GoodsConfig -> Child.Goods(
+            is Navigator.Config.ItemConfig -> Child.Item(
                 detailGoodsScreen(
                     componentContext, config.id, config.typeGoods
                 )
@@ -175,8 +175,8 @@ internal class RootComponent(
 
     private fun detailGoodsScreen(
         componentContext: ComponentContext, id: Int, type: String
-    ): GoodsComponent {
-        return GoodsComponent(
+    ): ItemDetailComponent {
+        return ItemDetailComponent(
             componentContext,
             ItemGoodsRepository { Graph.snapshotRepository.get() },
             navigator,
@@ -235,7 +235,7 @@ internal class RootComponent(
         class List(val component: ListComponent) : Child()
         class Details(val component: DetailsComponent) : Child()
         class Filters(val component: FilterComponent) : Child()
-        class Goods(val component: GoodsComponent) : Child()
+        class Item(val component: ItemDetailComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
     }
 }

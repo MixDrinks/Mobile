@@ -53,7 +53,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
         content = {
             when (val child = it.instance) {
                 is RootComponent.Child.List -> MutableCocktailList(child.component)
-                is RootComponent.Child.Goods -> AccessoriesView(child.component)
+                is RootComponent.Child.Item -> AccessoriesView(child.component)
                 is RootComponent.Child.Details -> DetailView(child.component)
                 is RootComponent.Child.Filters -> FilterView(child.component)
                 is RootComponent.Child.ItemSearch -> SearchItemView(child.component)

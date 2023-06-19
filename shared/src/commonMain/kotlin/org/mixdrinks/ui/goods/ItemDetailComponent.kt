@@ -17,7 +17,7 @@ import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
-internal class GoodsComponent(
+internal class ItemDetailComponent(
     private val componentContext: ComponentContext,
     private val goodsRepository: ItemGoodsRepository,
     private val navigator: Navigator,
@@ -27,15 +27,15 @@ internal class GoodsComponent(
 
     val state: StateFlow<UiState<DetailGoodsUiModel>> = when (itemsType.type) {
         ItemsType.Type.GOODS -> flow {
-            emit(goodsRepository.getDetailGood(GoodId(itemsType.id)))
+            emit(goodsRepository.getGoodDetails(GoodId(itemsType.id)))
         }
 
         ItemsType.Type.TOOL -> flow {
-            emit(goodsRepository.getDetailGood(ToolId(itemsType.id)))
+            emit(goodsRepository.getToolDetails(ToolId(itemsType.id)))
         }
 
         ItemsType.Type.GLASSWARE -> flow {
-            emit(goodsRepository.getDetailGood(GlasswareId(itemsType.id)))
+            emit(goodsRepository.getGallsswareDetails(GlasswareId(itemsType.id)))
         }
     }
         .map { good: DetailGoodsUiModel ->
