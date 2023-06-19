@@ -32,7 +32,7 @@ import org.mixdrinks.ui.list.cocktailListInserter
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
-internal fun AccessoriesView(component: ItemDetailComponent) {
+internal fun ItemDetailsView(component: ItemDetailComponent) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -41,14 +41,14 @@ internal fun AccessoriesView(component: ItemDetailComponent) {
         ContentHolder(
             stateflow = component.state
         ) {
-            GoodsViewContent(it, component)
+            ItemViewContent(it, component)
         }
     }
 }
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalFoundationApi::class)
 @Composable
-internal fun GoodsViewContent(
+internal fun ItemViewContent(
     good: DetailGoodsUiModel,
     component: ItemDetailComponent
 ) {
@@ -74,7 +74,7 @@ internal fun GoodsViewContent(
                             .size(32.dp)
                             .padding(start = 12.dp),
                         painter = painterResource("ic_arrow_back.xml"),
-                        contentDescription = "Test"
+                        contentDescription = "Назад"
                     )
                 }
                 Text(
@@ -89,6 +89,13 @@ internal fun GoodsViewContent(
             }
         }
         goodsViewScrollContent(Modifier.padding(horizontal = 8.dp), good)
+        item {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                style = MixDrinksTextStyles.H2,
+                text = "Коктейлі з ${good.name}",
+            )
+        }
         cocktailListInserter(cocktails, predefineComponent::onCocktailClick)
     }
 }
