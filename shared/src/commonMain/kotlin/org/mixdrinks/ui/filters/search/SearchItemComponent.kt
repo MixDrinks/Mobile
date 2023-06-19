@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
-import org.mixdrinks.data.FilterRepository
+import org.mixdrinks.ui.list.main.MutableFilterStorage
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
 import org.mixdrinks.ui.RootComponent
+import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.launch
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -24,15 +25,15 @@ import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 internal class SearchItemComponent(
     private val componentContext: ComponentContext,
     private val searchItemType: SearchItemType,
-    private val filterRepository: FilterRepository,
+    private val mutableFilterStorage: MutableFilterStorage,
     private val itemRepository: ItemRepository,
-    private val navigation: StackNavigation<RootComponent.Config>,
+    private val navigation: StackNavigation<Navigator.Config>,
 ) : ComponentContext by componentContext {
 
     private val _textState = MutableStateFlow("")
     val textState: StateFlow<String> = _textState
 
-    val state: StateFlow<UiState<List<ItemUiModel>>> = filterRepository.selected
+    val state: StateFlow<UiState<List<ItemUiModel>>> = mutableFilterStorage.selected
         .map {
             it[searchItemType.filterGroupId] ?: emptyList()
         }
@@ -56,7 +57,7 @@ internal class SearchItemComponent(
 
     private fun mapItemsToUi(
         items: List<ItemRepository.ItemDto>,
-        selected: List<FilterRepository.FilterSelected>,
+        selected: List<MutableFilterStorage.FilterSelected>,
     ): List<ItemUiModel> {
         return items
             .map { item ->
@@ -104,7 +105,7 @@ internal class SearchItemComponent(
     }
 
     fun onItemClicked(id: ItemRepository.ItemId, isSelected: Boolean) = launch {
-        filterRepository.onValueChange(searchItemType.filterGroupId, FilterId(id.value), isSelected)
+        mutableFilterStorage.onValueChange(searchItemType.filterGroupId, FilterId(id.value), isSelected)
     }
 
     @Immutable

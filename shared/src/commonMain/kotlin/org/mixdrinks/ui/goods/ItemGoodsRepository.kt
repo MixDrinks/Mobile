@@ -11,7 +11,7 @@ import org.mixdrinks.dto.ToolId
 internal class ItemGoodsRepository(
     private val snapshot: suspend () -> SnapshotDto,
 ) {
-    suspend fun getDetailGood(goodId: GoodId): DetailGoodsUiModel {
+    suspend fun getGoodDetails(goodId: GoodId): DetailGoodsUiModel {
         val good = snapshot().goods.find { it.id.id == goodId.id }
             ?: error("Goods ${goodId.id} not found")
         return DetailGoodsUiModel(
@@ -23,7 +23,7 @@ internal class ItemGoodsRepository(
         )
     }
 
-    suspend fun getDetailGood(toolId: ToolId): DetailGoodsUiModel {
+    suspend fun getToolDetails(toolId: ToolId): DetailGoodsUiModel {
         val tool = snapshot().tools.find { it.id.id == toolId.id }
             ?: error("Tool ${toolId.id} not found")
         return DetailGoodsUiModel(
@@ -35,7 +35,7 @@ internal class ItemGoodsRepository(
         )
     }
 
-    suspend fun getDetailGood(glasswareId: GlasswareId): DetailGoodsUiModel {
+    suspend fun getGallsswareDetails(glasswareId: GlasswareId): DetailGoodsUiModel {
         val glassware = snapshot().glassware.find { it.id == glasswareId }
             ?: error("Glassware $glasswareId not found")
         return DetailGoodsUiModel(

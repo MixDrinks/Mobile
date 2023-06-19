@@ -1,4 +1,4 @@
-package org.mixdrinks.data
+package org.mixdrinks.ui.list.main
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +13,11 @@ import org.mixdrinks.dto.FilterId
 import org.mixdrinks.dto.SelectionType
 import org.mixdrinks.dto.SnapshotDto
 import org.mixdrinks.ui.filters.FilterValueChangeDelegate
+import org.mixdrinks.ui.list.FilterObserver
 
-internal class FilterRepository(
+class MutableFilterStorage(
     private val snapshot: suspend () -> SnapshotDto,
-) : FilterValueChangeDelegate {
+) : FilterValueChangeDelegate, FilterObserver {
 
     private var operationCount: Long = 0
 
@@ -26,7 +27,7 @@ internal class FilterRepository(
     )
 
     private val _selected = MutableStateFlow<Map<FilterGroupId, List<FilterSelected>>>(mapOf())
-    val selected: StateFlow<Map<FilterGroupId, List<FilterSelected>>> = _selected
+    override val selected: StateFlow<Map<FilterGroupId, List<FilterSelected>>> = _selected
 
     override fun onFilterStateChange(
         filterGroupId: FilterGroupId,
