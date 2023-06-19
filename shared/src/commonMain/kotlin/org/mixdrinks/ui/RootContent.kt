@@ -17,7 +17,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
-import org.mixdrinks.ui.goods.AccessoriesView
+import org.mixdrinks.ui.goods.ItemDetailsView
 import org.mixdrinks.ui.list.main.MutableCocktailList
 
 @Composable
@@ -53,7 +53,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
         content = {
             when (val child = it.instance) {
                 is RootComponent.Child.List -> MutableCocktailList(child.component)
-                is RootComponent.Child.Item -> AccessoriesView(child.component)
+                is RootComponent.Child.Item -> ItemDetailsView(child.component)
                 is RootComponent.Child.Details -> DetailView(child.component)
                 is RootComponent.Child.Filters -> FilterView(child.component)
                 is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
