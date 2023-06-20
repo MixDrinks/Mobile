@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
 import org.mixdrinks.data.DetailGoodsUiModel
 import org.mixdrinks.domain.ImageUrlCreators

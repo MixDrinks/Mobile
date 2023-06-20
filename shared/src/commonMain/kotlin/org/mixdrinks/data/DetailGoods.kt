@@ -23,10 +23,6 @@ data class ItemsType(
                 TOOL -> FilterGroups.TOOLS
             }
         }
-
-        companion object {
-            fun fromString(value: String) = Type.values().first { it.toString() == value }
-        }
     }
 }
 

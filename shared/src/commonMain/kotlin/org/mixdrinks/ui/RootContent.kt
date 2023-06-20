@@ -17,8 +17,9 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
-import org.mixdrinks.ui.goods.ItemDetailsView
+import org.mixdrinks.ui.items.ItemDetailsView
 import org.mixdrinks.ui.list.main.MutableCocktailList
+import org.mixdrinks.ui.tag.TagCocktails
 
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
@@ -32,6 +33,8 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                     } else {
                         Offset.Infinite
                     }
+
+                    println("Start $lastTouch")
                 },
                 onDragEnd = {
                     lastTouch = Offset.Infinite
@@ -57,6 +60,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                 is RootComponent.Child.Details -> DetailView(child.component)
                 is RootComponent.Child.Filters -> FilterView(child.component)
                 is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
+                is RootComponent.Child.CommonTagCockails -> TagCocktails(child.component)
             }
         }
     )
@@ -67,4 +71,4 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
     }
 }
 
-private const val CLOSE_ANIMATION_DURACIOTN_TRIGGER = 300
+private const val CLOSE_ANIMATION_DURACIOTN_TRIGGER = 100

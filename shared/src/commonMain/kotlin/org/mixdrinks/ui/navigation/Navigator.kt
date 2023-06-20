@@ -6,12 +6,16 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import org.mixdrinks.data.ItemsType
+import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.dto.TagId
+import org.mixdrinks.dto.TasteId
 import org.mixdrinks.ui.filters.search.SearchItemComponent
+import org.mixdrinks.ui.tag.CommonTag
 import kotlin.native.concurrent.ThreadLocal
 
 internal class Navigator(
     private val stackNavigation: StackNavigation<Config>
-) {
+) : CocktailOpener {
 
     sealed class Config(open val operationIndex: Int) : Parcelable {
         @Parcelize
@@ -57,6 +61,15 @@ internal class Navigator(
             )
         }
 
+        @Parcelize
+        data class CommonTagConfig(
+            val id: Int,
+            val type: CommonTag.Type,
+            override val operationIndex: Int
+        ) : Config(operationIndex) {
+            constructor(id: Int, type: CommonTag.Type) : this(id, type, operation++)
+        }
+
         @ThreadLocal
         companion object {
             private var operation: Int = 0
@@ -69,12 +82,16 @@ internal class Navigator(
 
     fun navigateToItem(itemsType: ItemsType.Type, id: Int) {
         stackNavigation.push(
-            Config.ItemConfig(id, itemsType.toString())
+            Config.ItemConfig(id, itemsType.name)
         )
     }
 
     fun navigateToDetails(id: Int) {
         stackNavigation.push(Config.DetailsConfig(id))
+    }
+
+    override fun navigateToDetails(id: CocktailId) {
+        stackNavigation.push(Config.DetailsConfig(id.id))
     }
 
     fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType) {
@@ -85,8 +102,15 @@ internal class Navigator(
         stackNavigation.push(Config.FilterConfig())
     }
 
+    fun navigateToTagCocktails(tagId: TagId) {
+        stackNavigation.push(Config.CommonTagConfig(tagId.id, CommonTag.Type.TAG))
+    }
+
+    fun navigationToTasteCocktails(tasteId: TasteId) {
+        stackNavigation.push(Config.CommonTagConfig(tasteId.id, CommonTag.Type.TASTE))
+    }
+
     fun openFromDeepLink(config: Config) {
         stackNavigation.push(config)
     }
-
 }

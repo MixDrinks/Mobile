@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

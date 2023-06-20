@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.goods
+package org.mixdrinks.ui.items
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.Dispatchers

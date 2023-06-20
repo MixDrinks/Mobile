@@ -30,8 +30,8 @@ import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
-import org.mixdrinks.ui.goods.ItemDetailComponent
-import org.mixdrinks.ui.goods.ItemGoodsRepository
+import org.mixdrinks.ui.items.ItemDetailComponent
+import org.mixdrinks.ui.items.ItemGoodsRepository
 import org.mixdrinks.ui.list.SelectedFilterProvider
 import org.mixdrinks.ui.list.main.ListComponent
 import org.mixdrinks.ui.list.main.MutableFilterStorage
@@ -39,6 +39,9 @@ import org.mixdrinks.ui.list.predefine.PreDefineCocktailsComponent
 import org.mixdrinks.ui.list.predefine.PreDefineFilterStorage
 import org.mixdrinks.ui.navigation.DeepLinkParser
 import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.tag.CommonTag
+import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
+import org.mixdrinks.ui.tag.CommonTagNameProvider
 import org.mixdrinks.ui.widgets.undomain.launch
 
 internal object Graph {
@@ -154,6 +157,12 @@ internal class RootComponent(
                     componentContext, config.id, config.typeGoods
                 )
             )
+
+            is Navigator.Config.CommonTagConfig -> Child.CommonTagCockails(
+                commonTagCocktailsScreen(
+                    componentContext, CommonTag(config.id, config.type)
+                )
+            )
         }
 
     private fun listScreen(componentContext: ComponentContext): ListComponent = ListComponent(
@@ -180,7 +189,7 @@ internal class RootComponent(
             componentContext,
             ItemGoodsRepository { Graph.snapshotRepository.get() },
             navigator,
-            ItemsType(id, ItemsType.Type.fromString(type)),
+            ItemsType(id, ItemsType.Type.valueOf(type)),
             this,
         )
     }
@@ -231,11 +240,38 @@ internal class RootComponent(
         )
     }
 
+    private fun commonTagCocktailsScreen(
+        component: ComponentContext,
+        commonTag: CommonTag,
+    ): CommonTagCocktailsComponent {
+        return CommonTagCocktailsComponent(
+            componentContext = component,
+            commonTagNameProvider = CommonTagNameProvider(
+                snapshotRepository = Graph.snapshotRepository,
+            ),
+            cocktailsProvider = CocktailsProvider(
+                snapshot = { Graph.snapshotRepository.get() },
+                filterRepository = PreDefineFilterStorage(
+                    commonTag.type.filterGroups.id,
+                    FilterId(commonTag.id)
+                ),
+                cocktailSelector = {
+                    CocktailSelector(Graph.mutableFilterStorage.getFilterGroups()
+                        .map { it.toFilterGroup() })
+                },
+                tagsRepository = TagsRepository(suspend { Graph.snapshotRepository.get() }),
+            ),
+            commonTag = commonTag,
+            cocktailOpener = navigator,
+        )
+    }
+
     sealed class Child {
         class List(val component: ListComponent) : Child()
         class Details(val component: DetailsComponent) : Child()
         class Filters(val component: FilterComponent) : Child()
         class Item(val component: ItemDetailComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
+        class CommonTagCockails(val component: CommonTagCocktailsComponent) : Child()
     }
 }
