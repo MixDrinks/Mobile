@@ -80,21 +80,26 @@ internal fun MutableCocktailList(component: ListComponent) {
             }
         }
 
-        ContentHolder(
-            stateflow = component.state,
-        ) {
-            when (it) {
-                is CocktailsListState.PlaceHolder -> {
-                    PlaceHolder(it, component)
-                }
+        Content(component)
+    }
+}
 
-                is CocktailsListState.Cocktails -> {
-                    CocktailList(
-                        it,
-                        component::navigateToDetails,
-                        component::navigateToTagCocktails
-                    )
-                }
+@Composable
+internal fun Content(component: ListComponent) {
+    ContentHolder(
+        stateflow = component.state,
+    ) {
+        when (it) {
+            is CocktailsListState.PlaceHolder -> {
+                PlaceHolder(it, component)
+            }
+
+            is CocktailsListState.Cocktails -> {
+                CocktailList(
+                    it,
+                    component::navigateToDetails,
+                    component::navigateToTagCocktails
+                )
             }
         }
     }
