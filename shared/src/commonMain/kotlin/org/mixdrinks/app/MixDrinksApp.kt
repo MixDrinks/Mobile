@@ -3,13 +3,16 @@ package org.mixdrinks.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.arkivanov.decompose.DefaultComponentContext
+import org.mixdrinks.ui.ComponentsFactory
+import org.mixdrinks.ui.Graph
 import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.RootContent
 
 @Composable
 internal fun MixDrinksApp(contextComponent: DefaultComponentContext, deepLink: String?) {
     val rootComponent = remember {
-        RootComponent(contextComponent)
+        val graph = Graph()
+        RootComponent(contextComponent, graph, ComponentsFactory(graph))
     }
 
     RootContent(rootComponent, deepLink)

@@ -1,4 +1,4 @@
-package org.mixdrinks.ui.list.predefine
+package org.mixdrinks.ui.tag
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
@@ -12,22 +12,37 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.mixdrinks.data.CocktailsProvider
-import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
 import org.mixdrinks.ui.navigation.INavigator
 import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.widgets.undomain.scope
 
-internal class PreDefineCocktailsComponent(
+internal class CommonTagCocktailsComponent(
     private val componentContext: ComponentContext,
+    private val commonTagNameProvider: CommonTagNameProvider,
     private val cocktailsProvider: CocktailsProvider,
+    private val commonTag: CommonTag,
     private val navigator: Navigator,
-    private val cocktailsMapper: CocktailListMapper,
-) : ComponentContext by componentContext, INavigator by navigator {
+    private val commonCocktailListMapper: CocktailListMapper,
+) : ComponentContext by componentContext,
+    INavigator by navigator {
+
+    val name: StateFlow<String> = flow {
+        emit(commonTagNameProvider.getName(commonTag) ?: "")
+    }
+        .map {
+            "Коктейлі $it"
+        }
+        .stateIn(
+            scope = componentContext.scope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = ""
+        )
 
     val state: StateFlow<CocktailsListState.Cocktails> = flow {
         emitAll(cocktailsProvider.getCocktails().map { cocktails ->
-            CocktailsListState.Cocktails(cocktailsMapper.map(cocktails))
+            CocktailsListState.Cocktails(commonCocktailListMapper.map(cocktails))
         })
     }
         .flowOn(Dispatchers.Default)

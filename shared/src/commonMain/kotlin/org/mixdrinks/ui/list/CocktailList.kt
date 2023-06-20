@@ -25,6 +25,7 @@ import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
 import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.dto.TagId
 import org.mixdrinks.ui.tag.Tag
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -32,10 +33,11 @@ import org.mixdrinks.ui.tag.Tag
 internal fun CocktailList(
     cocktails: CocktailsListState.Cocktails,
     onClick: (CocktailId) -> Unit,
+    onTagClick: (TagId) -> Unit,
 ) {
     LazyColumn {
         items(cocktails.list, key = { cocktail -> cocktail.id.id }) { cocktail ->
-            Cocktail(Modifier.animateItemPlacement(), cocktail, onClick)
+            Cocktail(Modifier.animateItemPlacement(), cocktail, onClick, onTagClick)
         }
     }
 }
@@ -43,10 +45,11 @@ internal fun CocktailList(
 internal fun LazyListScope.cocktailListInserter(
     cocktails: CocktailsListState.Cocktails,
     onClick: (CocktailId) -> Unit,
+    onTagClick: (TagId) -> Unit,
 ) {
     cocktails.list.forEach {
         item(key = it.id.id) {
-            Cocktail(Modifier, it, onClick)
+            Cocktail(Modifier, it, onClick, onTagClick)
         }
     }
 }
@@ -56,6 +59,7 @@ internal fun Cocktail(
     modifier: Modifier,
     cocktail: CocktailsListState.Cocktails.Cocktail,
     onClick: (CocktailId) -> Unit,
+    onTagClick : (TagId) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -85,7 +89,7 @@ internal fun Cocktail(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items(cocktail.tags) {
-                        Tag(it) {}
+                        Tag(it, onTagClick)
                     }
                 }
             }

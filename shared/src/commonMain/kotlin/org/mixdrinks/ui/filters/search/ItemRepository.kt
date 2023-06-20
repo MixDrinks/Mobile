@@ -1,6 +1,7 @@
 package org.mixdrinks.ui.filters.search
 
 import org.mixdrinks.data.FutureCocktailSelector
+import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.dto.FilterId
 import org.mixdrinks.dto.GoodId
@@ -8,7 +9,7 @@ import org.mixdrinks.dto.SnapshotDto
 import org.mixdrinks.dto.ToolId
 
 internal class ItemRepository(
-    private val snapshot: suspend () -> SnapshotDto,
+    private val snapshotRepository: SnapshotRepository,
     private val futureCocktailSelector: FutureCocktailSelector,
 ) {
 
@@ -20,7 +21,7 @@ internal class ItemRepository(
     }
 
     private suspend fun getTools(): List<ItemDto> {
-        return snapshot().tools
+        return snapshotRepository.get().tools
             .map {
                 ItemDto(
                     id = ItemId.Tool(it.id),
@@ -34,7 +35,7 @@ internal class ItemRepository(
     }
 
     private suspend fun getGoods(): List<ItemDto> {
-        return snapshot().goods
+        return snapshotRepository.get().goods
             .map {
                 ItemDto(
                     id = ItemId.Good(it.id),

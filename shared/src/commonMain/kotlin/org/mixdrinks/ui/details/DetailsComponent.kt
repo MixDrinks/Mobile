@@ -3,8 +3,6 @@ package org.mixdrinks.ui.details
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
@@ -19,7 +17,6 @@ import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
-import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.details.goods.GoodsSubComponent
 import org.mixdrinks.ui.navigation.Navigator
@@ -90,13 +87,12 @@ internal class DetailsComponent(
         navigator.back()
     }
 
-    @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
     fun onTagClick(tagId: TagId) {
+        navigator.navigateToTagCocktails(tagId)
     }
 
-    @Suppress("EmptyFunctionBlock", "UnusedPrivateMember")
     fun onTasteClick(tasteId: TasteId) {
-
+        navigator.navigationToTasteCocktails(tasteId)
     }
 
     fun onGoodClick(goodId: GoodId) {

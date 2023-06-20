@@ -13,6 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
+import org.mixdrinks.dto.TagId
+import org.mixdrinks.ui.list.CocktailsListState
+
+@Composable
+internal fun Tag(tag: CocktailsListState.TagUIModel, onClick: (TagId) -> Unit) {
+    Tag(name = tag.name, onClick = { onClick(tag.id) })
+}
 
 @Composable
 internal fun Tag(name: String, onClick: () -> Unit) {

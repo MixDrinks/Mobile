@@ -5,6 +5,7 @@ import shared
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = Main_iosKt.MainViewController()
+        controller.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         return controller
     }
 

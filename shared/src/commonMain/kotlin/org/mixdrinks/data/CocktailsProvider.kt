@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.map
 import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.dto.SnapshotDto
+import org.mixdrinks.dto.TagDto
 import org.mixdrinks.ui.list.FilterObserver
 
 internal class CocktailsProvider(
-    private val snapshot: suspend () -> SnapshotDto,
+    private val snapshotRepository: SnapshotRepository,
     private val filterRepository: FilterObserver,
     private val cocktailSelector: suspend () -> CocktailSelector,
     private val tagsRepository: TagsRepository,
@@ -19,7 +19,7 @@ internal class CocktailsProvider(
         val id: CocktailId,
         val url: String,
         val name: String,
-        val tags: List<String>,
+        val tags: List<TagDto>,
     )
 
     suspend fun getCocktails(): Flow<List<Cocktail>> {
@@ -27,13 +27,14 @@ internal class CocktailsProvider(
             val notEmptyFilter =
                 it.filter { filterGroup -> filterGroup.value.isNotEmpty() }
             if (notEmptyFilter.isEmpty()) {
-                snapshot().cocktails
+                snapshotRepository.get().cocktails
             } else {
                 val notEmptyFilterIds = notEmptyFilter
                     .mapValues { filterGroupIdListEntry -> filterGroupIdListEntry.value.map { it.filterId } }
 
                 val ids = cocktailSelector().getCocktailIds(notEmptyFilterIds)
-                snapshot().cocktails.filter { cocktailDto -> ids.contains(cocktailDto.id) }
+                snapshotRepository.get().cocktails
+                    .filter { cocktailDto -> ids.contains(cocktailDto.id) }
             }
                 .map { cocktailDto ->
                     Cocktail(
@@ -43,7 +44,7 @@ internal class CocktailsProvider(
                             ImageUrlCreators.Size.SIZE_400
                         ),
                         name = cocktailDto.name,
-                        tags = tagsRepository.getTags(cocktailDto.tags).map { it.name }
+                        tags = tagsRepository.getTags(cocktailDto.tags)
                     )
                 }
         }

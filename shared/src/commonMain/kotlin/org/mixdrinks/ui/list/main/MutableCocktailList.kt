@@ -50,7 +50,7 @@ internal fun MutableCocktailList(component: ListComponent) {
             Box(
                 modifier = Modifier
                     .clickable {
-                        component.openFilters()
+                        component.navigateToFilters()
                     }
                     .align(Alignment.CenterEnd)
                     .size(52.dp)
@@ -80,17 +80,26 @@ internal fun MutableCocktailList(component: ListComponent) {
             }
         }
 
-        ContentHolder(
-            stateflow = component.state,
-        ) {
-            when (it) {
-                is CocktailsListState.PlaceHolder -> {
-                    PlaceHolder(it, component)
-                }
+        Content(component)
+    }
+}
 
-                is CocktailsListState.Cocktails -> {
-                    CocktailList(it, component::onCocktailClick)
-                }
+@Composable
+internal fun Content(component: ListComponent) {
+    ContentHolder(
+        stateflow = component.state,
+    ) {
+        when (it) {
+            is CocktailsListState.PlaceHolder -> {
+                PlaceHolder(it, component)
+            }
+
+            is CocktailsListState.Cocktails -> {
+                CocktailList(
+                    it,
+                    component::navigateToDetails,
+                    component::navigateToTagCocktails
+                )
             }
         }
     }
