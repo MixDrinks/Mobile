@@ -30,12 +30,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
+import org.mixdrinks.data.ItemsType
 import org.mixdrinks.ui.details.goods.GoodsView
 import org.mixdrinks.ui.tag.Tag
+import org.mixdrinks.ui.widgets.MixDrinksHeader
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
@@ -53,7 +53,6 @@ internal fun DetailView(component: DetailsComponent) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: DetailsComponent) {
     Column {
@@ -63,30 +62,7 @@ internal fun DetailViewContent(cocktail: FullCocktailUiModel, component: Details
                 .fillMaxWidth()
                 .height(52.dp),
         ) {
-            Box(
-                modifier = Modifier.size(52.dp)
-                    .clickable {
-                        component.close()
-                    }
-            ) {
-                Image(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(32.dp)
-                        .padding(start = 12.dp),
-                    painter = painterResource("ic_arrow_back.xml"),
-                    contentDescription = "Назад"
-                )
-            }
-            Text(
-                modifier = Modifier.padding(start = 4.dp)
-                    .align(Alignment.CenterVertically),
-                color = MixDrinksColors.White,
-                text = cocktail.name,
-                style = MixDrinksTextStyles.H2,
-                softWrap = false,
-                maxLines = 1,
-            )
+            MixDrinksHeader(cocktail.name, component::back)
         }
         Spacer(modifier = Modifier.height(4.dp).fillMaxWidth())
         DetailsScrollContent(cocktail, component)
@@ -107,7 +83,10 @@ internal fun DetailsScrollContent(cocktail: FullCocktailUiModel, component: Deta
                 .padding(vertical = 8.dp),
         )
 
-        GoodsView(component.goodsSubComponent, onGoodClick = { component.onGoodClick(it) })
+        GoodsView(
+            component.goodsSubComponent,
+            onGoodClick = { component.navigateToItem(ItemsType.Type.GOODS, it.id) }
+        )
 
         Text(
             modifier = Modifier.padding(12.dp),
@@ -152,7 +131,9 @@ internal fun Tools(cocktail: FullCocktailUiModel, component: DetailsComponent) {
 internal fun Tool(toolUi: FullCocktailUiModel.ToolUi, component: DetailsComponent) {
     Card(
         modifier = Modifier
-            .clickable { component.onToolClick(toolUi.id) }
+            .clickable {
+                component.navigateToItem(ItemsType.Type.TOOL, toolUi.id.id)
+            }
             .width(100.dp)
             .height(124.dp)
             .fillMaxWidth()
@@ -167,7 +148,9 @@ internal fun Tool(toolUi: FullCocktailUiModel.ToolUi, component: DetailsComponen
 internal fun Tool(glasswareUi: FullCocktailUiModel.GlasswareUi, component: DetailsComponent) {
     Card(
         modifier = Modifier
-            .clickable { component.onGlasswareClick(glasswareUi.id) }
+            .clickable {
+                component.navigateToItem(ItemsType.Type.GLASSWARE, glasswareUi.id.value)
+            }
             .width(100.dp)
             .height(124.dp)
             .fillMaxWidth()
@@ -232,8 +215,8 @@ internal fun Tags(cocktail: FullCocktailUiModel, component: DetailsComponent) {
         items(cocktail.tags) {
             Tag(it.name) {
                 when (it) {
-                    is FullCocktailUiModel.TagUi.Tag -> component.onTagClick(it.id)
-                    is FullCocktailUiModel.TagUi.Taste -> component.onTasteClick(it.id)
+                    is FullCocktailUiModel.TagUi.Tag -> component.navigateToTagCocktails(it.id)
+                    is FullCocktailUiModel.TagUi.Taste -> component.navigationToTasteCocktails(it.id)
                 }
             }
         }

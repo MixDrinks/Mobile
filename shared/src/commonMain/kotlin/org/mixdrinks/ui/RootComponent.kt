@@ -138,11 +138,9 @@ internal class RootComponent(
             )
 
             is Navigator.Config.CommonTagConfig -> Child.CommonTagCocktails(
-                suspend {
-                    componentsFactory.commonTagCocktailsScreen(
-                        componentContext, CommonTag(config.id, config.type), navigator
-                    )
-                }
+                componentsFactory.commonTagCocktailsComponent(
+                    componentContext, CommonTag(config.id, config.type), navigator
+                )
             )
         }
 
@@ -152,6 +150,6 @@ internal class RootComponent(
         class Filters(val component: FilterComponent) : Child()
         class Item(val component: ItemDetailComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
-        class CommonTagCocktails(val component: suspend () -> CommonTagCocktailsComponent) : Child()
+        class CommonTagCocktails(val component: CommonTagCocktailsComponent) : Child()
     }
 }

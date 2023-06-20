@@ -92,7 +92,7 @@ internal class ComponentsFactory(
         )
     }
 
-    suspend fun commonTagCocktailsScreen(
+    fun commonTagCocktailsComponent(
         component: ComponentContext,
         commonTag: CommonTag,
         navigator: Navigator,
