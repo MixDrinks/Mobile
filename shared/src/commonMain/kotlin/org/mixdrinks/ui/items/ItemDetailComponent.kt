@@ -22,7 +22,7 @@ internal class ItemDetailComponent(
     private val goodsRepository: ItemGoodsRepository,
     private val navigator: Navigator,
     private val itemsType: ItemsType,
-    public val rootComponent: RootComponent,
+    public val predefineCocktailComponent: PreDefineCocktailsComponent,
 ) : ComponentContext by componentContext {
 
     val state: StateFlow<UiState<DetailGoodsUiModel>> = when (itemsType.type) {
@@ -35,7 +35,7 @@ internal class ItemDetailComponent(
         }
 
         ItemsType.Type.GLASSWARE -> flow {
-            emit(goodsRepository.getGallsswareDetails(GlasswareId(itemsType.id)))
+            emit(goodsRepository.getGlasswareDetails(GlasswareId(itemsType.id)))
         }
     }
         .map { good: DetailGoodsUiModel ->
@@ -46,12 +46,5 @@ internal class ItemDetailComponent(
 
     fun close() {
         navigator.back()
-    }
-
-    fun getPredefineCocktailComponent(): PreDefineCocktailsComponent {
-        return rootComponent.buildPreDefineCocktailsComponent(
-            componentContext = componentContext,
-            itemsType = itemsType,
-        )
     }
 }

@@ -50,7 +50,7 @@ internal fun MutableCocktailList(component: ListComponent) {
             Box(
                 modifier = Modifier
                     .clickable {
-                        component.openFilters()
+                        component.navigateToFilters()
                     }
                     .align(Alignment.CenterEnd)
                     .size(52.dp)
@@ -89,7 +89,11 @@ internal fun MutableCocktailList(component: ListComponent) {
                 }
 
                 is CocktailsListState.Cocktails -> {
-                    CocktailList(it, component::onCocktailClick)
+                    CocktailList(
+                        it,
+                        component::navigateToDetails,
+                        component::navigateToTagCocktails
+                    )
                 }
             }
         }

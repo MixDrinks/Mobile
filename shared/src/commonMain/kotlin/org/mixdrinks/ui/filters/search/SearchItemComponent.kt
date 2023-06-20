@@ -2,8 +2,6 @@ package org.mixdrinks.ui.filters.search
 
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,12 +9,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
-import org.mixdrinks.ui.list.main.MutableFilterStorage
 import org.mixdrinks.domain.FilterGroups
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
-import org.mixdrinks.ui.RootComponent
+import org.mixdrinks.ui.list.main.MutableFilterStorage
 import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.launch
@@ -27,7 +24,7 @@ internal class SearchItemComponent(
     private val searchItemType: SearchItemType,
     private val mutableFilterStorage: MutableFilterStorage,
     private val itemRepository: ItemRepository,
-    private val navigation: StackNavigation<Navigator.Config>,
+    private val navigator: Navigator,
 ) : ComponentContext by componentContext {
 
     private val _textState = MutableStateFlow("")
@@ -97,7 +94,7 @@ internal class SearchItemComponent(
     }
 
     fun close() {
-        navigation.pop()
+        navigator.back()
     }
 
     fun onSearchQueryChanged(query: String) = launch {
@@ -105,7 +102,11 @@ internal class SearchItemComponent(
     }
 
     fun onItemClicked(id: ItemRepository.ItemId, isSelected: Boolean) = launch {
-        mutableFilterStorage.onValueChange(searchItemType.filterGroupId, FilterId(id.value), isSelected)
+        mutableFilterStorage.onValueChange(
+            searchItemType.filterGroupId,
+            FilterId(id.value),
+            isSelected
+        )
     }
 
     @Immutable

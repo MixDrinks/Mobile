@@ -15,7 +15,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 internal class Navigator(
     private val stackNavigation: StackNavigation<Config>
-) : CocktailOpener {
+) : INavigator {
 
     sealed class Config(open val operationIndex: Int) : Parcelable {
         @Parcelize
@@ -76,17 +76,17 @@ internal class Navigator(
         }
     }
 
-    fun back() {
+    override fun back() {
         stackNavigation.pop()
     }
 
-    fun navigateToItem(itemsType: ItemsType.Type, id: Int) {
+    override fun navigateToItem(itemsType: ItemsType.Type, id: Int) {
         stackNavigation.push(
             Config.ItemConfig(id, itemsType.name)
         )
     }
 
-    fun navigateToDetails(id: Int) {
+    override fun navigateToDetails(id: Int) {
         stackNavigation.push(Config.DetailsConfig(id))
     }
 
@@ -94,23 +94,23 @@ internal class Navigator(
         stackNavigation.push(Config.DetailsConfig(id.id))
     }
 
-    fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType) {
+    override fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType) {
         stackNavigation.push(Config.SearchItemConfig(searchItemType))
     }
 
-    fun navigateToFilters() {
+    override fun navigateToFilters() {
         stackNavigation.push(Config.FilterConfig())
     }
 
-    fun navigateToTagCocktails(tagId: TagId) {
+    override fun navigateToTagCocktails(tagId: TagId) {
         stackNavigation.push(Config.CommonTagConfig(tagId.id, CommonTag.Type.TAG))
     }
 
-    fun navigationToTasteCocktails(tasteId: TasteId) {
+    override fun navigationToTasteCocktails(tasteId: TasteId) {
         stackNavigation.push(Config.CommonTagConfig(tasteId.id, CommonTag.Type.TASTE))
     }
 
-    fun openFromDeepLink(config: Config) {
+    override fun openFromDeepLink(config: Config) {
         stackNavigation.push(config)
     }
 }

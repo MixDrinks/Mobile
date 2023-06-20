@@ -1,7 +1,5 @@
 package org.mixdrinks.ui.list.main
 
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.intl.Locale
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +11,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.mixdrinks.data.CocktailsProvider
-import org.mixdrinks.domain.ImageUrlCreators
-import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.filters.FilterItemUiModel
+import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
 import org.mixdrinks.ui.list.SelectedFilterProvider
+import org.mixdrinks.ui.navigation.INavigator
 import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -28,7 +26,9 @@ internal class ListComponent(
     private val selectedFilterProvider: SelectedFilterProvider,
     private val navigator: Navigator,
     private val mutableFilterStorage: MutableFilterStorage,
-) : ComponentContext by componentContext {
+    private val cocktailListMapper: CocktailListMapper,
+) : ComponentContext by componentContext,
+    INavigator by navigator {
 
     val state: StateFlow<UiState<CocktailsListState>> = flow {
         emitAll(cocktailsProvider.getCocktails().map { cocktails ->
@@ -51,16 +51,7 @@ internal class ListComponent(
             if (cocktails.isEmpty()) {
                 CocktailsListState.PlaceHolder(selectedFilterProvider.getSelectedFiltersWithData())
             } else {
-                CocktailsListState.Cocktails(cocktails.map { cocktail ->
-                    CocktailsListState.Cocktails.Cocktail(
-                        id = cocktail.id,
-                        url = ImageUrlCreators.createUrl(
-                            cocktail.id, ImageUrlCreators.Size.SIZE_400
-                        ),
-                        name = cocktail.name,
-                        tags = cocktail.tags.map { it.capitalize(Locale.current) },
-                    )
-                })
+                CocktailsListState.Cocktails(cocktailListMapper.map(cocktails))
             }
         )
     }
@@ -70,13 +61,5 @@ internal class ListComponent(
         isSelect: Boolean
     ) {
         mutableFilterStorage.onFilterStateChange(filterGroupId, isSelect)
-    }
-
-    fun openFilters() {
-        navigator.navigateToFilters()
-    }
-
-    fun onCocktailClick(cocktailId: CocktailId) {
-        navigator.navigateToDetails(cocktailId.id)
     }
 }

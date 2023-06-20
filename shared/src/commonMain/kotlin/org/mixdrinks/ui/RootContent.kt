@@ -60,7 +60,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                 is RootComponent.Child.Details -> DetailView(child.component)
                 is RootComponent.Child.Filters -> FilterView(child.component)
                 is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
-                is RootComponent.Child.CommonTagCockails -> TagCocktails(child.component)
+                is RootComponent.Child.CommonTagCocktails -> TagCocktails(child.component)
             }
         }
     )

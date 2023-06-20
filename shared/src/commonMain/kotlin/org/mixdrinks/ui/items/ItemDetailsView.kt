@@ -52,7 +52,7 @@ internal fun ItemViewContent(
     good: DetailGoodsUiModel,
     component: ItemDetailComponent
 ) {
-    val predefineComponent = remember(good) { component.getPredefineCocktailComponent() }
+    val predefineComponent = remember(good) { component.predefineCocktailComponent }
     val cocktails by predefineComponent.state.collectAsState()
     LazyColumn {
         stickyHeader {
@@ -96,7 +96,11 @@ internal fun ItemViewContent(
                 text = "Коктейлі з ${good.name}",
             )
         }
-        cocktailListInserter(cocktails, predefineComponent::onCocktailClick)
+        cocktailListInserter(
+            cocktails,
+            predefineComponent::navigateToDetails,
+            predefineComponent::navigateToTagCocktails
+        )
     }
 }
 
