@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "18528209355",
+    "project_id": "mixdrinks-bb828",
+    "storage_bucket": "mixdrinks-bb828.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18528209355:android:5c2687eb3bada359e5ce4e",
+        "android_client_info": {
+          "package_name": "org.mixdrinks.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18528209355-8o18kp2sabqr0928mkp0icaatiu265v3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_ICk516QsqWbQdogKkt_9B6V_-lmOgTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18528209355-8o18kp2sabqr0928mkp0icaatiu265v3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
