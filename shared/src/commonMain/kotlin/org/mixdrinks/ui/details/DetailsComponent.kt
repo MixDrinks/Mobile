@@ -9,16 +9,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.mixdrinks.data.FullCocktail
-import org.mixdrinks.data.ItemsType
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.GlasswareId
-import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
 import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.details.goods.GoodsSubComponent
+import org.mixdrinks.ui.navigation.INavigator
 import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -29,7 +28,8 @@ internal class DetailsComponent(
     private val cocktailId: CocktailId,
     private val navigator: Navigator,
     goodsRepository: GoodsRepository,
-) : ComponentContext by componentContext {
+) : ComponentContext by componentContext,
+    INavigator by navigator {
 
     val goodsSubComponent = GoodsSubComponent(
         componentContext,
@@ -81,30 +81,6 @@ internal class DetailsComponent(
                 )
             })
         )
-    }
-
-    fun close() {
-        navigator.back()
-    }
-
-    fun onTagClick(tagId: TagId) {
-        navigator.navigateToTagCocktails(tagId)
-    }
-
-    fun onTasteClick(tasteId: TasteId) {
-        navigator.navigationToTasteCocktails(tasteId)
-    }
-
-    fun onGoodClick(goodId: GoodId) {
-        navigator.navigateToItem(ItemsType.Type.GOODS, goodId.id)
-    }
-
-    fun onGlasswareClick(glasswareId: GlasswareId) {
-        navigator.navigateToItem(ItemsType.Type.GLASSWARE, glasswareId.value)
-    }
-
-    fun onToolClick(toolId: ToolId) {
-        navigator.navigateToItem(ItemsType.Type.TOOL, toolId.id)
     }
 }
 

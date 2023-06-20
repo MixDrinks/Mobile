@@ -21,7 +21,7 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun Header(name: String, onBackClick: () -> Unit) {
+internal fun MixDrinksHeader(name: String, onBackClick: () -> Unit) {
     Row(
         modifier = Modifier
             .background(MixDrinksColors.Main)
