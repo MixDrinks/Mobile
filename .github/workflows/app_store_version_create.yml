@@ -1,0 +1,20 @@
+name: AppStore version create
+
+on:
+    branch: app_store_version_create
+
+jobs:
+    app_store_version_create:
+        runs-on: macos-12
+        steps:
+            -   name: Get token
+                id: asc
+                uses: yuki0n0/action-appstoreconnect-token@v1.0
+                with:
+                    issuer id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ISSUER_ID  }}
+                    key id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}
+                    key: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY }}
+
+            -   name: Use token
+                run: |
+                    JSON=`curl -sS -H "Authorization:Bearer ${{ steps.asc.outputs.token }}" https://api.appstoreconnect.apple.com/v1/apps`
