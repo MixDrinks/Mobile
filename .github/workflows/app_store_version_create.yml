@@ -1,7 +1,9 @@
 name: AppStore version create
 
 on:
-    branch: app_store_version_create
+    push:
+        branches:
+            - app_store_version_create
 
 jobs:
     app_store_version_create:
