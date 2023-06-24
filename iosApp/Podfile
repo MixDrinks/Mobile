@@ -3,3 +3,8 @@ target 'iosApp' do
   platform :ios, '14.1'
   pod 'shared', :path => '../shared'
 end
+
+pod 'FirebaseUI/Email'
+pod 'FirebaseUI/Auth'
+pod 'FirebaseUI/Google'
+pod 'FirebaseUI/OAuth'

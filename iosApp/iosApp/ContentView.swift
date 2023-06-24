@@ -1,6 +1,9 @@
 import UIKit
 import SwiftUI
 import shared
+import GoogleSignIn
+import Firebase
+import FirebaseAuth
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
@@ -13,8 +16,19 @@ struct ComposeView: UIViewControllerRepresentable {
 }
 
 struct ContentView: View {
+    
+    @State private var showingLogin = true
+    
+    init() {
+        
+    }
+    
     var body: some View {
-        ComposeView()
-                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
+        if (showingLogin) {
+            LoginView()
+        } else {
+            ComposeView()
+              .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
+        }
     }
 }
