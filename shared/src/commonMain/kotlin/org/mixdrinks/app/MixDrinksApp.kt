@@ -3,8 +3,8 @@ package org.mixdrinks.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.arkivanov.decompose.DefaultComponentContext
-import org.mixdrinks.ui.ComponentsFactory
-import org.mixdrinks.ui.Graph
+import org.mixdrinks.di.ComponentsFactory
+import org.mixdrinks.di.Graph
 import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.RootContent
 

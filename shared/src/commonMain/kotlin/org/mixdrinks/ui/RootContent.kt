@@ -14,6 +14,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import org.mixdrinks.ui.auth.AuthView
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
@@ -61,6 +62,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                 is RootComponent.Child.Filters -> FilterView(child.component)
                 is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
                 is RootComponent.Child.CommonTagCocktails -> TagCocktails(child.component)
+                is RootComponent.Child.Auth -> AuthView(child.component)
             }
         }
     )

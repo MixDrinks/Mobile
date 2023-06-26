@@ -4,7 +4,6 @@ target 'iosApp' do
   pod 'shared', :path => '../shared'
 end
 
-pod 'FirebaseUI/Email'
-pod 'FirebaseUI/Auth'
-pod 'FirebaseUI/Google'
-pod 'FirebaseUI/OAuth'
+pod 'GoogleSignIn'
+pod 'FirebaseCore'
+pod 'FirebaseAuth'

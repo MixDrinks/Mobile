@@ -4,7 +4,7 @@ import shared
 struct LoginView: View {
     
     init() {
-        Main_iosKt.doNewTokenProvide()
+        Main_iosKt.Login(token: "some new token")
     }
 
   @EnvironmentObject var viewModel: AuthenticationViewModel
@@ -34,41 +34,3 @@ struct LoginView: View {
     }
   }
 }
-
-
-/*
-            HStack {
-                Spacer()
-                Button(action: {
-                    
-                    Auth.auth().signIn(withEmail: "test@plusmobileapps.com", password: "Password123!") { (authResult, error) in
-                            if let error = error {
-                                // Handle the sign-in error
-                                print("Sign-in failed: \(error.localizedDescription)")
-                            } else {
-                                // User successfully signed in
-                                print("User signed in successfully.")
-                                if let user = authResult?.user {
-                                                // Print user details
-                                                print("User ID: \(user.uid)")
-                                                print("Display Name: \(user.displayName ?? "")")
-                                                print("Email: \(user.email ?? "")")
-                                                // You can access other user properties as well
-                                                
-                                                // Perform any additional actions or navigate to another view
-                                            }
-                                // Perform any additional actions or navigate to another view
-                            }
-                        }
-                }){
-                    Text("Create")
-                    .bold()
-                    .font(Font.custom("Helvetica Neue", size: 24.0))
-                    .padding(20)
-                    .foregroundColor(Color.white)
-                    .background(Color.purple)
-                    .cornerRadius(12)
-                }
-                Spacer()
-            }
-        }.padding(20) */

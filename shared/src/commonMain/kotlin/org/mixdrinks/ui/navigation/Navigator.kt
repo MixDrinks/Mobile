@@ -70,6 +70,13 @@ internal class Navigator(
             constructor(id: Int, type: CommonTag.Type) : this(id, type, operation++)
         }
 
+        @Parcelize
+        data class AuthConfig(
+            override val operationIndex: Int
+        ) : Config(operationIndex) {
+            constructor() : this(operation++)
+        }
+
         @ThreadLocal
         companion object {
             private var operation: Int = 0

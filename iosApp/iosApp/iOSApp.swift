@@ -1,9 +1,10 @@
 import SwiftUI
 import FirebaseCore
 import GoogleSignIn
+import AuthenticationServices
+import UIKit
 
-
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate{
 
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -20,7 +21,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct iOSApp: App {
-    @StateObject var viewModel = AuthenticationViewModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     init() {
@@ -30,7 +30,6 @@ struct iOSApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
-                .environmentObject(viewModel)
                 .onOpenURL { url in
                     print(url.absoluteString)
                 }

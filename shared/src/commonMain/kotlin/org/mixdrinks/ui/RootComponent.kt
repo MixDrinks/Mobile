@@ -16,8 +16,12 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
+import org.mixdrinks.di.ComponentsFactory
+import org.mixdrinks.di.Graph
 import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.ui.auth.AuthComponent
+import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.SearchItemComponent
@@ -30,29 +34,6 @@ import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.widgets.undomain.launch
 
-internal class Graph {
-
-    private val settings: Settings = Settings()
-
-    private val json = Json {
-        isLenient = true
-        ignoreUnknownKeys = true
-    }
-
-    private val ktorfit = Ktorfit.Builder()
-        .httpClient(HttpClient {
-            install(ContentNegotiation) {
-                json(json)
-            }
-        })
-        .baseUrl("https://api.mixdrinks.org/")
-        .build()
-        .create<MixDrinksService>()
-
-    val snapshotRepository: SnapshotRepository = SnapshotRepository(ktorfit, settings, json)
-
-    val mutableFilterStorage = MutableFilterStorage { snapshotRepository.get() }
-}
 
 internal class RootComponent(
     componentContext: ComponentContext,
@@ -66,7 +47,7 @@ internal class RootComponent(
 
     private val _stack: Value<ChildStack<Navigator.Config, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Navigator.Config.ListConfig(),
+        initialConfiguration = Navigator.Config.AuthConfig(),
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -142,6 +123,10 @@ internal class RootComponent(
                     componentContext, CommonTag(config.id, config.type), navigator
                 )
             )
+
+            is Navigator.Config.AuthConfig -> Child.Auth(
+                componentsFactory.authComponent(componentContext, navigator)
+            )
         }
 
     sealed class Child {
@@ -151,5 +136,7 @@ internal class RootComponent(
         class Item(val component: ItemDetailComponent) : Child()
         class ItemSearch(val component: SearchItemComponent) : Child()
         class CommonTagCocktails(val component: CommonTagCocktailsComponent) : Child()
+
+        class Auth(val component: AuthComponent) : Child()
     }
 }
