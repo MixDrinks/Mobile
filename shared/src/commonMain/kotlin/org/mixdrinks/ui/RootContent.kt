@@ -32,6 +32,8 @@ import org.mixdrinks.ui.profile.ProfileContent
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
     val showAuthDialog by component.showAuthDialog.collectAsState()
+    val tabs by component.selectedTab.collectAsState()
+
     Box {
         Scaffold(
             bottomBar = {
@@ -39,17 +41,16 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                     backgroundColor = MixDrinksColors.Main,
                     elevation = 4.dp
                 ) {
-                    val selectedTab by component.selectedTab.collectAsState()
-                    RootComponent.BottomNavigationTab.values().forEach { tab ->
+                    tabs.forEach { tab ->
                         BottomNavigationItem(
-                            icon = { Icon(painterResource(tab.icon), contentDescription = tab.title) },
-                            label = { Text(text = tab.title, fontSize = 12.sp) },
+                            icon = { Icon(painterResource(tab.tab.icon), contentDescription = tab.tab.title) },
+                            label = { Text(text = tab.tab.title, fontSize = 12.sp) },
                             selectedContentColor = Color.White,
                             unselectedContentColor = Color.White.copy(alpha = 0.3f),
                             alwaysShowLabel = true,
-                            selected = selectedTab == tab,
+                            selected = tab.isSelected,
                             onClick = {
-                                component.open(tab)
+                                component.open(tab.tab)
                             }
                         )
                     }

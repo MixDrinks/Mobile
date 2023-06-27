@@ -38,8 +38,12 @@ internal class RootComponent(
 
     val stack: Value<ChildStack<Config, Child>> = _stack
 
-    private val _selectedTab = MutableStateFlow(BottomNavigationTab.Main)
-    val selectedTab: StateFlow<BottomNavigationTab> = _selectedTab
+    private val _selectedTab = MutableStateFlow(listOf(
+        TabUiModel(BottomNavigationTab.Main, true),
+        TabUiModel(BottomNavigationTab.Profile, false)
+    ))
+
+    val selectedTab: StateFlow<List<TabUiModel>> = _selectedTab
 
     private val _showAuthDialog = MutableStateFlow(false)
     val showAuthDialog: StateFlow<Boolean> = _showAuthDialog
@@ -56,7 +60,7 @@ internal class RootComponent(
     }
 
     private fun createProfileComponent(componentContext: ComponentContext): ProfileComponent {
-        return ProfileComponent(componentContext)
+        return ProfileComponent(componentContext, graph.visitedCocktailsService)
     }
 
     fun open(tab: BottomNavigationTab) {
@@ -79,7 +83,7 @@ internal class RootComponent(
 
     private fun openProfile() {
         if (graph.tokenStorage.getToken() != null) {
-            navigation.replaceCurrent(Config.Profile)
+            openTab(BottomNavigationTab.Profile)
             return
         }
         loginDialogScope.launch {
@@ -96,13 +100,24 @@ internal class RootComponent(
         }
     }
 
-    private fun openTab(tab: BottomNavigationTab) {
-        _selectedTab.tryEmit(tab)
-        when (tab) {
+    private fun openTab(newTab: BottomNavigationTab) {
+        scope.launch {
+            _selectedTab.emit(BottomNavigationTab.values()
+                .map { tab ->
+                    TabUiModel(tab, tab == newTab)
+                })
+        }
+
+        when (newTab) {
             BottomNavigationTab.Main -> navigation.replaceCurrent(Config.Main)
             BottomNavigationTab.Profile -> navigation.replaceCurrent(Config.Profile)
         }
     }
+
+    data class TabUiModel(
+        val tab: BottomNavigationTab,
+        val isSelected: Boolean,
+    )
 
     enum class BottomNavigationTab(
         val icon: String,
