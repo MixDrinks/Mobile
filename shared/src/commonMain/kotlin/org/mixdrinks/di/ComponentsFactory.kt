@@ -8,7 +8,6 @@ import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.FilterId
-import org.mixdrinks.ui.auth.AuthComponent
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.details.FullCocktailRepository
 import org.mixdrinks.ui.details.goods.GoodsRepository
@@ -58,11 +57,14 @@ internal class ComponentsFactory(
         cocktailId: CocktailId,
         navigator: Navigator,
     ): DetailsComponent {
-        return DetailsComponent(componentContext,
+        return DetailsComponent(
+            componentContext,
             FullCocktailRepository(graph.snapshotRepository),
             cocktailId,
             navigator,
-            GoodsRepository { graph.snapshotRepository.get() })
+            GoodsRepository { graph.snapshotRepository.get() },
+            graph.visitedCocktailsService,
+        )
     }
 
     fun filterScreenComponent(

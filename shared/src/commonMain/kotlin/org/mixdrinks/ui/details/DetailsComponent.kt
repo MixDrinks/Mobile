@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.mixdrinks.data.FullCocktail
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
@@ -19,7 +20,9 @@ import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.details.goods.GoodsSubComponent
 import org.mixdrinks.ui.navigation.INavigator
 import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.visited.UserVisitedCocktailsService
 import org.mixdrinks.ui.widgets.undomain.UiState
+import org.mixdrinks.ui.widgets.undomain.scope
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
 internal class DetailsComponent(
@@ -28,6 +31,7 @@ internal class DetailsComponent(
     private val cocktailId: CocktailId,
     private val navigator: Navigator,
     goodsRepository: GoodsRepository,
+    visitedCocktailsService: UserVisitedCocktailsService,
 ) : ComponentContext by componentContext,
     INavigator by navigator {
 
@@ -36,6 +40,12 @@ internal class DetailsComponent(
         goodsRepository,
         cocktailId
     )
+
+    init {
+        scope.launch {
+            visitedCocktailsService.visitCocktail(cocktailId.id)
+        }
+    }
 
     val state: StateFlow<UiState<FullCocktailUiModel>> = flow {
         fullCocktailRepository.getFullCocktail(cocktailId)?.let {
