@@ -30,7 +30,7 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 internal fun AuthView(modifier: Modifier, onClose: () -> Unit) {
     Column(modifier = modifier
         .wrapContentSize()
-        .background(shape = RoundedCornerShape(6.dp), color = MixDrinksColors.Grey)
+        .background(shape = RoundedCornerShape(6.dp), color = MixDrinksColors.White)
     ) {
         Text(
             modifier = Modifier
@@ -39,7 +39,7 @@ internal fun AuthView(modifier: Modifier, onClose: () -> Unit) {
             text = "Авторизуся",
             style = MixDrinksTextStyles.H2,
             textAlign = TextAlign.Center,
-            color = MixDrinksColors.White,
+            color = MixDrinksColors.Main,
         )
         Spacer(modifier = Modifier.height(8.dp))
         SocialButton(
@@ -83,6 +83,7 @@ internal fun SocialButton(socialButtonType: SocialButtonType, onClick: () -> Uni
         modifier = Modifier.padding(8.dp).height(48.dp).fillMaxWidth(),
         onClick = { onClick() },
         shape = RoundedCornerShape(6.dp),
+        elevation = ButtonDefaults.elevation(8.dp, 12.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.White,
         )

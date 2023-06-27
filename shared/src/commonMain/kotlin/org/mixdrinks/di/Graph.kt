@@ -39,6 +39,7 @@ internal class Graph {
     val mutableFilterStorage = MutableFilterStorage { snapshotRepository.get() }
 
     val tokenStorage = TokenStorage(settings)
+
 }
 
 internal object GraphHolder {

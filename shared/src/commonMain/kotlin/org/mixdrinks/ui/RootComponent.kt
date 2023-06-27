@@ -4,17 +4,23 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.di.Graph
 import org.mixdrinks.ui.main.MainComponent
 import org.mixdrinks.ui.profile.ProfileComponent
+import org.mixdrinks.ui.widgets.undomain.scope
 
 internal class RootComponent(
     private val componentContext: ComponentContext,
@@ -35,6 +41,9 @@ internal class RootComponent(
     private val _selectedTab = MutableStateFlow(BottomNavigationTab.Main)
     val selectedTab: StateFlow<BottomNavigationTab> = _selectedTab
 
+    private val _showAuthDialog = MutableStateFlow(false)
+    val showAuthDialog: StateFlow<Boolean> = _showAuthDialog
+
     private fun createChild(config: Config, componentContext: ComponentContext): Child {
         return when (config) {
             is Config.Main -> Child.Main(createMainComponent(componentContext))
@@ -51,12 +60,48 @@ internal class RootComponent(
     }
 
     fun open(tab: BottomNavigationTab) {
-        _selectedTab.value = tab
-        val config = when (tab) {
-            BottomNavigationTab.Main -> Config.Main
-            BottomNavigationTab.Profile -> Config.Profile
+        when (tab) {
+            BottomNavigationTab.Main -> {
+                openTab(BottomNavigationTab.Main)
+            }
+
+            BottomNavigationTab.Profile -> {
+                openProfile()
+            }
         }
-        navigation.replaceCurrent(config)
+    }
+
+    fun authFlowCancel() {
+        _showAuthDialog.tryEmit(false)
+    }
+
+    private val loginDialogScope = scope + SupervisorJob()
+
+    private fun openProfile() {
+        if (graph.tokenStorage.getToken() != null) {
+            navigation.replaceCurrent(Config.Profile)
+            return
+        }
+        loginDialogScope.launch {
+            _showAuthDialog.emit(true)
+            graph.tokenStorage.tokenFlow
+                .collectLatest {
+                    if (it != null) {
+                        _showAuthDialog.emit(false)
+                        withContext(Dispatchers.Main) {
+                            openTab(BottomNavigationTab.Profile)
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun openTab(tab: BottomNavigationTab) {
+        _selectedTab.tryEmit(tab)
+        when (tab) {
+            BottomNavigationTab.Main -> navigation.replaceCurrent(Config.Main)
+            BottomNavigationTab.Profile -> navigation.replaceCurrent(Config.Profile)
+        }
     }
 
     enum class BottomNavigationTab(

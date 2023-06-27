@@ -1,10 +1,10 @@
 package org.mixdrinks.ui.profile
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import org.mixdrinks.ui.auth.AuthView
+import org.mixdrinks.di.GraphHolder
 
 @Composable
 internal fun ProfileContent(component: ProfileComponent) {
-    AuthView(Modifier, {})
+    Text("Profile ${GraphHolder.graph.tokenStorage.getToken()}")
 }
