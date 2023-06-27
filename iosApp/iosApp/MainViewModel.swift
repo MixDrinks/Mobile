@@ -18,17 +18,16 @@ import AuthenticationServices
 fileprivate var currentNonce: String?
 
 class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    
+
     override init() {
         super.init()
         Main_iosKt.setGoogleAuthStart {
-            //self.googleSignIn()
-            self.startSignInWithAppleFlow()
+            self.googleSignIn()
         }
         Main_iosKt.setAppleAuthStart {
             self.startSignInWithAppleFlow()
         }
-        
+
         Main_iosKt.setLogout {
             let firebaseAuth = Auth.auth()
             do {
@@ -38,7 +37,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
             }
         }
     }
-    
+
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         // Find the window associated with the currently active scene
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -64,7 +63,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
       authorizationController.performRequests()
     }
 
-    
+
     private func randomNonceString(length: Int = 32) -> String {
       precondition(length > 0)
       var randomBytes = [UInt8](repeating: 0, count: length)
@@ -85,7 +84,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
 
       return String(nonce)
     }
-    
+
     @available(iOS 13, *)
     private func sha256(_ input: String) -> String {
       let inputData = Data(input.utf8)
@@ -104,26 +103,26 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
         }
       } else {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        
+
         let configuration = GIDConfiguration(clientID: clientID)
-        
+
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
         guard let rootViewController = windowScene.windows.first?.rootViewController else { return }
-        
+
         GIDSignIn.sharedInstance.signIn(with: configuration, presenting: rootViewController) { [unowned self] user, error in
           authenticateUser(for: user, with: error)
         }
       }
     }
-    
+
     private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
       if let error = error {
         print(error.localizedDescription)
         return
       }
-      
+
       guard let authentication = user?.authentication, let idToken = authentication.idToken else { return }
-      
+
       let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
 
       Auth.auth().signIn(with: credential) { (authResult, error) in
@@ -137,7 +136,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
                                         print("Error retrieving token: \(error.localizedDescription)")
                                     } else {
                                         print("token \(token ?? "")")
-                                        
+
                                         if let unwrappedToken = token {
                                             Main_iosKt.NewToken(token: unwrappedToken)
                                         }
@@ -172,7 +171,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
           // Error. If error.code == .MissingOrInvalidNonce, make sure
           // you're sending the SHA256-hashed nonce as a hex string with
           // your request to Apple.
-            
+
             if let safeError = error {
                 // The error is not nil, it has been successfully unwrapped
                 let description = safeError.localizedDescription
@@ -183,7 +182,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
                 print("error is nill")
             }
 
-          
+
           return
         }
           print("success")
@@ -194,7 +193,7 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
                                       print("Error retrieving token: \(error.localizedDescription)")
                                   } else {
                                       print("token \(token ?? "")")
-                                      
+
                                       if let unwrappedToken = token {
                                           Main_iosKt.NewToken(token: unwrappedToken)
                                       }

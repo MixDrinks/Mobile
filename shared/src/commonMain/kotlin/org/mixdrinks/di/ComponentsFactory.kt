@@ -171,8 +171,4 @@ internal class ComponentsFactory(
             mutableFilterStorage = { graph.mutableFilterStorage },
         )
     }
-
-    fun authComponent(componentContext: ComponentContext, navigator: Navigator): AuthComponent {
-        return AuthComponent(componentContext, navigator)
-    }
 }

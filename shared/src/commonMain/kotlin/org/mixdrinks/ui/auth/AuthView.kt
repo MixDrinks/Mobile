@@ -68,7 +68,7 @@ internal fun AuthView(modifier: Modifier, onClose: () -> Unit) {
     }
 }
 
-enum class SocialButtonType(
+internal enum class SocialButtonType(
     val icon: String,
     val text: String,
 ) {
@@ -78,7 +78,7 @@ enum class SocialButtonType(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun SocialButton(socialButtonType: SocialButtonType, onClick: () -> Unit) {
+internal fun SocialButton(socialButtonType: SocialButtonType, onClick: () -> Unit) {
     Button(
         modifier = Modifier.padding(8.dp).height(48.dp).fillMaxWidth(),
         onClick = { onClick() },
