@@ -15,7 +15,6 @@ fun NewToken(token: String) {
     GraphHolder.graph.tokenStorage.setToken(token)
 }
 
-@Suppress("FunctionNaming")
 fun setLogout(block: () -> Unit) {
     AuthCallbacks.logout = {
         block()

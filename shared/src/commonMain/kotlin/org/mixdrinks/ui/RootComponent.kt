@@ -5,29 +5,21 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.russhwolf.settings.Settings
-import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import org.mixdrinks.data.MixDrinksService
-import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.di.Graph
 import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.auth.AuthComponent
-import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.SearchItemComponent
 import org.mixdrinks.ui.items.ItemDetailComponent
 import org.mixdrinks.ui.list.main.ListComponent
-import org.mixdrinks.ui.list.main.MutableFilterStorage
 import org.mixdrinks.ui.navigation.DeepLinkParser
 import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.tag.CommonTag
@@ -38,7 +30,7 @@ import org.mixdrinks.ui.widgets.undomain.launch
 internal class RootComponent(
     componentContext: ComponentContext,
     private val graph: Graph,
-    private val componentsFactory: ComponentsFactory,
+    internal val componentsFactory: ComponentsFactory,
 ) : ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Navigator.Config>()
@@ -47,10 +39,13 @@ internal class RootComponent(
 
     private val _stack: Value<ChildStack<Navigator.Config, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Navigator.Config.AuthConfig(),
+        initialConfiguration = Navigator.Config.ListConfig(),
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    private val _authDialogShow = MutableStateFlow(true)
+    val authDialogShow: StateFlow<Boolean> = _authDialogShow
 
     val stack: Value<ChildStack<Navigator.Config, Child>> = _stack
 
@@ -83,7 +78,11 @@ internal class RootComponent(
     }
 
     fun onBack() {
-        navigator.back()
+        if (authDialogShow.value) {
+            _authDialogShow.tryEmit(false)
+        } else {
+            navigator.back()
+        }
     }
 
     private fun createChild(config: Navigator.Config, componentContext: ComponentContext): Child =

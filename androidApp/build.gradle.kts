@@ -13,6 +13,9 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(project(":shared"))
+                implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+                implementation("com.google.firebase:firebase-auth-ktx")
+                implementation("com.google.android.gms:play-services-auth:20.6.0")
             }
         }
     }
@@ -38,9 +41,8 @@ android {
             this.resValue("string", "app_name", "MixDrinks")
         }
         getByName("debug") {
-            applicationIdSuffix = ".debug"
             isDebuggable = true
-            this.resValue("string", "app_name", "Debug_MixDrinks")
+            this.resValue("string", "app_name", "MixDrinks")
         }
     }
     compileOptions {
