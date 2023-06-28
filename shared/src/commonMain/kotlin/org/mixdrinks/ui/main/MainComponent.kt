@@ -12,7 +12,6 @@ import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.di.Graph
 import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.ui.auth.AuthComponent
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.SearchItemComponent
@@ -70,10 +69,6 @@ internal class MainComponent(
                 }
             }
         }
-    }
-
-    fun onBack() {
-        navigator.back()
     }
 
     private fun createChild(config: Navigator.Config, componentContext: ComponentContext): Child =

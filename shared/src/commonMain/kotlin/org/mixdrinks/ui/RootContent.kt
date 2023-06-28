@@ -11,6 +11,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -86,6 +87,12 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                     onClose = { component.authFlowCancel() }
                 )
             }
+        }
+    }
+
+    LaunchedEffect(deepLink) {
+        if (deepLink != null) {
+            component.open(RootComponent.BottomNavigationTab.Main)
         }
     }
 }

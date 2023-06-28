@@ -10,6 +10,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +22,10 @@ import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.di.Graph
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.main.MainComponent
+import org.mixdrinks.ui.navigation.DeepLinkParser
+import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.profile.ProfileComponent
+import org.mixdrinks.ui.widgets.undomain.launch
 import org.mixdrinks.ui.widgets.undomain.scope
 
 internal class RootComponent(

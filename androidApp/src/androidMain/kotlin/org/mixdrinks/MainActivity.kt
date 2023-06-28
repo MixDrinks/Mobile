@@ -32,8 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val deepLink = intent?.data?.toString()
+        setContent {
+            MainView(deepLink)
+        }
 
         FirebaseApp.initializeApp(this)
 
@@ -44,10 +46,6 @@ class MainActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         firebaseAuth = FirebaseAuth.getInstance()
-
-        setContent {
-            MainView(deepLink)
-        }
 
         setGoogleAuthStart {
             signInGoogle()

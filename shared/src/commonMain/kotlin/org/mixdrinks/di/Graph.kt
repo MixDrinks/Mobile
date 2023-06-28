@@ -12,8 +12,10 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
+import org.mixdrinks.domain.FilterPathParser
 import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.list.main.MutableFilterStorage
+import org.mixdrinks.ui.navigation.DeepLinkParser
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
 
 internal class Graph {
@@ -62,6 +64,13 @@ internal class Graph {
     val snapshotRepository: SnapshotRepository = SnapshotRepository(snapshotService, settings, json)
 
     val mutableFilterStorage = MutableFilterStorage { snapshotRepository.get() }
+
+    suspend fun getDeepLinkParser(): DeepLinkParser {
+        return DeepLinkParser(
+            suspend { snapshotRepository.get() },
+            FilterPathParser(),
+        )
+    }
 
 
 }
