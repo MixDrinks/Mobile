@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import setAppleAuthStart
 import setGoogleAuthStart
 import setLogout
@@ -53,30 +55,25 @@ class MainActivity : AppCompatActivity() {
             signInGoogle()
         }
 
-        val appelProvider = OAuthProvider.newBuilder("apple.com")
-
+        val appleProvider = OAuthProvider.newBuilder("apple.com")
 
         setAppleAuthStart {
             val pending = firebaseAuth.pendingAuthResult
             if (pending != null) {
                 pending.addOnSuccessListener { authResult ->
-                    Log.d("Main", "checkPending:onSuccess:$authResult")
                     authResult.user.sendNewToken()
                 }.addOnFailureListener { e ->
-                    Log.w("Main", "checkPending:onFailure", e)
+                    Firebase.crashlytics.recordException(e)
                 }
             } else {
-                Log.d("Main", "pending: null")
-                firebaseAuth.startActivityForSignInWithProvider(this, appelProvider.build())
+                firebaseAuth.startActivityForSignInWithProvider(this, appleProvider.build())
                     .addOnSuccessListener { authResult ->
-                        Log.d("Main", "activitySignIn:onSuccess:${authResult.user}")
                         authResult.user.sendNewToken()
                     }
                     .addOnFailureListener { e ->
-                        Log.w("Main", "activitySignIn:onFailure", e)
+                        Firebase.crashlytics.recordException(e)
                     }
             }
-
         }
 
         setLogout {
@@ -123,12 +120,11 @@ class MainActivity : AppCompatActivity() {
         getIdToken(true)
             .addOnCompleteListener {
                 it.result?.token?.let { token ->
-                    Log.e("Main", "token $token")
                     NewToken(token)
                 }
             }
             .addOnFailureListener {
-                Log.e("Main", "token error $it")
+                Firebase.crashlytics.recordException(it)
             }
     }
 }

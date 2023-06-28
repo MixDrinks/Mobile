@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.compose")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 kotlin {
@@ -13,9 +14,11 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(project(":shared"))
+                implementation("com.google.android.gms:play-services-auth:20.6.0")
                 implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
                 implementation("com.google.firebase:firebase-auth-ktx")
-                implementation("com.google.android.gms:play-services-auth:20.6.0")
+                implementation("com.google.firebase:firebase-crashlytics-ktx")
+                implementation("com.google.firebase:firebase-analytics-ktx")
             }
         }
     }
