@@ -29,7 +29,6 @@ import org.mixdrinks.ui.auth.AuthView
 import org.mixdrinks.ui.main.MainContent
 import org.mixdrinks.ui.profile.ProfileContent
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
     val showAuthDialog by component.showAuthDialog.collectAsState()
@@ -38,24 +37,7 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
     Box {
         Scaffold(
             bottomBar = {
-                BottomNavigation(
-                    backgroundColor = MixDrinksColors.Main,
-                    elevation = 4.dp
-                ) {
-                    tabs.forEach { tab ->
-                        BottomNavigationItem(
-                            icon = { Icon(painterResource(tab.tab.icon), contentDescription = tab.tab.title) },
-                            label = { Text(text = tab.tab.title, fontSize = 12.sp) },
-                            selectedContentColor = Color.White,
-                            unselectedContentColor = Color.White.copy(alpha = 0.3f),
-                            alwaysShowLabel = true,
-                            selected = tab.isSelected,
-                            onClick = {
-                                component.open(tab.tab)
-                            }
-                        )
-                    }
-                }
+                BottomNavigationBar(tabs, component)
             },
             content = {
                 Children(
@@ -93,6 +75,29 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
     LaunchedEffect(deepLink) {
         if (deepLink != null) {
             component.open(RootComponent.BottomNavigationTab.Main)
+        }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun BottomNavigationBar(tabs: List<RootComponent.TabUiModel>, component: RootComponent) {
+    BottomNavigation(
+        backgroundColor = MixDrinksColors.Main,
+        elevation = 4.dp
+    ) {
+        tabs.forEach { tab ->
+            BottomNavigationItem(
+                icon = { Icon(painterResource(tab.tab.icon), contentDescription = tab.tab.title) },
+                label = { Text(text = tab.tab.title, fontSize = 12.sp) },
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White.copy(alpha = 0.3f),
+                alwaysShowLabel = true,
+                selected = tab.isSelected,
+                onClick = {
+                    component.open(tab.tab)
+                }
+            )
         }
     }
 }
