@@ -18,7 +18,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import setAppleAuthStart
 import setGoogleAuthStart
 import setLogout
@@ -26,7 +28,7 @@ import setLogout
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mGoogleSignInClient: GoogleSignInClient
+    lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var register: ActivityResultLauncher<Intent>
     private lateinit var firebaseAuth: FirebaseAuth
 
@@ -44,14 +46,36 @@ class MainActivity : AppCompatActivity() {
             .requestEmail()
             .build()
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
         firebaseAuth = FirebaseAuth.getInstance()
 
         setGoogleAuthStart {
             signInGoogle()
         }
 
+        val appelProvider = OAuthProvider.newBuilder("apple.com")
+
+
         setAppleAuthStart {
+            val pending = firebaseAuth.pendingAuthResult
+            if (pending != null) {
+                pending.addOnSuccessListener { authResult ->
+                    Log.d("Main", "checkPending:onSuccess:$authResult")
+                    authResult.user.sendNewToken()
+                }.addOnFailureListener { e ->
+                    Log.w("Main", "checkPending:onFailure", e)
+                }
+            } else {
+                Log.d("Main", "pending: null")
+                firebaseAuth.startActivityForSignInWithProvider(this, appelProvider.build())
+                    .addOnSuccessListener { authResult ->
+                        Log.d("Main", "activitySignIn:onSuccess:${authResult.user}")
+                        authResult.user.sendNewToken()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("Main", "activitySignIn:onFailure", e)
+                    }
+            }
 
         }
 
@@ -71,7 +95,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun signInGoogle() {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+        val signInIntent: Intent = googleSignInClient.signInIntent
         register.launch(signInIntent)
     }
 
@@ -90,13 +114,21 @@ class MainActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
-                FirebaseAuth.getInstance().currentUser?.getIdToken(true)
-                    ?.addOnCompleteListener {
-                        it.result?.token?.let { token ->
-                            Log.e("Main", "token $token")
-                            NewToken(token)
-                        }
-                    }
+                FirebaseAuth.getInstance().currentUser?.sendNewToken()
+            }
+    }
+
+    private fun FirebaseUser?.sendNewToken() {
+        this ?: return
+        getIdToken(true)
+            .addOnCompleteListener {
+                it.result?.token?.let { token ->
+                    Log.e("Main", "token $token")
+                    NewToken(token)
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Main", "token error $it")
             }
     }
 }
