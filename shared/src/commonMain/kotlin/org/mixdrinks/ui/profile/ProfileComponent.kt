@@ -12,7 +12,6 @@ import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
-import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -25,17 +24,21 @@ internal class ProfileComponent(
     private val tagsRepository: TagsRepository,
 ) : ComponentContext by componentContext {
 
-    val state: StateFlow<UiState<CocktailsListState.Cocktails>> = flow {
+    val state: StateFlow<UiState<VisitedCocktailList>> = flow {
         emit(UiState.Loading)
         val cocktailIds = visitedCocktailsService.getVisitedCocktails()
             .map { it.id }
 
-        emit(UiState.Data(getCocktailsByIds(cocktailIds)))
+        if (cocktailIds.isEmpty()) {
+            emit(UiState.Data(VisitedCocktailList.Empty))
+        } else {
+            emit(UiState.Data(VisitedCocktailList.Cocktails(getCocktailsByIds(cocktailIds))))
+        }
     }
         .flowOn(Dispatchers.Default)
         .stateInWhileSubscribe()
 
-    private suspend fun getCocktailsByIds(ids: List<CocktailId>): CocktailsListState.Cocktails {
+    private suspend fun getCocktailsByIds(ids: List<CocktailId>): List<CocktailsListState.Cocktails.Cocktail> {
         val cocktails = snapshotRepository.get().cocktails
             .filter { cocktailDto -> ids.contains(cocktailDto.id) }
             .sortedBy { cocktailDto -> ids.indexOf(cocktailDto.id) }
@@ -51,7 +54,13 @@ internal class ProfileComponent(
                 )
             }
 
-        return CocktailsListState.Cocktails(commonCocktailListMapper.map(cocktails))
+        return commonCocktailListMapper.map(cocktails)
+    }
+
+    sealed class VisitedCocktailList {
+        data class Cocktails(val cocktails: List<CocktailsListState.Cocktails.Cocktail>) : VisitedCocktailList()
+
+        object Empty : VisitedCocktailList()
     }
 
 }
