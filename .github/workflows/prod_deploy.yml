@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
       - uses: actions-ecosystem/action-bump-semver@v1
@@ -25,7 +27,7 @@ jobs:
         id: set-output
         run: |
           echo "mix_drinks_mobile_version_name=${{ steps.bump-semver.outputs.new_version }}" >> $GITHUB_OUTPUT
-          
+
           IFS='.' read -r major minor patch <<< "${{ steps.bump-semver.outputs.new_version }}"
           mix_drinks_mobile_version_code=$((major * 10000 + minor * 100 + patch))
 
