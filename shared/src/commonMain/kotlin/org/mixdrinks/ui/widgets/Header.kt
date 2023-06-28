@@ -21,27 +21,29 @@ import org.mixdrinks.app.styles.MixDrinksTextStyles
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-internal fun MixDrinksHeader(name: String, onBackClick: () -> Unit) {
+internal fun MixDrinksHeader(name: String, onBackClick: (() -> Unit)? = null) {
     Row(
         modifier = Modifier
             .background(MixDrinksColors.Main)
             .fillMaxWidth()
             .height(52.dp),
     ) {
-        Box(
-            modifier = Modifier.size(52.dp)
-                .clickable {
-                    onBackClick()
-                }
-        ) {
-            Image(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(32.dp)
-                    .padding(start = 12.dp),
-                painter = painterResource("ic_arrow_back.xml"),
-                contentDescription = "Назад"
-            )
+        if (onBackClick != null) {
+            Box(
+                modifier = Modifier.size(52.dp)
+                    .clickable {
+                        onBackClick()
+                    }
+            ) {
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(32.dp)
+                        .padding(start = 12.dp),
+                    painter = painterResource("ic_arrow_back.xml"),
+                    contentDescription = "Назад"
+                )
+            }
         }
         Text(
             modifier = Modifier.padding(start = 4.dp)

@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "18528209355",
+    "project_id": "mixdrinks-bb828",
+    "storage_bucket": "mixdrinks-bb828.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18528209355:android:5c2687eb3bada359e5ce4e",
+        "android_client_info": {
+          "package_name": "org.mixdrinks.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18528209355-ei9b3v6gkcr9rjk29lspvdpfs5e7uvq0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mixdrinks.app",
+            "certificate_hash": "391bf5ea50bf4d137b995aec1505aecaf21cb999"
+          }
+        },
+        {
+          "client_id": "18528209355-nfp25i6n0pn8n98099b04q93plcsgre1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mixdrinks.app",
+            "certificate_hash": "39fc6fcdbfcc7a5cdeb112ca87d8089112b82fed"
+          }
+        },
+        {
+          "client_id": "18528209355-f88aa33m72rshqp56b2so77ujnm7s32d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_ICk516QsqWbQdogKkt_9B6V_-lmOgTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18528209355-8o18kp2sabqr0928mkp0icaatiu265v3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "18528209355-27v672k8ptniriie05l143938toknieo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.mixdrinks.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

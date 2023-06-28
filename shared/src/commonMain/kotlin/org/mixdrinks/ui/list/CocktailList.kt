@@ -54,12 +54,25 @@ internal fun LazyListScope.cocktailListInserter(
     }
 }
 
+internal fun LazyListScope.cocktailListInserter(
+    cocktails: List<CocktailsListState.Cocktails.Cocktail>,
+    onClick: (CocktailId) -> Unit,
+    onTagClick: (TagId) -> Unit,
+) {
+    cocktails.forEach {
+        item(key = it.id.id) {
+            Cocktail(Modifier, it, onClick, onTagClick)
+        }
+    }
+}
+
+
 @Composable
 internal fun Cocktail(
     modifier: Modifier,
     cocktail: CocktailsListState.Cocktails.Cocktail,
     onClick: (CocktailId) -> Unit,
-    onTagClick : (TagId) -> Unit,
+    onTagClick: (TagId) -> Unit,
 ) {
     Card(
         modifier = modifier

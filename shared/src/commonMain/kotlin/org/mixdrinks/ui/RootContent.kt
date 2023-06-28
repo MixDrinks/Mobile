@@ -1,74 +1,103 @@
 package org.mixdrinks.ui
 
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
-import org.mixdrinks.ui.details.DetailView
-import org.mixdrinks.ui.filters.main.FilterView
-import org.mixdrinks.ui.filters.search.SearchItemView
-import org.mixdrinks.ui.items.ItemDetailsView
-import org.mixdrinks.ui.list.main.MutableCocktailList
-import org.mixdrinks.ui.tag.TagCocktails
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import org.mixdrinks.app.styles.MixDrinksColors
+import org.mixdrinks.ui.auth.AuthView
+import org.mixdrinks.ui.main.MainContent
+import org.mixdrinks.ui.profile.ProfileContent
 
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
-    var lastTouch by remember { mutableStateOf(Offset.Infinite) }
-    Children(
-        modifier = Modifier.pointerInput(Unit) {
-            detectDragGestures(
-                onDragStart = {
-                    lastTouch = if (it.x < CLOSE_ANIMATION_DURACIOTN_TRIGGER) {
-                        it
-                    } else {
-                        Offset.Infinite
-                    }
+    val showAuthDialog by component.showAuthDialog.collectAsState()
+    val tabs by component.selectedTab.collectAsState()
 
-                    println("Start $lastTouch")
-                },
-                onDragEnd = {
-                    lastTouch = Offset.Infinite
-                },
-                onDragCancel = {
-                    lastTouch = Offset.Infinite
-                },
-                onDrag = { change: PointerInputChange, dragAmount: Offset ->
-                    if (change.position.x - lastTouch.x > CLOSE_ANIMATION_DURACIOTN_TRIGGER) {
-                        component.onBack()
+    Box {
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(tabs, component)
+            },
+            content = {
+                Children(
+                    modifier = Modifier.padding(it),
+                    stack = component.stack,
+                    animation = stackAnimation(
+                        animator = fade()
+                    ),
+                    content = {
+                        when (val child = it.instance) {
+                            is RootComponent.Child.Main -> MainContent(child.component, deepLink)
+                            is RootComponent.Child.Profile -> ProfileContent(child.component)
+                        }
                     }
-                }
-            )
-        },
-        stack = component.stack,
-        animation = stackAnimation(
-            animator = slide()
-        ),
-        content = {
-            when (val child = it.instance) {
-                is RootComponent.Child.List -> MutableCocktailList(child.component)
-                is RootComponent.Child.Item -> ItemDetailsView(child.component)
-                is RootComponent.Child.Details -> DetailView(child.component)
-                is RootComponent.Child.Filters -> FilterView(child.component)
-                is RootComponent.Child.ItemSearch -> SearchItemView(child.component)
-                is RootComponent.Child.CommonTagCocktails -> TagCocktails(child.component)
+                )
+            }
+        )
+
+        if (showAuthDialog) {
+            Box(modifier = Modifier
+                .clickable(enabled = false, onClick = { })
+                .fillMaxSize()
+                .background(Color.DarkGray.copy(alpha = 0.5f))
+            ) {
+                AuthView(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                    onClose = { component.authFlowCancel() }
+                )
             }
         }
-    )
+    }
+
     LaunchedEffect(deepLink) {
         if (deepLink != null) {
-            component.onDeepLink(deepLink)
+            component.open(RootComponent.BottomNavigationTab.Main)
         }
     }
 }
 
-private const val CLOSE_ANIMATION_DURACIOTN_TRIGGER = 100
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun BottomNavigationBar(tabs: List<RootComponent.TabUiModel>, component: RootComponent) {
+    BottomNavigation(
+        backgroundColor = MixDrinksColors.Main,
+        elevation = 4.dp
+    ) {
+        tabs.forEach { tab ->
+            BottomNavigationItem(
+                icon = { Icon(painterResource(tab.tab.icon), contentDescription = tab.tab.title) },
+                label = { Text(text = tab.tab.title, fontSize = 12.sp) },
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White.copy(alpha = 0.3f),
+                alwaysShowLabel = true,
+                selected = tab.isSelected,
+                onClick = {
+                    component.open(tab.tab)
+                }
+            )
+        }
+    }
+}

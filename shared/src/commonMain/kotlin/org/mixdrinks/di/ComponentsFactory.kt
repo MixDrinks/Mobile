@@ -1,4 +1,4 @@
-package org.mixdrinks.ui
+package org.mixdrinks.di
 
 import com.arkivanov.decompose.ComponentContext
 import org.mixdrinks.data.CocktailsProvider
@@ -27,12 +27,12 @@ import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.tag.CommonTagNameProvider
 
 internal class ComponentsFactory(
-    private val graph: Graph
+    private val graph: Graph,
 ) {
 
     fun cocktailListComponent(
         componentContext: ComponentContext,
-        navigator: Navigator
+        navigator: Navigator,
     ): ListComponent =
         ListComponent(
             componentContext = componentContext,
@@ -57,16 +57,19 @@ internal class ComponentsFactory(
         cocktailId: CocktailId,
         navigator: Navigator,
     ): DetailsComponent {
-        return DetailsComponent(componentContext,
+        return DetailsComponent(
+            componentContext,
             FullCocktailRepository(graph.snapshotRepository),
             cocktailId,
             navigator,
-            GoodsRepository { graph.snapshotRepository.get() })
+            GoodsRepository { graph.snapshotRepository.get() },
+            graph.visitedCocktailsService,
+        )
     }
 
     fun filterScreenComponent(
         componentContext: ComponentContext,
-        navigator: Navigator
+        navigator: Navigator,
     ): FilterComponent {
         return FilterComponent(
             componentContext,
