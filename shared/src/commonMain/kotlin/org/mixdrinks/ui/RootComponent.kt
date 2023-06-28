@@ -54,11 +54,15 @@ internal class RootComponent(
                 ))
             }
         }
+
+        graph.authBus.registerLogoutNotifier {
+            openTab(BottomNavigationTab.Main)
+        }
     }
 
     val selectedTab: StateFlow<List<TabUiModel>> = _selectedTab
 
-    val showAuthDialog: StateFlow<Boolean> = graph.authDialogBus.showAuthDialog
+    val showAuthDialog: StateFlow<Boolean> = graph.authBus.showAuthDialog
 
     private fun createChild(config: Config, componentContext: ComponentContext): Child {
         return when (config) {
@@ -73,7 +77,7 @@ internal class RootComponent(
 
     private fun createProfileComponent(componentContext: ComponentContext): ProfileComponent {
         return ProfileComponent(componentContext, graph.visitedCocktailsService, graph.snapshotRepository,
-            CocktailListMapper(), TagsRepository(graph.snapshotRepository), graph.tokenStorage)
+            CocktailListMapper(), TagsRepository(graph.snapshotRepository), graph.authBus)
     }
 
     fun open(tab: BottomNavigationTab) {
@@ -89,7 +93,7 @@ internal class RootComponent(
     }
 
     fun authFlowCancel() {
-        graph.authDialogBus.tryEmit(false)
+        graph.authBus.tryEmit(false)
     }
 
     private val loginDialogScope = scope + SupervisorJob()
@@ -100,11 +104,11 @@ internal class RootComponent(
             return
         }
         loginDialogScope.launch {
-            graph.authDialogBus.emit(true)
+            graph.authBus.emit(true)
             graph.tokenStorage.tokenFlow
                 .collectLatest {
                     if (it != null) {
-                        graph.authDialogBus.emit(false)
+                        graph.authBus.emit(false)
                         withContext(Dispatchers.Main) {
                             openTab(BottomNavigationTab.Profile)
                         }

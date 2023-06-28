@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
-import org.mixdrinks.ui.auth.AuthCallbacks
 import org.mixdrinks.ui.list.cocktailListInserter
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
@@ -60,9 +57,10 @@ internal fun ProfileContent(component: ProfileComponent) {
                                         component.logout()
                                     }
                                     .align(Alignment.CenterVertically)
-                                    .padding(end = 4.dp)
-                                    .size(32.dp),
-                                text = "Вийти"
+                                    .padding(end = 4.dp),
+                                text = "Вийти",
+                                style = MixDrinksTextStyles.H4,
+                                color = MixDrinksColors.White,
                             )
                         }
                     }

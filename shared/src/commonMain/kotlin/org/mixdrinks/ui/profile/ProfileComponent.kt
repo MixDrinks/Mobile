@@ -10,8 +10,7 @@ import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.ui.auth.AuthCallbacks
-import org.mixdrinks.ui.auth.TokenStorage
+import org.mixdrinks.ui.auth.AuthBus
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
@@ -25,7 +24,7 @@ internal class ProfileComponent(
     private val snapshotRepository: SnapshotRepository,
     private val commonCocktailListMapper: CocktailListMapper,
     private val tagsRepository: TagsRepository,
-    private val tokenStorage: TokenStorage,
+    private val authBus: AuthBus,
 ) : ComponentContext by componentContext {
 
     val state: StateFlow<UiState<VisitedCocktailList>> = flow {
@@ -44,8 +43,7 @@ internal class ProfileComponent(
         .stateInWhileSubscribe()
 
     fun logout() {
-        tokenStorage.clean()
-        AuthCallbacks.logout()
+        authBus.logout()
     }
 
     private suspend fun getCocktailsByIds(ids: List<CocktailId>): List<CocktailsListState.Cocktails.Cocktail> {

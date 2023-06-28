@@ -3,7 +3,6 @@ package org.mixdrinks.di
 import com.russhwolf.settings.Settings
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.mergeHeaders
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -13,7 +12,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.mixdrinks.data.MixDrinksService
 import org.mixdrinks.data.SnapshotRepository
-import org.mixdrinks.ui.auth.AuthDialogBus
+import org.mixdrinks.ui.auth.AuthBus
 import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.list.main.MutableFilterStorage
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
@@ -65,7 +64,7 @@ internal class Graph {
 
     val mutableFilterStorage = MutableFilterStorage { snapshotRepository.get() }
 
-    val authDialogBus = AuthDialogBus()
+    val authBus = AuthBus(tokenStorage)
 
 }
 
