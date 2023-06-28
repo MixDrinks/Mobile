@@ -21,6 +21,7 @@ import org.mixdrinks.ui.details.goods.GoodsSubComponent
 import org.mixdrinks.ui.navigation.INavigator
 import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
+import org.mixdrinks.ui.visited.authExecutor
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.scope
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -43,7 +44,9 @@ internal class DetailsComponent(
 
     init {
         scope.launch {
-            visitedCocktailsService.visitCocktail(cocktailId.id)
+            authExecutor {
+                visitedCocktailsService.visitCocktail(cocktailId.id)
+            }
         }
     }
 

@@ -18,9 +18,7 @@ class TokenStorage(
     }
 
     fun getToken(): String? {
-        return settings.getStringOrNull(KEY_TOKEN).also {
-            print("get token $it")
-        }
+        return settings.getStringOrNull(KEY_TOKEN)
     }
 
     fun clean() {

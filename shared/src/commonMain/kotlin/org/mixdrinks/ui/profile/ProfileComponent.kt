@@ -10,9 +10,12 @@ import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
+import org.mixdrinks.ui.auth.AuthCallbacks
+import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
+import org.mixdrinks.ui.visited.authExecutor
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
@@ -22,21 +25,28 @@ internal class ProfileComponent(
     private val snapshotRepository: SnapshotRepository,
     private val commonCocktailListMapper: CocktailListMapper,
     private val tagsRepository: TagsRepository,
+    private val tokenStorage: TokenStorage,
 ) : ComponentContext by componentContext {
 
     val state: StateFlow<UiState<VisitedCocktailList>> = flow {
         emit(UiState.Loading)
-        val cocktailIds = visitedCocktailsService.getVisitedCocktails()
-            .map { it.id }
+        val result = authExecutor { visitedCocktailsService.getVisitedCocktails() }
 
-        if (cocktailIds.isEmpty()) {
-            emit(UiState.Data(VisitedCocktailList.Empty))
-        } else {
-            emit(UiState.Data(VisitedCocktailList.Cocktails(getCocktailsByIds(cocktailIds))))
+        result.onSuccess { cocktailIds ->
+            if (cocktailIds.isEmpty()) {
+                emit(UiState.Data(VisitedCocktailList.Empty))
+            } else {
+                emit(UiState.Data(VisitedCocktailList.Cocktails(getCocktailsByIds(cocktailIds.map { it.id }))))
+            }
         }
     }
         .flowOn(Dispatchers.Default)
         .stateInWhileSubscribe()
+
+    fun logout() {
+        tokenStorage.clean()
+        AuthCallbacks.logout()
+    }
 
     private suspend fun getCocktailsByIds(ids: List<CocktailId>): List<CocktailsListState.Cocktails.Cocktail> {
         val cocktails = snapshotRepository.get().cocktails
