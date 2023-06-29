@@ -1,27 +1,27 @@
 ## MixDrinks app
 
-Додаток доступний в **Google Play** та **App Store**:
+The app is available on **Google Play** and **App Store**:
 
 - [Android](https://play.google.com/store/apps/details?id=org.mixdrinks.app)
 - [App Store](https://apps.apple.com/app/id6447103081)
-- [Web](https://play.google.com/apps/testing/org.mixdrinks.app)
+- [Web](https://mixdrinks.org/)
 
-## Перед роботою з проектом
+## Before start any works on project
 
 > **Warning**
 > Writing and running iOS-specific code for a simulated or real device requires macOS. This is an
 > Apple limitation.
 
-Підготовка до роботи з проектом
-Для роботи з проектом вам знадобляться:
 
-- Комютер з актуальною версією macOs
+Check your environment has all requirements for Kotlin Multiplatform Mobile Development:
+
+- The computer must be running latest macOS.
 - [Xcode](https://developer.apple.com/xcode/)
 - [Android Studio](https://developer.android.com/studio)
 - [Kotlin Multiplatform Mobile plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
 - [CocoaPods](https://kotlinlang.org/docs/native-cocoapods.html)
 
-### Це все можна перевірити через `kdoctor`
+### The environment can be checked by `kdoctor`
 
 **Before opening the project in Android Studio**, use [`kdoctor`](https://github.com/Kotlin/kdoctor)
 to ensure your development environment is configured correctly. Install `kdoctor`
@@ -31,7 +31,7 @@ via [`brew`](https://brew.sh/):
 brew install kdoctor
 ```
 
-Якщо щось пішло не так, kdoctor надасть вам список помилок:
+The kdoctor tool will check your environment and provide a list of errors if something goes wrong:
 
 ```
 Environment diagnose (to see all details, use -v option):
@@ -45,79 +45,82 @@ Conclusion:
   ✓ Your system is ready for Kotlin Multiplatform Mobile Development!
 ```
 
-Переконайтеся, що встановлений
-плагін [Kotlin Multiplatform Mobile](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
+#### Codding environment preparation
 
-## Струкутура проекту
+Check you have
+installed [Kotlin Multiplatform Mobile plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile)
 
-Для перегляду структури проекту використовуйте Project view.
+## Project structure
 
-В проекті є три модулі:
+To view the project structure use **Project view**.
+
+The project has three modules:
 
 ### `shared`
 
-Цей модуль містить код, який буде спільним для всіх платформ.
+The module contains code that will be shared across all platforms.
 
 App `@Composable` фукція знаходиться в `shared/src/commonMain/kotlin/App.kt`.
 
 ### `androidApp`
 
-Цей модуль містить код, який буде використовуватись тільки в Android.
+The module contains code that will be used only on Android.
 
 ### `iosApp`
 
-Цей модуль містить код, який буде використовуватись тільки в iOS.
-Модуль `iosApp` залежить від `shared` модуля як від CocoaPods залежності.
+The module contains code that will be used only on iOS.
+The module `iosApp` depends on the `shared` module as a CocoaPods dependency.
 
-## Запуск проекту
+## Run the app/project
 
 ## Android
 
-Виберіть конфігурацію `androidApp` -> `Run`
+Chose the configuration `androidApp` -> `Run`
 
-Gradle
+Or run by gradle command
 `./gradlew installDebug`
 
 ## iOS
 
-### Запуск на iOS simulator
+Before run the mixdrinks project for ios, we highly recommend to run the `Hello, World` Xcode
+project. Just to be sure that your environment is ready for ios development.
 
-Виберіть конфігурацію `iosApp` -> `Run`
+### Run ios mixdrinks app on simulator
 
-### Запуск на реальному iOS пристрої
+Chose the configuration `iosApp` -> `Run`
 
-Підготовка до запуску на фізичному пристрої
+### Run ios mixdrinks app on real ios device
 
-- [Apple ID](https://support.apple.com/en-us/HT204316)
-- Зареєструй пристрій в Xcode
+Before run the app on real ios device you need to prepare your environment:
 
-Перед тим як запускати цей проект переконайтеся що можете запустити "Hello, World" додаток що
-створений Xcode на вашому фізичному пристрої.
+- Create an [Apple ID](https://support.apple.com/en-us/HT204316)
+- Register your iphone in Xcode
 
-Далі додайте значення для поля `TEAM_ID` в `iosApp/Configuration/Config.xcconfig`
+Change the `TEAM_ID` to your team id (can be found in apple.developer),
+in `iosApp/Configuration/Config.xcconfig`
 
-Список team id що є в системі можна отримати за допомогою команди `kdoctor --team-ids`
+Alternatively way to get team id, use kdoctor command `kdoctor --team-ids`. The command will produce
+the list of team ids from your system, choose the one you prefer.
 
 ### Contributing
 
-Автор проекту буде радий будь-якій допомозі.
+We are happy to accept small and large contributions, you can just make changes and create a pull,
+or you can check our [issue tab](https://github.com/MixDrinks/Mobile/issues) and choose the one you
+like.
 
-Нотатки про для розробників що будуть робити зміни в проекті:
+### Troubleshooting
 
-#### Config.xcconfig
+If you have any problems with the project, please check the following list:
 
-- Якщо ваші зміни в код відбуваються в файлі `iosApp/Configuration/Config.xcconfig` то закрийте
-  Android studio та зробіть зміни в іншому редакторі, далі запустіть `./cleanup.sh` після чого
-  проект знову можна відкривати в Android Studio.
+#### Most popular problems, you can run ios app.
 
-```shell
-./cleanup.sh
-```
+Usually happens after you make change is some ios specific files,
+like `iosApp/Configuration/Config.xcconfig` or `iosApp/Info.plist`
 
-#### Робота з ресурсами
+**Close Android Studio or you idea. Than run the `./cleanup.sh`.** Now you can open the project
+again.
 
-Після змін в ресурсах необхідно в `iosApp` запустити `pod install` щоб згенерувати нові файли.
+#### The resource files are not available in ios project
 
-```shell
-pod install
-```
+After you maker changes into resources into `shared` module, you need to run `pod install` in
+the `iosApp` folder.
