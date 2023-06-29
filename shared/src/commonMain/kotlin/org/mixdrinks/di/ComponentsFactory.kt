@@ -8,6 +8,7 @@ import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.CocktailSelector
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.FilterId
+import org.mixdrinks.ui.details.CocktailsDetailNavigation
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.details.FullCocktailRepository
 import org.mixdrinks.ui.details.goods.GoodsRepository
@@ -15,16 +16,20 @@ import org.mixdrinks.ui.filters.main.FilterComponent
 import org.mixdrinks.ui.filters.search.ItemRepository
 import org.mixdrinks.ui.filters.search.SearchItemComponent
 import org.mixdrinks.ui.items.ItemDetailComponent
+import org.mixdrinks.ui.items.ItemDetailsNavigation
 import org.mixdrinks.ui.items.ItemGoodsRepository
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.SelectedFilterProvider
 import org.mixdrinks.ui.list.main.ListComponent
 import org.mixdrinks.ui.list.predefine.PreDefineCocktailsComponent
 import org.mixdrinks.ui.list.predefine.PreDefineFilterStorage
-import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.navigation.MainTabNavigator
+import org.mixdrinks.ui.profile.ProfileNavigator
 import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.tag.CommonTagNameProvider
+import org.mixdrinks.ui.tag.CommonTagNavigation
+import org.mixdrinks.ui.visited.VisitedCocktailsComponent
 
 internal class ComponentsFactory(
     private val graph: Graph,
@@ -32,7 +37,7 @@ internal class ComponentsFactory(
 
     fun cocktailListComponent(
         componentContext: ComponentContext,
-        navigator: Navigator,
+        mainTabNavigator: MainTabNavigator,
     ): ListComponent =
         ListComponent(
             componentContext = componentContext,
@@ -47,7 +52,7 @@ internal class ComponentsFactory(
             ),
             selectedFilterProvider = SelectedFilterProvider(suspend { graph.snapshotRepository.get() },
                 suspend { graph.mutableFilterStorage }),
-            navigator = navigator,
+            mainTabNavigator = mainTabNavigator,
             mutableFilterStorage = graph.mutableFilterStorage,
             cocktailListMapper = CocktailListMapper(),
         )
@@ -55,13 +60,13 @@ internal class ComponentsFactory(
     fun cocktailDetailsComponent(
         componentContext: ComponentContext,
         cocktailId: CocktailId,
-        navigator: Navigator,
+        mainTabNavigator: CocktailsDetailNavigation,
     ): DetailsComponent {
         return DetailsComponent(
             componentContext,
             FullCocktailRepository(graph.snapshotRepository),
             cocktailId,
-            navigator,
+            mainTabNavigator,
             GoodsRepository { graph.snapshotRepository.get() },
             graph.visitedCocktailsService,
         )
@@ -69,20 +74,20 @@ internal class ComponentsFactory(
 
     fun filterScreenComponent(
         componentContext: ComponentContext,
-        navigator: Navigator,
+        mainTabNavigator: MainTabNavigator,
     ): FilterComponent {
         return FilterComponent(
             componentContext,
             graph.mutableFilterStorage,
             createFutureCocktailSelector(),
-            navigator,
+            mainTabNavigator,
         )
     }
 
     fun searchItemScreen(
         component: ComponentContext,
         searchItemType: SearchItemComponent.SearchItemType,
-        navigator: Navigator,
+        mainTabNavigator: MainTabNavigator,
     ): SearchItemComponent {
         val itemRepository =
             ItemRepository(graph.snapshotRepository, createFutureCocktailSelector())
@@ -91,14 +96,14 @@ internal class ComponentsFactory(
             searchItemType,
             graph.mutableFilterStorage,
             itemRepository,
-            navigator,
+            mainTabNavigator,
         )
     }
 
     fun commonTagCocktailsComponent(
         component: ComponentContext,
         commonTag: CommonTag,
-        navigator: Navigator,
+        navigator: CommonTagNavigation,
     ): CommonTagCocktailsComponent {
         return CommonTagCocktailsComponent(
             componentContext = component,
@@ -118,23 +123,26 @@ internal class ComponentsFactory(
                 tagsRepository = TagsRepository(graph.snapshotRepository),
             ),
             commonTag = commonTag,
-            navigator = navigator,
+            profileNavigator = navigator,
             commonCocktailListMapper = CocktailListMapper(),
         )
     }
 
     fun detailGoodsScreen(
-        componentContext: ComponentContext, navigator: Navigator, id: Int, type: String,
+        componentContext: ComponentContext,
+        itemDetailsNavigation: ItemDetailsNavigation,
+        id: Int,
+        type: String,
     ): ItemDetailComponent {
         return ItemDetailComponent(
             componentContext,
             ItemGoodsRepository(graph.snapshotRepository),
-            navigator,
+            itemDetailsNavigation,
             ItemsType(id, ItemsType.Type.valueOf(type)),
             createPredefinedCocktailsComponent(
                 componentContext,
                 ItemsType(id, ItemsType.Type.valueOf(type)),
-                navigator,
+                itemDetailsNavigation,
             ),
         )
     }
@@ -142,7 +150,7 @@ internal class ComponentsFactory(
     fun createPredefinedCocktailsComponent(
         componentContext: ComponentContext,
         itemsType: ItemsType,
-        navigator: Navigator,
+        itemDetailsNavigation: ItemDetailsNavigation,
     ): PreDefineCocktailsComponent {
         return PreDefineCocktailsComponent(
             componentContext = componentContext,
@@ -158,7 +166,7 @@ internal class ComponentsFactory(
                 },
                 tagsRepository = TagsRepository(graph.snapshotRepository)
             ),
-            navigator = navigator,
+            mainTabNavigator = itemDetailsNavigation,
             cocktailsMapper = CocktailListMapper(),
         )
     }
@@ -171,6 +179,21 @@ internal class ComponentsFactory(
                     .map { it.toFilterGroup() })
             },
             mutableFilterStorage = { graph.mutableFilterStorage },
+        )
+    }
+
+    fun visitedCocktailsComponent(
+        componentContext: ComponentContext,
+        profileTabNavigator: ProfileNavigator,
+    ): VisitedCocktailsComponent {
+        return VisitedCocktailsComponent(
+            componentContext = componentContext,
+            visitedCocktailsService = graph.visitedCocktailsService,
+            snapshotRepository = graph.snapshotRepository,
+            commonCocktailListMapper = CocktailListMapper(),
+            tagsRepository = TagsRepository(graph.snapshotRepository),
+            visitedCocktailsNavigation = profileTabNavigator,
+            authBus = graph.authBus,
         )
     }
 }

@@ -12,9 +12,9 @@ internal interface INavigator {
 
     fun navigateToItem(itemsType: ItemsType.Type, id: Int)
 
-    fun navigateToDetails(id: Int)
+    fun navigateToDetails(cocktailId: Int)
 
-    fun navigateToDetails(id: CocktailId)
+    fun navigateToDetails(cocktailId: CocktailId)
 
     fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType)
 
@@ -24,6 +24,6 @@ internal interface INavigator {
 
     fun navigationToTasteCocktails(tasteId: TasteId)
 
-    fun openFromDeepLink(config: Navigator.Config)
+    fun openFromDeepLink(config: MainTabNavigator.Config)
 
 }

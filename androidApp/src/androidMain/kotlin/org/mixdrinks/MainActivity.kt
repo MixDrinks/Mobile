@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val deepLink = intent?.data?.toString()
+        window.statusBarColor = android.graphics.Color.parseColor("#FF2B4718")
         setContent {
             MainView(deepLink)
         }

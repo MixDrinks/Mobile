@@ -45,7 +45,7 @@ internal fun ItemDetailsView(component: ItemDetailComponent) {
 @Composable
 internal fun ItemViewContent(
     good: DetailGoodsUiModel,
-    component: ItemDetailComponent
+    component: ItemDetailComponent,
 ) {
     val predefineComponent = remember(good) { component.predefineCocktailComponent }
     val cocktails by predefineComponent.state.collectAsState()

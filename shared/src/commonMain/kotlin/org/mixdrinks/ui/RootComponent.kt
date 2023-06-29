@@ -16,10 +16,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.di.Graph
-import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.main.MainComponent
 import org.mixdrinks.ui.profile.ProfileComponent
 import org.mixdrinks.ui.widgets.undomain.scope
@@ -76,8 +74,10 @@ internal class RootComponent(
     }
 
     private fun createProfileComponent(componentContext: ComponentContext): ProfileComponent {
-        return ProfileComponent(componentContext, graph.visitedCocktailsService, graph.snapshotRepository,
-            CocktailListMapper(), TagsRepository(graph.snapshotRepository), graph.authBus)
+        return ProfileComponent(
+            componentContext,
+            ComponentsFactory(graph),
+        )
     }
 
     fun open(tab: BottomNavigationTab) {

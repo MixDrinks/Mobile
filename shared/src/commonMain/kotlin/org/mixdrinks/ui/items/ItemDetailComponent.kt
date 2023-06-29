@@ -13,18 +13,17 @@ import org.mixdrinks.dto.GoodId
 import org.mixdrinks.dto.ToolId
 import org.mixdrinks.ui.list.predefine.PreDefineCocktailsComponent
 import org.mixdrinks.ui.navigation.INavigator
-import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
 
 internal class ItemDetailComponent(
     private val componentContext: ComponentContext,
     private val goodsRepository: ItemGoodsRepository,
-    private val navigator: Navigator,
+    private val itemDetailsNavigation: ItemDetailsNavigation,
     private val itemsType: ItemsType,
     public val predefineCocktailComponent: PreDefineCocktailsComponent,
 ) : ComponentContext by componentContext,
-    INavigator by navigator {
+    ItemDetailsNavigation by itemDetailsNavigation {
 
     val state: StateFlow<UiState<DetailGoodsUiModel>> = when (itemsType.type) {
         ItemsType.Type.GOODS -> flow {

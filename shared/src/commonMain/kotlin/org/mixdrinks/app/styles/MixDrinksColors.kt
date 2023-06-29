@@ -22,4 +22,7 @@ internal object MixDrinksColors {
 
     @Stable
     val DarkGrey = Color(0xFF404040)
+
+    @Stable
+    val Red = Color(0xFFFF0000)
 }

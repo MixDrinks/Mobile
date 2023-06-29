@@ -1,74 +1,107 @@
 package org.mixdrinks.ui.profile
 
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import org.mixdrinks.data.CocktailsProvider
-import org.mixdrinks.data.SnapshotRepository
-import org.mixdrinks.data.TagsRepository
-import org.mixdrinks.domain.ImageUrlCreators
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.parcelable.Parcelable
+import com.arkivanov.essenty.parcelable.Parcelize
+import kotlin.native.concurrent.ThreadLocal
+import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.ui.auth.AuthBus
-import org.mixdrinks.ui.list.CocktailListMapper
-import org.mixdrinks.ui.list.CocktailsListState
-import org.mixdrinks.ui.visited.UserVisitedCocktailsService
-import org.mixdrinks.ui.visited.authExecutor
-import org.mixdrinks.ui.widgets.undomain.UiState
-import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
+import org.mixdrinks.ui.details.DetailsComponent
+import org.mixdrinks.ui.items.ItemDetailComponent
+import org.mixdrinks.ui.tag.CommonTag
+import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
+import org.mixdrinks.ui.visited.VisitedCocktailsComponent
 
 internal class ProfileComponent(
     private val componentContext: ComponentContext,
-    private val visitedCocktailsService: UserVisitedCocktailsService,
-    private val snapshotRepository: SnapshotRepository,
-    private val commonCocktailListMapper: CocktailListMapper,
-    private val tagsRepository: TagsRepository,
-    private val authBus: AuthBus,
+    private val componentsFactory: ComponentsFactory,
 ) : ComponentContext by componentContext {
 
-    val state: StateFlow<UiState<VisitedCocktailList>> = flow {
-        emit(UiState.Loading)
-        val result = authExecutor { visitedCocktailsService.getVisitedCocktails() }
+    private val navigation = StackNavigation<ProfileContentConfig>()
 
-        result.onSuccess { cocktailIds ->
-            if (cocktailIds.isEmpty()) {
-                emit(UiState.Data(VisitedCocktailList.Empty))
-            } else {
-                emit(UiState.Data(VisitedCocktailList.Cocktails(getCocktailsByIds(cocktailIds.map { it.id }))))
-            }
+    private val profileTabNavigator: ProfileNavigator = ProfileNavigator(navigation)
+
+    private val _stack: Value<ChildStack<ProfileContentConfig, ProfileChild>> = childStack(
+        source = navigation,
+        initialConfiguration = ProfileContentConfig.VisitedCocktailsConfig,
+        handleBackButton = true,
+        childFactory = ::createChild
+    )
+
+    val stack: Value<ChildStack<ProfileContentConfig, ProfileChild>> = _stack
+
+    private fun createChild(config: ProfileContentConfig, componentContext: ComponentContext): ProfileChild {
+        return when (config) {
+            is ProfileContentConfig.CommonTagConfig -> ProfileChild.CommonTag(
+                componentsFactory.commonTagCocktailsComponent(
+                    componentContext, CommonTag(config.id, config.type), profileTabNavigator,
+                )
+            )
+
+            is ProfileContentConfig.DetailsConfig -> ProfileChild.Details(
+                componentsFactory.cocktailDetailsComponent(componentContext, CocktailId(config.id), profileTabNavigator)
+            )
+
+            is ProfileContentConfig.ItemConfig -> ProfileChild.Item(
+                componentsFactory.detailGoodsScreen(
+                    componentContext = componentContext,
+                    itemDetailsNavigation = profileTabNavigator,
+                    id = config.id,
+                    type = config.typeGoods
+                )
+            )
+
+            ProfileContentConfig.VisitedCocktailsConfig -> ProfileChild.VisitedCocktails(
+                componentsFactory.visitedCocktailsComponent(componentContext, profileTabNavigator)
+            )
         }
     }
-        .flowOn(Dispatchers.Default)
-        .stateInWhileSubscribe()
 
-    fun logout() {
-        authBus.logout()
+    sealed class ProfileContentConfig(open val operationIndex: Int) : Parcelable {
+
+        @Parcelize
+        object VisitedCocktailsConfig : ProfileContentConfig(0)
+
+        @Parcelize
+        data class DetailsConfig(
+            val id: Int,
+            override val operationIndex: Int,
+        ) : ProfileContentConfig(operationIndex) {
+            constructor(id: Int) : this(id, Companion.operation++)
+        }
+
+        @Parcelize
+        data class ItemConfig(
+            val id: Int,
+            val typeGoods: String,
+            override val operationIndex: Int,
+        ) : ProfileContentConfig(operationIndex) {
+            constructor(id: Int, itemType: String) : this(id, itemType, Companion.operation++)
+        }
+
+        @Parcelize
+        data class CommonTagConfig(
+            val id: Int,
+            val type: CommonTag.Type,
+            override val operationIndex: Int,
+        ) : ProfileContentConfig(operationIndex) {
+            constructor(id: Int, type: CommonTag.Type) : this(id, type, operation++)
+        }
+
+        @ThreadLocal
+        companion object {
+            private var operation: Int = 0
+        }
     }
 
-    private suspend fun getCocktailsByIds(ids: List<CocktailId>): List<CocktailsListState.Cocktails.Cocktail> {
-        val cocktails = snapshotRepository.get().cocktails
-            .filter { cocktailDto -> ids.contains(cocktailDto.id) }
-            .sortedBy { cocktailDto -> ids.indexOf(cocktailDto.id) }
-            .map { cocktailDto ->
-                CocktailsProvider.Cocktail(
-                    id = cocktailDto.id,
-                    url = ImageUrlCreators.createUrl(
-                        cocktailDto.id,
-                        ImageUrlCreators.Size.SIZE_400
-                    ),
-                    name = cocktailDto.name,
-                    tags = tagsRepository.getTags(cocktailDto.tags)
-                )
-            }
-
-        return commonCocktailListMapper.map(cocktails)
+    sealed class ProfileChild {
+        class VisitedCocktails(val component: VisitedCocktailsComponent) : ProfileChild()
+        class Details(val component: DetailsComponent) : ProfileChild()
+        class Item(val component: ItemDetailComponent) : ProfileChild()
+        class CommonTag(val component: CommonTagCocktailsComponent) : ProfileChild()
     }
-
-    sealed class VisitedCocktailList {
-        data class Cocktails(val cocktails: List<CocktailsListState.Cocktails.Cocktail>) : VisitedCocktailList()
-
-        object Empty : VisitedCocktailList()
-    }
-
 }

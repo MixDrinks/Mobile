@@ -10,7 +10,7 @@ import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.filters.main.FilterView
 import org.mixdrinks.ui.filters.search.SearchItemView
 import org.mixdrinks.ui.items.ItemDetailsView
-import org.mixdrinks.ui.list.main.MutableCocktailList
+import org.mixdrinks.ui.list.main.AllCocktailsPage
 import org.mixdrinks.ui.tag.TagCocktails
 
 @Composable
@@ -23,7 +23,7 @@ internal fun MainContent(component: MainComponent, deepLink: String?) {
             ),
             content = {
                 when (val child = it.instance) {
-                    is MainComponent.Child.List -> MutableCocktailList(child.component)
+                    is MainComponent.Child.List -> AllCocktailsPage(child.component)
                     is MainComponent.Child.Item -> ItemDetailsView(child.component)
                     is MainComponent.Child.Details -> DetailView(child.component)
                     is MainComponent.Child.Filters -> FilterView(child.component)

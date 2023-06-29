@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Colors
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,43 +36,62 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
     val showAuthDialog by component.showAuthDialog.collectAsState()
     val tabs by component.selectedTab.collectAsState()
 
-    Box {
-        Scaffold(
-            bottomBar = {
-                BottomNavigationBar(tabs, component)
-            },
-            content = {
-                Children(
-                    modifier = Modifier.padding(it),
-                    stack = component.stack,
-                    animation = stackAnimation(
-                        animator = fade()
-                    ),
-                    content = {
-                        when (val child = it.instance) {
-                            is RootComponent.Child.Main -> MainContent(child.component, deepLink)
-                            is RootComponent.Child.Profile -> ProfileContent(child.component)
-                        }
-                    }
-                )
-            }
+    MaterialTheme(
+        colors = Colors(
+            primary = MixDrinksColors.Main,
+            primaryVariant = MixDrinksColors.Main,
+            secondary = MixDrinksColors.Secondary,
+            secondaryVariant = MixDrinksColors.Secondary,
+            background = MixDrinksColors.White,
+            surface = MixDrinksColors.White,
+            error = MixDrinksColors.White,
+            onPrimary = MixDrinksColors.White,
+            onSecondary = MixDrinksColors.White,
+            onBackground = MixDrinksColors.Black,
+            onSurface = MixDrinksColors.White,
+            onError = Color.Red,
+            isLight = true,
         )
+    ) {
+        Box {
+            Scaffold(
+                bottomBar = {
+                    BottomNavigationBar(tabs, component)
+                },
+                content = {
+                    Children(
+                        modifier = Modifier.padding(it),
+                        stack = component.stack,
+                        animation = stackAnimation(
+                            animator = fade()
+                        ),
+                        content = {
+                            when (val child = it.instance) {
+                                is RootComponent.Child.Main -> MainContent(child.component, deepLink)
+                                is RootComponent.Child.Profile -> ProfileContent(child.component)
+                            }
+                        }
+                    )
+                }
+            )
 
-        if (showAuthDialog) {
-            Box(modifier = Modifier
-                .clickable(enabled = false, onClick = { })
-                .fillMaxSize()
-                .background(Color.DarkGray.copy(alpha = 0.5f))
-            ) {
-                AuthView(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.Center),
-                    onClose = { component.authFlowCancel() }
-                )
+            if (showAuthDialog) {
+                Box(modifier = Modifier
+                    .clickable(enabled = false, onClick = { })
+                    .fillMaxSize()
+                    .background(Color.DarkGray.copy(alpha = 0.5f))
+                ) {
+                    AuthView(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.Center),
+                        onClose = { component.authFlowCancel() }
+                    )
+                }
             }
         }
     }
+
 
     LaunchedEffect(deepLink) {
         if (deepLink != null) {

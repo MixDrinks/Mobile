@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 import org.mixdrinks.data.CocktailsProvider
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
-import org.mixdrinks.ui.navigation.INavigator
-import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.widgets.undomain.scope
 
 internal class CommonTagCocktailsComponent(
@@ -23,10 +21,10 @@ internal class CommonTagCocktailsComponent(
     private val commonTagNameProvider: CommonTagNameProvider,
     private val cocktailsProvider: CocktailsProvider,
     private val commonTag: CommonTag,
-    private val navigator: Navigator,
+    private val profileNavigator: CommonTagNavigation,
     private val commonCocktailListMapper: CocktailListMapper,
 ) : ComponentContext by componentContext,
-    INavigator by navigator {
+    CommonTagNavigation by profileNavigator {
 
     val name: StateFlow<String> = flow {
         emit(commonTagNameProvider.getName(commonTag) ?: "")

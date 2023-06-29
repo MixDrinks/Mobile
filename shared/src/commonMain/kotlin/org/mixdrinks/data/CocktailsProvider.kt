@@ -49,4 +49,19 @@ internal class CocktailsProvider(
                 }
         }
     }
+
+    suspend fun getAllCocktails(): List<Cocktail> {
+        return snapshotRepository.get().cocktails
+            .map { cocktailDto ->
+                Cocktail(
+                    id = cocktailDto.id,
+                    url = ImageUrlCreators.createUrl(
+                        cocktailDto.id,
+                        ImageUrlCreators.Size.SIZE_400
+                    ),
+                    name = cocktailDto.name,
+                    tags = tagsRepository.getTags(cocktailDto.tags)
+                )
+            }
+    }
 }

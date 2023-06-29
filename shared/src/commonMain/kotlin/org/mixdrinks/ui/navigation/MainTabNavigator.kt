@@ -5,29 +5,35 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import kotlin.native.concurrent.ThreadLocal
 import org.mixdrinks.data.ItemsType
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
+import org.mixdrinks.ui.details.CocktailsDetailNavigation
 import org.mixdrinks.ui.filters.search.SearchItemComponent
+import org.mixdrinks.ui.items.ItemDetailsNavigation
 import org.mixdrinks.ui.tag.CommonTag
-import kotlin.native.concurrent.ThreadLocal
+import org.mixdrinks.ui.tag.CommonTagNavigation
 
-internal class Navigator(
-    private val stackNavigation: StackNavigation<Config>
-) : INavigator {
+internal class MainTabNavigator(
+    private val stackNavigation: StackNavigation<Config>,
+) : INavigator,
+    CommonTagNavigation,
+    CocktailsDetailNavigation,
+    ItemDetailsNavigation {
 
     sealed class Config(open val operationIndex: Int) : Parcelable {
         @Parcelize
         data class ListConfig(
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
             constructor() : this(operation++)
         }
 
         @Parcelize
         data class FilterConfig(
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
             constructor() : this(operation++)
         }
@@ -35,7 +41,7 @@ internal class Navigator(
         @Parcelize
         data class DetailsConfig(
             val id: Int,
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
             constructor(id: Int) : this(id, operation++)
         }
@@ -44,7 +50,7 @@ internal class Navigator(
         data class ItemConfig(
             val id: Int,
             val typeGoods: String,
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
             constructor(id: Int, itemType: String) : this(id, itemType, operation++)
         }
@@ -52,7 +58,7 @@ internal class Navigator(
         @Parcelize
         data class SearchItemConfig(
             val searchItemType: SearchItemComponent.SearchItemType,
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
 
             constructor(searchItemType: SearchItemComponent.SearchItemType) : this(
@@ -65,7 +71,7 @@ internal class Navigator(
         data class CommonTagConfig(
             val id: Int,
             val type: CommonTag.Type,
-            override val operationIndex: Int
+            override val operationIndex: Int,
         ) : Config(operationIndex) {
             constructor(id: Int, type: CommonTag.Type) : this(id, type, operation++)
         }
@@ -86,12 +92,12 @@ internal class Navigator(
         )
     }
 
-    override fun navigateToDetails(id: Int) {
-        stackNavigation.push(Config.DetailsConfig(id))
+    override fun navigateToDetails(cocktailId: Int) {
+        stackNavigation.push(Config.DetailsConfig(cocktailId))
     }
 
-    override fun navigateToDetails(id: CocktailId) {
-        stackNavigation.push(Config.DetailsConfig(id.id))
+    override fun navigateToDetails(cocktailId: CocktailId) {
+        stackNavigation.push(Config.DetailsConfig(cocktailId.id))
     }
 
     override fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType) {

@@ -18,8 +18,6 @@ import org.mixdrinks.dto.TasteId
 import org.mixdrinks.dto.ToolId
 import org.mixdrinks.ui.details.goods.GoodsRepository
 import org.mixdrinks.ui.details.goods.GoodsSubComponent
-import org.mixdrinks.ui.navigation.INavigator
-import org.mixdrinks.ui.navigation.Navigator
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
 import org.mixdrinks.ui.visited.authExecutor
 import org.mixdrinks.ui.widgets.undomain.UiState
@@ -30,11 +28,11 @@ internal class DetailsComponent(
     private val componentContext: ComponentContext,
     private val fullCocktailRepository: FullCocktailRepository,
     private val cocktailId: CocktailId,
-    private val navigator: Navigator,
+    private val cocktailsDetailNavigation: CocktailsDetailNavigation,
     goodsRepository: GoodsRepository,
     visitedCocktailsService: UserVisitedCocktailsService,
 ) : ComponentContext by componentContext,
-    INavigator by navigator {
+    CocktailsDetailNavigation by cocktailsDetailNavigation {
 
     val goodsSubComponent = GoodsSubComponent(
         componentContext,
