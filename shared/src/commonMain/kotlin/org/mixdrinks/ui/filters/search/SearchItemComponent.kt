@@ -14,7 +14,7 @@ import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.FilterGroupId
 import org.mixdrinks.dto.FilterId
 import org.mixdrinks.ui.list.main.MutableFilterStorage
-import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.navigation.MainTabNavigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.launch
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -24,7 +24,7 @@ internal class SearchItemComponent(
     private val searchItemType: SearchItemType,
     private val mutableFilterStorage: MutableFilterStorage,
     private val itemRepository: ItemRepository,
-    private val navigator: Navigator,
+    private val mainTabNavigator: MainTabNavigator,
 ) : ComponentContext by componentContext {
 
     private val _textState = MutableStateFlow("")
@@ -94,7 +94,7 @@ internal class SearchItemComponent(
     }
 
     fun close() {
-        navigator.back()
+        mainTabNavigator.back()
     }
 
     fun onSearchQueryChanged(query: String) = launch {

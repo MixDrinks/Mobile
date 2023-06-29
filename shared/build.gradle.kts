@@ -42,7 +42,6 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.runtime)
-                implementation(compose.material3)
 
                 implementation("org.jetbrains.compose.components:components-resources:${org.jetbrains.compose.ComposeBuildConfig.composeVersion}")
 

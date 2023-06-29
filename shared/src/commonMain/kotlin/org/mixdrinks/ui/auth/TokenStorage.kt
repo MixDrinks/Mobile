@@ -12,15 +12,13 @@ class TokenStorage(
     val tokenFlow: StateFlow<String?> = _tokenFlow
 
     fun setToken(token: String) {
-        print("new token: $token")
+        println("new token: $token")
         settings.putString(KEY_TOKEN, token)
         _tokenFlow.tryEmit(token)
     }
 
     fun getToken(): String? {
-        return settings.getStringOrNull(KEY_TOKEN).also {
-            print("get token $it")
-        }
+        return settings.getStringOrNull(KEY_TOKEN)
     }
 
     fun clean() {

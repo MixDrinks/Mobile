@@ -16,7 +16,7 @@ import org.mixdrinks.ui.filters.FilterItemUiModel
 import org.mixdrinks.ui.filters.FilterValueChangeDelegate
 import org.mixdrinks.ui.filters.search.SearchItemComponent
 import org.mixdrinks.ui.list.main.MutableFilterStorage
-import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.navigation.MainTabNavigator
 import org.mixdrinks.ui.widgets.undomain.UiState
 import org.mixdrinks.ui.widgets.undomain.launch
 import org.mixdrinks.ui.widgets.undomain.stateInWhileSubscribe
@@ -25,7 +25,7 @@ internal class FilterComponent(
     private val componentContext: ComponentContext,
     private val mutableFilterStorage: MutableFilterStorage,
     private val futureCocktailSelector: FutureCocktailSelector,
-    private val navigator: Navigator,
+    private val mainTabNavigator: MainTabNavigator,
 ) : ComponentContext by componentContext,
     FilterValueChangeDelegate by mutableFilterStorage {
 
@@ -131,7 +131,7 @@ internal class FilterComponent(
     }
 
     fun close() {
-        navigator.back()
+        mainTabNavigator.back()
     }
 
     fun openDetailSearch(filterGroupId: FilterGroupId) {
@@ -141,7 +141,7 @@ internal class FilterComponent(
             else -> error("Unknown filter group id: $filterGroupId")
         }
 
-        navigator.navigateToSearchItem(searchItemType)
+        mainTabNavigator.navigateToSearchItem(searchItemType)
     }
 
     @Immutable

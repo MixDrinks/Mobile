@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Colors
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,17 +33,45 @@ import org.mixdrinks.ui.profile.ProfileContent
 
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
+    MaterialTheme(
+        colors = Colors(
+            primary = MixDrinksColors.Main,
+            primaryVariant = MixDrinksColors.Main,
+            secondary = MixDrinksColors.Secondary,
+            secondaryVariant = MixDrinksColors.Secondary,
+            background = MixDrinksColors.White,
+            surface = MixDrinksColors.White,
+            error = MixDrinksColors.White,
+            onPrimary = MixDrinksColors.White,
+            onSecondary = MixDrinksColors.White,
+            onBackground = MixDrinksColors.Black,
+            onSurface = MixDrinksColors.White,
+            onError = Color.Red,
+            isLight = true,
+        )
+    ) {
+        RootScreen(component, deepLink)
+    }
+
+    LaunchedEffect(deepLink) {
+        if (deepLink != null) {
+            component.open(RootComponent.BottomNavigationTab.Main)
+        }
+    }
+}
+
+@Composable
+private fun RootScreen(component: RootComponent, deepLink: String?) {
     val showAuthDialog by component.showAuthDialog.collectAsState()
     val tabs by component.selectedTab.collectAsState()
-
     Box {
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(tabs, component)
             },
-            content = {
+            content = { paddingValues ->
                 Children(
-                    modifier = Modifier.padding(it),
+                    modifier = Modifier.padding(paddingValues),
                     stack = component.stack,
                     animation = stackAnimation(
                         animator = fade()
@@ -69,12 +99,6 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
                     onClose = { component.authFlowCancel() }
                 )
             }
-        }
-    }
-
-    LaunchedEffect(deepLink) {
-        if (deepLink != null) {
-            component.open(RootComponent.BottomNavigationTab.Main)
         }
     }
 }

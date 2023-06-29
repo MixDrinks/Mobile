@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val deepLink = intent?.data?.toString()
+        window.statusBarColor = android.graphics.Color.parseColor("#FF2B4718")
         setContent {
             MainView(deepLink)
         }
@@ -82,6 +83,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        firebaseAuth.currentUser?.getIdToken(true)
+            ?.addOnCompleteListener {
+                it.result?.token?.let { token ->
+                    NewToken(token)
+                }
+            }
+            ?.addOnFailureListener {
+                Firebase.crashlytics.recordException(it)
+            }
         register = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)

@@ -18,7 +18,7 @@ import org.mixdrinks.ui.filters.search.SearchItemComponent
 import org.mixdrinks.ui.items.ItemDetailComponent
 import org.mixdrinks.ui.list.main.ListComponent
 import org.mixdrinks.ui.navigation.DeepLinkParser
-import org.mixdrinks.ui.navigation.Navigator
+import org.mixdrinks.ui.navigation.MainTabNavigator
 import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.widgets.undomain.launch
@@ -30,18 +30,18 @@ internal class MainComponent(
     private val componentsFactory: ComponentsFactory,
 ) : ComponentContext by componentContext {
 
-    private val navigation = StackNavigation<Navigator.Config>()
+    private val navigation = StackNavigation<MainTabNavigator.Config>()
 
-    private val navigator: Navigator = Navigator(navigation)
+    private val mainTabNavigator: MainTabNavigator = MainTabNavigator(navigation)
 
-    private val _stack: Value<ChildStack<Navigator.Config, Child>> = childStack(
+    private val _stack: Value<ChildStack<MainTabNavigator.Config, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Navigator.Config.ListConfig(),
+        initialConfiguration = MainTabNavigator.Config.ListConfig(),
         handleBackButton = true,
         childFactory = ::createChild
     )
 
-    val stack: Value<ChildStack<Navigator.Config, Child>> = _stack
+    val stack: Value<ChildStack<MainTabNavigator.Config, Child>> = _stack
 
     private val deepLinkParser = DeepLinkParser(
         suspend { graph.snapshotRepository.get() },
@@ -51,61 +51,61 @@ internal class MainComponent(
     fun onDeepLink(deepLink: String) {
         launch {
             deepLinkParser.parseDeepLink(deepLink)?.let { deepLinkAction ->
-                val config: Navigator.Config = when (deepLinkAction) {
-                    is DeepLinkParser.DeepLinkAction.Cocktail -> Navigator.Config.DetailsConfig(
+                val config: MainTabNavigator.Config = when (deepLinkAction) {
+                    is DeepLinkParser.DeepLinkAction.Cocktail -> MainTabNavigator.Config.DetailsConfig(
                         deepLinkAction.id
                     )
 
                     is DeepLinkParser.DeepLinkAction.Filters -> {
                         graph.mutableFilterStorage.selectMany(deepLinkAction.selectedFilters)
-                        Navigator.Config.ListConfig()
+                        MainTabNavigator.Config.ListConfig()
                     }
                 }
 
                 coroutineScope {
                     this.launch(Dispatchers.Main) {
-                        navigator.openFromDeepLink(config)
+                        mainTabNavigator.openFromDeepLink(config)
                     }
                 }
             }
         }
     }
 
-    private fun createChild(config: Navigator.Config, componentContext: ComponentContext): Child =
+    private fun createChild(config: MainTabNavigator.Config, componentContext: ComponentContext): Child =
         when (config) {
-            is Navigator.Config.ListConfig -> Child.List(
-                componentsFactory.cocktailListComponent(componentContext, navigator)
+            is MainTabNavigator.Config.ListConfig -> Child.List(
+                componentsFactory.cocktailListComponent(componentContext, mainTabNavigator)
             )
 
-            is Navigator.Config.DetailsConfig -> Child.Details(
+            is MainTabNavigator.Config.DetailsConfig -> Child.Details(
                 componentsFactory.cocktailDetailsComponent(
                     componentContext,
                     CocktailId(config.id),
-                    navigator
+                    mainTabNavigator
                 )
             )
 
-            is Navigator.Config.FilterConfig -> Child.Filters(
-                componentsFactory.filterScreenComponent(componentContext, navigator)
+            is MainTabNavigator.Config.FilterConfig -> Child.Filters(
+                componentsFactory.filterScreenComponent(componentContext, mainTabNavigator)
             )
 
-            is Navigator.Config.SearchItemConfig -> Child.ItemSearch(
+            is MainTabNavigator.Config.SearchItemConfig -> Child.ItemSearch(
                 componentsFactory.searchItemScreen(
                     componentContext,
                     config.searchItemType,
-                    navigator
+                    mainTabNavigator
                 )
             )
 
-            is Navigator.Config.ItemConfig -> Child.Item(
+            is MainTabNavigator.Config.ItemConfig -> Child.Item(
                 componentsFactory.detailGoodsScreen(
-                    componentContext, navigator, config.id, config.typeGoods
+                    componentContext, mainTabNavigator, config.id, config.typeGoods
                 )
             )
 
-            is Navigator.Config.CommonTagConfig -> Child.CommonTagCocktails(
+            is MainTabNavigator.Config.CommonTagConfig -> Child.CommonTagCocktails(
                 componentsFactory.commonTagCocktailsComponent(
-                    componentContext, CommonTag(config.id, config.type), navigator
+                    componentContext, CommonTag(config.id, config.type), mainTabNavigator
                 )
             )
         }
