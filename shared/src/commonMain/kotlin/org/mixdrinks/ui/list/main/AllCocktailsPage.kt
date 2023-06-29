@@ -61,10 +61,7 @@ internal fun AllCocktailsPage(component: ListComponent) {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun TopBar(component: ListComponent) {
-    val searchQuery by component.searchQuery.collectAsState()
     val isSearchActive by component.isSearchActive.collectAsState()
-
-    val focusRequester = remember { FocusRequester() }
 
     Box(
         modifier = Modifier
@@ -72,32 +69,7 @@ private fun TopBar(component: ListComponent) {
             .fillMaxWidth()
             .height(60.dp),
     ) {
-        AnimatedVisibility(
-            exit = shrinkVertically(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            visible = isSearchActive
-        ) {
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
-            TextField(
-                modifier = Modifier.focusRequester(focusRequester),
-                trailingIcon = {
-                    Icon(
-                        modifier = Modifier.clickable { component.closeSearch() },
-                        painter = painterResource("ic_clear.xml"),
-                        contentDescription = "Закрити"
-                    )
-                },
-                shape = RoundedCornerShape(8.dp),
-                singleLine = true,
-                value = searchQuery,
-                onValueChange = {
-                    component.onSearchQueryChange(it)
-                })
-        }
+        SearchField(component, isSearchActive)
 
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.CenterEnd),
@@ -125,6 +97,39 @@ private fun TopBar(component: ListComponent) {
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun SearchField(component: ListComponent, isSearchActive: Boolean) {
+    val searchQuery by component.searchQuery.collectAsState()
+    val focusRequester = remember { FocusRequester() }
+    AnimatedVisibility(
+        exit = shrinkVertically(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        visible = isSearchActive
+    ) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+        TextField(
+            modifier = Modifier.focusRequester(focusRequester),
+            trailingIcon = {
+                Icon(
+                    modifier = Modifier.clickable { component.closeSearch() },
+                    painter = painterResource("ic_clear.xml"),
+                    contentDescription = "Закрити"
+                )
+            },
+            shape = RoundedCornerShape(8.dp),
+            singleLine = true,
+            value = searchQuery,
+            onValueChange = {
+                component.onSearchQueryChange(it)
+            })
     }
 }
 

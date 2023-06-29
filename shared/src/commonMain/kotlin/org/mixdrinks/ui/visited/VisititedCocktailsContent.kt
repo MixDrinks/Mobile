@@ -23,39 +23,9 @@ import org.mixdrinks.ui.list.cocktailListInserter
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
-internal fun VisititedCocktailsContent(component: VisitedCocktailsComponent) {
+internal fun VisitedCocktailsContent(component: VisitedCocktailsComponent) {
     Column {
-        Row(
-            modifier = Modifier
-                .background(MixDrinksColors.Main)
-                .fillMaxWidth()
-                .height(52.dp),
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .align(Alignment.CenterVertically),
-                color = MixDrinksColors.White,
-                text = "Переглянуті коктейлі",
-                style = MixDrinksTextStyles.H2,
-                softWrap = false,
-                maxLines = 1,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                modifier = Modifier
-                    .clickable {
-                        component.logout()
-                    }
-                    .align(Alignment.CenterVertically)
-                    .padding(end = 4.dp),
-                text = "Вийти",
-                style = MixDrinksTextStyles.H4,
-                color = MixDrinksColors.White,
-            )
-        }
+        Header(component)
 
         ContentHolder(
             stateflow = component.state,
@@ -85,5 +55,40 @@ internal fun VisititedCocktailsContent(component: VisitedCocktailsComponent) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Header(component: VisitedCocktailsComponent) {
+    Row(
+        modifier = Modifier
+            .background(MixDrinksColors.Main)
+            .fillMaxWidth()
+            .height(52.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .align(Alignment.CenterVertically),
+            color = MixDrinksColors.White,
+            text = "Переглянуті коктейлі",
+            style = MixDrinksTextStyles.H2,
+            softWrap = false,
+            maxLines = 1,
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            modifier = Modifier
+                .clickable {
+                    component.logout()
+                }
+                .align(Alignment.CenterVertically)
+                .padding(end = 4.dp),
+            text = "Вийти",
+            style = MixDrinksTextStyles.H4,
+            color = MixDrinksColors.White,
+        )
     }
 }

@@ -8,7 +8,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.items.ItemDetailsView
 import org.mixdrinks.ui.tag.TagCocktails
-import org.mixdrinks.ui.visited.VisititedCocktailsContent
+import org.mixdrinks.ui.visited.VisitedCocktailsContent
 
 @Composable
 internal fun ProfileContent(component: ProfileComponent) {
@@ -24,7 +24,7 @@ internal fun ProfileContent(component: ProfileComponent) {
                         is ProfileComponent.ProfileChild.CommonTag -> TagCocktails(child.component)
                         is ProfileComponent.ProfileChild.Details -> DetailView(child.component)
                         is ProfileComponent.ProfileChild.Item -> ItemDetailsView(child.component)
-                        is ProfileComponent.ProfileChild.VisitedCocktails -> VisititedCocktailsContent(child.component)
+                        is ProfileComponent.ProfileChild.VisitedCocktails -> VisitedCocktailsContent(child.component)
                     }
                 }
             )

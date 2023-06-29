@@ -33,9 +33,6 @@ import org.mixdrinks.ui.profile.ProfileContent
 
 @Composable
 internal fun RootContent(component: RootComponent, deepLink: String?) {
-    val showAuthDialog by component.showAuthDialog.collectAsState()
-    val tabs by component.selectedTab.collectAsState()
-
     MaterialTheme(
         colors = Colors(
             primary = MixDrinksColors.Main,
@@ -53,49 +50,55 @@ internal fun RootContent(component: RootComponent, deepLink: String?) {
             isLight = true,
         )
     ) {
-        Box {
-            Scaffold(
-                bottomBar = {
-                    BottomNavigationBar(tabs, component)
-                },
-                content = {
-                    Children(
-                        modifier = Modifier.padding(it),
-                        stack = component.stack,
-                        animation = stackAnimation(
-                            animator = fade()
-                        ),
-                        content = {
-                            when (val child = it.instance) {
-                                is RootComponent.Child.Main -> MainContent(child.component, deepLink)
-                                is RootComponent.Child.Profile -> ProfileContent(child.component)
-                            }
-                        }
-                    )
-                }
-            )
-
-            if (showAuthDialog) {
-                Box(modifier = Modifier
-                    .clickable(enabled = false, onClick = { })
-                    .fillMaxSize()
-                    .background(Color.DarkGray.copy(alpha = 0.5f))
-                ) {
-                    AuthView(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.Center),
-                        onClose = { component.authFlowCancel() }
-                    )
-                }
-            }
-        }
+        RootScreen(component, deepLink)
     }
-
 
     LaunchedEffect(deepLink) {
         if (deepLink != null) {
             component.open(RootComponent.BottomNavigationTab.Main)
+        }
+    }
+}
+
+@Composable
+private fun RootScreen(component: RootComponent, deepLink: String?) {
+    val showAuthDialog by component.showAuthDialog.collectAsState()
+    val tabs by component.selectedTab.collectAsState()
+    Box {
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(tabs, component)
+            },
+            content = { paddingValues ->
+                Children(
+                    modifier = Modifier.padding(paddingValues),
+                    stack = component.stack,
+                    animation = stackAnimation(
+                        animator = fade()
+                    ),
+                    content = {
+                        when (val child = it.instance) {
+                            is RootComponent.Child.Main -> MainContent(child.component, deepLink)
+                            is RootComponent.Child.Profile -> ProfileContent(child.component)
+                        }
+                    }
+                )
+            }
+        )
+
+        if (showAuthDialog) {
+            Box(modifier = Modifier
+                .clickable(enabled = false, onClick = { })
+                .fillMaxSize()
+                .background(Color.DarkGray.copy(alpha = 0.5f))
+            ) {
+                AuthView(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                    onClose = { component.authFlowCancel() }
+                )
+            }
         }
     }
 }
