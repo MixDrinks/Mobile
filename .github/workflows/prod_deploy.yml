@@ -20,9 +20,11 @@ jobs:
                 with:
                     current_version: ${{ steps.last_tag.outputs.LAST_TAG }}
                     level: patch
-            -   uses: actions-ecosystem/action-push-tag@v1
-                with:
-                    tag: ${{ steps.bump-semver.outputs.new_version }}
+
+            - run: |
+                git config user.name github-actions
+                git config user.email github-actions@github.com
+                git push --tags
             -   name: "Set output"
                 id: set-output
                 run: |
