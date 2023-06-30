@@ -9,19 +9,16 @@ jobs:
     prepare_deploy:
         runs-on: ubuntu-22.04
         steps:
-            -   name: "Checkout"
-                uses: actions/checkout@v3
+            -   uses: actions/checkout@v3
                 with:
-                    fetch-depth: 0
-            -   uses: actions-ecosystem/action-get-latest-tag@v1
-                id: get-latest-tag
-                with:
-                    with_initial_version: true
-                    initial_version: "1.1.0"
+                    fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
+            -   name: 'Get Previous tag'
+                id: previoustag
+                uses: "WyriHaximus/github-action-get-previous-tag@v1"
             -   uses: actions-ecosystem/action-bump-semver@v1
                 id: bump-semver
                 with:
-                    current_version: ${{ steps.get-latest-tag.outputs.tag }}
+                    current_version: ${{ steps.previoustag.outputs.tag }}
                     level: patch
             -   uses: actions-ecosystem/action-push-tag@v1
                 with:
