@@ -15,7 +15,7 @@ jobs:
             -   uses: actions-ecosystem/action-bump-semver@v1
                 id: bump-semver
                 with:
-                    current_version: $(git tag --sort=committerdate | tail -1)
+                    current_version: "$(git tag --sort=committerdate | tail -1)"
                     level: patch
             -   uses: actions-ecosystem/action-push-tag@v1
                 with:
