@@ -21,10 +21,10 @@ jobs:
                     current_version: ${{ steps.last_tag.outputs.LAST_TAG }}
                     level: patch
 
-            - run: |
-                git config user.name github-actions
-                git config user.email github-actions@github.com
-                git push --tags
+            -   run: |
+                    git config user.name github-actions
+                    git config user.email github-actions@github.com
+                    git push --tags
             -   name: "Set output"
                 id: set-output
                 run: |
