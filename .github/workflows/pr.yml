@@ -42,6 +42,7 @@ jobs:
 
             -   name: Use token
                 run: |
+                    echo "Token: ${{ steps.asc.outputs.token }}"
                     JSON=`curl -sS -H "Authorization:Bearer ${{ steps.asc.outputs.token }}" https://api.appstoreconnect.apple.com/v1/apps`
                     echo $JSON
 
