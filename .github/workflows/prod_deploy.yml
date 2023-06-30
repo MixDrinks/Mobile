@@ -11,14 +11,14 @@ jobs:
         steps:
             -   uses: actions/checkout@v3
                 with:
-                    fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
+                    fetch-depth: 0
             -   name: 'Get Previous tag'
                 id: previoustag
-                uses: "WyriHaximus/github-action-get-previous-tag@v1"
+                run: echo "LAST_TAG=$(git tag --sort=committerdate | tail -1)" >> $GITHUB_ENV
             -   uses: actions-ecosystem/action-bump-semver@v1
                 id: bump-semver
                 with:
-                    current_version: ${{ steps.previoustag.outputs.tag }}
+                    current_version: ${{ LAST_TAG }}
                     level: patch
             -   uses: actions-ecosystem/action-push-tag@v1
                 with:
