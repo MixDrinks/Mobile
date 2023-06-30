@@ -12,10 +12,12 @@ jobs:
             -   uses: actions/checkout@v3
                 with:
                     fetch-depth: 0
+            -   name: Set env
+                run: echo "LAST_TAG=$(git tag --sort=committerdate | tail -1)" >> $GITHUB_ENV
             -   uses: actions-ecosystem/action-bump-semver@v1
                 id: bump-semver
                 with:
-                    current_version: "$(git tag --sort=committerdate | tail -1)"
+                    current_version: ${LAST_TAG}
                     level: patch
             -   uses: actions-ecosystem/action-push-tag@v1
                 with:
