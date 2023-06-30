@@ -38,7 +38,7 @@ jobs:
                 with:
                     issuer id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ISSUER_ID  }}
                     key id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}
-                    key: ~/private_keys/AuthKey_${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}.p8
+                    key: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY_RAW }}
 
             -   name: Use token
                 run: |
