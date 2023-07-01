@@ -42,7 +42,7 @@ jobs:
 
             -   name: Use token
                 run: |
-                    JSON=`curl -sS -H "Authorization:Bearer ${{ steps.asc.outputs.token }}" https://api.appstoreconnect.apple.com/v1/apps`
+                    JSON=`curl -sS -H "Authorization:Bearer ${{ steps.asc.outputs.token }}" https://api.appstoreconnect.apple.com/v1/appStoreVersions -d '{"data": {"type": "appStoreVersions","attributes": {"platform": "IOS","versionString": "1.1","copyright": "© 2020 MixDrinks","releaseType": "MANUAL","usesIdfa": false},"relationships": {"app": {"data": {"type": "apps","id": "284993459"}}}}}'`
                     echo $JSON
 
 
