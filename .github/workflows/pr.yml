@@ -22,25 +22,3 @@ jobs:
                 uses: gradle/gradle-build-action@9cf99034d287025d4ee4838498a346d99521aaa4
                 with:
                     arguments: check
-    appstore_token:
-        runs-on: macos-12
-        steps:
-            -   name: Install private API key P8
-                env:
-                    PRIVATE_API_KEY_BASE64: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_PRIVATE_KEY }}
-                    API_KEY: ${{ secrets.MIXDRINKS_IOS_APPSTORE_API_KEY_ID }}
-                run: |
-                    mkdir -p ~/private_keys
-                    echo -n "$PRIVATE_API_KEY_BASE64" | base64 --decode --output ~/private_keys/AuthKey_$API_KEY.p8
-            -   name: Get token
-                id: asc
-                uses: yuki0n0/action-appstoreconnect-token@v1.0
-                with:
-                    issuer id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ISSUER_ID  }}
-                    key id: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ADMIN_API_KEY_ID }}
-                    key: ${{ secrets.MIXDRINKS_IOS_APPSTORE_ADMIN_API_PRIVATE_KEY_RAW }}
-
-            -   name: Use token
-                run: |
-                    JSON=`curl -sS -H "Authorization:Bearer ${{ steps.asc.outputs.token }}" https://api.appstoreconnect.apple.com/v1/appStoreVersions -d '{"data": {"type": "appStoreVersions","attributes": {"platform": "IOS","versionString": "1.1.0","copyright": "© 2020 MixDrinks","releaseType": "MANUAL","usesIdfa": false},"relationships": {"app": {"data": {"type": "apps","id": "421"}}}}}' -H 'Content-Type: application/json'`
-                    echo $JSON
