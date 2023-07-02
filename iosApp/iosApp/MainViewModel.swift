@@ -21,6 +21,20 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
 
     override init() {
         super.init()
+
+        let firebaseAuth = Auth.auth()
+        firebaseAuth.currentUser?.getIDTokenForcingRefresh(true) { (token, error) in
+            if let error = error {
+                print("Error retrieving token: \(error.localizedDescription)")
+            } else {
+                print("token \(token ?? "")")
+
+                if let unwrappedToken = token {
+                    Main_iosKt.NewToken(token: unwrappedToken)
+                }
+            }
+        }
+
         Main_iosKt.setGoogleAuthStart {
             self.googleSignIn()
         }

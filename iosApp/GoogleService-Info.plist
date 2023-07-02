@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>18528209355-huqbcrn38tkgv9g1kvpt1l5r24jlt29v.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.18528209355-huqbcrn38tkgv9g1kvpt1l5r24jlt29v</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>18528209355-ei9b3v6gkcr9rjk29lspvdpfs5e7uvq0.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBX4aFClqVRN1n6StMYr-kpUI41ra18afI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>18528209355</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.mixdrinks.app9LJW42P73L</string>
+	<key>PROJECT_ID</key>
+	<string>mixdrinks-bb828</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mixdrinks-bb828.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:18528209355:ios:45e2d12f94ef0428e5ce4e</string>
+</dict>
+</plist>

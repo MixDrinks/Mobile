@@ -4,10 +4,13 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.mixdrinks.app.MixDrinksApp
 import org.mixdrinks.di.GraphHolder
 import org.mixdrinks.ui.auth.AuthCallbacks
+import platform.UIKit.UIViewController
 
 @Suppress("FunctionNaming")
-fun MainViewController() = ComposeUIViewController {
-    MixDrinksApp(DefaultComponentContext(LifecycleRegistry()), null)
+fun MainViewController(): UIViewController {
+    return ComposeUIViewController {
+        MixDrinksApp(DefaultComponentContext(LifecycleRegistry()), null)
+    }
 }
 
 @Suppress("FunctionNaming")
