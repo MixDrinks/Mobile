@@ -29,7 +29,7 @@ pluginManagement {
         id("org.jetbrains.compose").version(composeVersion)
 
         kotlin("native.cocoapods").version(kotlinVersion)
-        id("com.google.gms.google-services").version("4.3.14")
+        id("com.google.gms.google-services").version("4.3.15")
         id("com.google.firebase.crashlytics").version("2.9.6")
     }
 }

@@ -3,6 +3,7 @@ package org.mixdrinks.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.backhandler.BackDispatcher
 import org.mixdrinks.di.Graph
 import org.mixdrinks.ui.RootComponent
 import org.mixdrinks.ui.RootContent
