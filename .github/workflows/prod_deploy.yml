@@ -56,8 +56,10 @@ jobs:
             -   name: "Setup Gradle"
                 uses: gradle/gradle-build-action@v2
 
-            -   name: "Build bundle release"
-                run: gradle android:bundleRelease
+            -   name: Setup Gradle
+                uses: gradle/gradle-build-action@v2
+            -   name: Run build with Gradle Wrapper
+                run: ./gradlew android:bundleRelease
 
             -   uses: r0adkll/sign-android-release@v1
                 name: "Sign app aab file"
