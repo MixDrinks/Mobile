@@ -4,6 +4,9 @@ on:
     schedule:
         -   cron: '0 16 * * 2'
     workflow_dispatch:
+    push:
+        branches:
+            - ci_new_2
 
 jobs:
     prepare_deploy:
