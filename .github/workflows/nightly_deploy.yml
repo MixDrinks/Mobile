@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - main
-            - fix_test_fly_build
     workflow_dispatch:
 
 jobs:
