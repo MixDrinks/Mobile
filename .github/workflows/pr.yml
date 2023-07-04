@@ -20,3 +20,76 @@ jobs:
                 uses: gradle/gradle-build-action@v2.5.1
                 with:
                     arguments: check
+
+    build_android:
+        env:
+            MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.0.1"
+            MIXDRINKS_MOBILE_APP_VERSION_CODE: 10
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'adopt'
+                    architecture: x64
+
+            -   name: Build with Gradle
+                uses: gradle/gradle-build-action@v2.5.1
+                with:
+                    arguments: android:bundleRelease
+
+            -   uses: r0adkll/sign-android-release@v1
+                name: "Sign app aab file"
+                id: sign_app
+                with:
+                    releaseDirectory: androidApp/build/outputs/bundle/release
+                    signingKeyBase64: ${{ secrets.MIXDRINKS_ANDROID_SIGNING_KEY }}
+                    alias: ${{ secrets.MIXDRINKS_ANDROID_ALIAS }}
+                    keyStorePassword: ${{ secrets.MIXDRINKS_ANDROID_KEY_STORE_PASSWORD }}
+                    keyPassword: ${{ secrets.MIXDRINKS_ANDROID_KEY_PASSWORD }}
+                env:
+                    BUILD_TOOLS_VERSION: "30.0.2"
+
+            -   uses: actions/upload-artifact@v3
+                with:
+                    name: "Upload AAB file as artifact"
+                    path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
+
+    build_ios:
+        env:
+            MIXDRINKS_MOBILE_APP_VERSION_NAME: "0.0.1"
+            MIXDRINKS_MOBILE_APP_VERSION_CODE: 10
+        runs-on: macos-12
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'adopt'
+                    architecture: x64
+
+            -   name: Build with Gradle
+                uses: gradle/gradle-build-action@v2.5.1
+                with:
+                    arguments: podInstall
+
+            -   name: "Build IOS App"
+                uses: yukiarrr/ios-build-action@v1.11.0
+                with:
+                    project-path: iosApp/iosApp.xcodeproj
+                    p12-base64: ${{ secrets.MIXDRINKS_IOS_P12_BASE64 }}
+                    mobileprovision-base64: ${{ secrets.MIXDRINKS_IOS_BUILD_PROVISION_PROFILE_BASE64_TESTFLY }}
+                    code-signing-identity: "iPhone Distribution"
+                    team-id: ${{ secrets.MIXDRINKS_IOS_TEAM_ID }}
+                    certificate-password: ${{ secrets.MIXDRINKS_IOS_CERTIFICATE_PASSWORD }}
+                    export-options: iosApp/exportOptionsTestFly.plist
+                    workspace-path: iosApp/iosApp.xcworkspace
+                    export-method: "ad-hoc"
+            -   name: "Upload IPA file as artifact"
+                uses: actions/upload-artifact@v3
+                with:
+                    name: IOS IPA
+                    path: "output.ipa"
+
