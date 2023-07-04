@@ -20,7 +20,7 @@ pluginManagement {
         kotlin("android").version(kotlinVersion)
 
         kotlin("plugin.serialization").version(kotlinVersion)
-        id("com.google.devtools.ksp").version("${kotlinVersion}-1.0.9")
+        id("com.google.devtools.ksp").version("${kotlinVersion}-1.0.11")
         id("de.jensklingenberg.ktorfit") version "1.0.0"
 
         id("com.android.application").version(agpVersion)
