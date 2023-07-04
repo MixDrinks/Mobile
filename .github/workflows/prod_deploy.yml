@@ -95,6 +95,11 @@ jobs:
         runs-on: macos-12
         steps:
             -   uses: actions/checkout@v3
+            -   name: Apply versions
+                run: |
+                    /usr/libexec/Plistbuddy -c "Set CFBundleVersion $MIXDRINKS_MOBILE_APP_VERSION_CODE" iosApp/Info.plist
+                    /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $MIXDRINKS_MOBILE_APP_VERSION_NAME" iosApp/Info.plist
+
             -   uses: actions/setup-java@v3
                 with:
                     java-version: '17'
