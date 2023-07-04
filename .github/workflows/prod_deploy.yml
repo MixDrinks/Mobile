@@ -50,11 +50,16 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             -   uses: actions/checkout@v3
+            -   uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'adopt'
+                    architecture: x64
 
-            -   name: Setup Gradle
-                uses: gradle/gradle-build-action@v2
-            -   name: Run build with Gradle Wrapper
-                run: ./gradlew android:bundleRelease
+            -   name: Build with Gradle
+                uses: gradle/gradle-build-action@v2.5.1
+                with:
+                    arguments: androidApp:bundleRelease
 
             -   uses: r0adkll/sign-android-release@v1
                 name: "Sign app aab file"
@@ -96,11 +101,10 @@ jobs:
                     distribution: 'adopt'
                     architecture: x64
 
-            -   name: "Setup Gradle"
-                uses: gradle/gradle-build-action@v2
-
-            -   name: "Build xcworkspace"
-                run: ./gradlew podInstall
+            -   name: Build pod install
+                uses: gradle/gradle-build-action@v2.5.1
+                with:
+                    arguments: podInstall
 
             -   name: "Build IOS App"
                 uses: yukiarrr/ios-build-action@v1.11.0
