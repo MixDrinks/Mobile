@@ -24,7 +24,6 @@ internal class VisitedCocktailsComponent(
     private val commonCocktailListMapper: CocktailListMapper,
     private val tagsRepository: TagsRepository,
     private val visitedCocktailsNavigation: VisitedCocktailsNavigation,
-    private val authBus: AuthBus,
 ) : ComponentContext by componentContext,
     VisitedCocktailsNavigation by visitedCocktailsNavigation {
 
@@ -60,10 +59,6 @@ internal class VisitedCocktailsComponent(
             }
 
         return commonCocktailListMapper.map(cocktails)
-    }
-
-    fun logout() {
-        authBus.logout()
     }
 
     sealed class VisitedCocktailList {

@@ -25,6 +25,8 @@ import org.mixdrinks.ui.list.predefine.PreDefineCocktailsComponent
 import org.mixdrinks.ui.list.predefine.PreDefineFilterStorage
 import org.mixdrinks.ui.navigation.MainTabNavigator
 import org.mixdrinks.ui.profile.ProfileNavigator
+import org.mixdrinks.ui.profile.root.ProfileRootComponent
+import org.mixdrinks.ui.profile.root.ProfileRootNavigation
 import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.tag.CommonTagNameProvider
@@ -182,6 +184,18 @@ internal class ComponentsFactory(
         )
     }
 
+    fun profileRootComponent(
+        componentContext: ComponentContext,
+        profileRootNavigation: ProfileRootNavigation,
+    ): ProfileRootComponent {
+        return ProfileRootComponent(
+            componentContext = componentContext,
+            profileRootNavigation = profileRootNavigation,
+            authBus = graph.authBus,
+            deleteAccountService = graph.deleteAccountService,
+        )
+    }
+
     fun visitedCocktailsComponent(
         componentContext: ComponentContext,
         profileTabNavigator: ProfileNavigator,
@@ -193,7 +207,6 @@ internal class ComponentsFactory(
             commonCocktailListMapper = CocktailListMapper(),
             tagsRepository = TagsRepository(graph.snapshotRepository),
             visitedCocktailsNavigation = profileTabNavigator,
-            authBus = graph.authBus,
         )
     }
 }

@@ -15,6 +15,7 @@ import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.ui.auth.AuthBus
 import org.mixdrinks.ui.auth.TokenStorage
 import org.mixdrinks.ui.list.main.MutableFilterStorage
+import org.mixdrinks.ui.profile.root.DeleteAccountService
 import org.mixdrinks.ui.visited.UserVisitedCocktailsService
 
 internal class Graph {
@@ -44,21 +45,29 @@ internal class Graph {
 
     val tokenStorage = TokenStorage(settings)
 
+    val httpClient =  HttpClient {
+        install(Logging)
+        install(ContentNegotiation) {
+            json(json)
+        }
+        install(Auth) {
+            bearer {
+                loadTokens { BearerTokens(tokenStorage.getToken() ?: "", "") }
+            }
+        }
+    }
+
     val visitedCocktailsService = Ktorfit.Builder()
-        .httpClient(HttpClient {
-            install(Logging)
-            install(ContentNegotiation) {
-                json(json)
-            }
-            install(Auth) {
-                bearer {
-                    loadTokens { BearerTokens(tokenStorage.getToken() ?: "", "") }
-                }
-            }
-        })
+        .httpClient(httpClient)
         .baseUrl(baseUrl)
         .build()
         .create<UserVisitedCocktailsService>()
+
+    val deleteAccountService = Ktorfit.Builder()
+        .httpClient(httpClient)
+        .baseUrl(baseUrl)
+        .build()
+        .create<DeleteAccountService>()
 
     val snapshotRepository: SnapshotRepository = SnapshotRepository(snapshotService, settings, json)
 

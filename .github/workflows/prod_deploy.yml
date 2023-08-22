@@ -99,7 +99,6 @@ jobs:
                 run: |
                     /usr/libexec/Plistbuddy -c "Set CFBundleVersion $MIXDRINKS_MOBILE_APP_VERSION_CODE" iosApp/iosApp/Info.plist
                     /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $MIXDRINKS_MOBILE_APP_VERSION_NAME" iosApp/iosApp/Info.plist
-
             -   uses: actions/setup-java@v3
                 with:
                     java-version: '17'

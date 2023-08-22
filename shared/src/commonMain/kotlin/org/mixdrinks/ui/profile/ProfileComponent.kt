@@ -12,6 +12,7 @@ import org.mixdrinks.di.ComponentsFactory
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.ui.details.DetailsComponent
 import org.mixdrinks.ui.items.ItemDetailComponent
+import org.mixdrinks.ui.profile.root.ProfileRootComponent
 import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagCocktailsComponent
 import org.mixdrinks.ui.visited.VisitedCocktailsComponent
@@ -27,7 +28,7 @@ internal class ProfileComponent(
 
     private val _stack: Value<ChildStack<ProfileContentConfig, ProfileChild>> = childStack(
         source = navigation,
-        initialConfiguration = ProfileContentConfig.VisitedCocktailsConfig,
+        initialConfiguration = ProfileContentConfig.ProfileRoot,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -36,6 +37,12 @@ internal class ProfileComponent(
 
     private fun createChild(config: ProfileContentConfig, componentContext: ComponentContext): ProfileChild {
         return when (config) {
+            is ProfileContentConfig.ProfileRoot -> ProfileChild.ProfileRoot(
+                componentsFactory.profileRootComponent(
+                    componentContext,
+                    profileTabNavigator,
+                )
+            )
             is ProfileContentConfig.CommonTagConfig -> ProfileChild.CommonTag(
                 componentsFactory.commonTagCocktailsComponent(
                     componentContext, CommonTag(config.id, config.type), profileTabNavigator,
@@ -55,7 +62,7 @@ internal class ProfileComponent(
                 )
             )
 
-            ProfileContentConfig.VisitedCocktailsConfig -> ProfileChild.VisitedCocktails(
+            is ProfileContentConfig.VisitedCocktailsConfig -> ProfileChild.VisitedCocktails(
                 componentsFactory.visitedCocktailsComponent(componentContext, profileTabNavigator)
             )
         }
@@ -64,7 +71,15 @@ internal class ProfileComponent(
     sealed class ProfileContentConfig(open val operationIndex: Int) : Parcelable {
 
         @Parcelize
-        object VisitedCocktailsConfig : ProfileContentConfig(0)
+        data object ProfileRoot: ProfileContentConfig(0)
+
+        @Parcelize
+        data class VisitedCocktailsConfig(
+            override val operationIndex: Int,
+        ) : ProfileContentConfig(operationIndex) {
+            constructor(): this(Companion.operation++)
+        }
+
 
         @Parcelize
         data class DetailsConfig(
@@ -99,6 +114,7 @@ internal class ProfileComponent(
     }
 
     sealed class ProfileChild {
+        class ProfileRoot(val component: ProfileRootComponent) : ProfileChild()
         class VisitedCocktails(val component: VisitedCocktailsComponent) : ProfileChild()
         class Details(val component: DetailsComponent) : ProfileChild()
         class Item(val component: ItemDetailComponent) : ProfileChild()
