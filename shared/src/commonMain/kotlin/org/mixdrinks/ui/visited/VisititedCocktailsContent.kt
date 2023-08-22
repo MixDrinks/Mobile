@@ -60,24 +60,3 @@ internal fun VisitedCocktailsContent(component: VisitedCocktailsComponent) {
         }
     }
 }
-
-@Composable
-private fun Header() {
-    Row(
-        modifier = Modifier
-            .background(MixDrinksColors.Main)
-            .fillMaxWidth()
-            .height(52.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .align(Alignment.CenterVertically),
-            color = MixDrinksColors.White,
-            text = "Переглянуті коктейлі",
-            style = MixDrinksTextStyles.H2,
-            softWrap = false,
-            maxLines = 1,
-        )
-    }
-}
