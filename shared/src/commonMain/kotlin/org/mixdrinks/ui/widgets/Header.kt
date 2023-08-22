@@ -45,8 +45,9 @@ internal fun MixDrinksHeader(name: String, onBackClick: (() -> Unit)? = null) {
                 )
             }
         }
+        val padding = if (onBackClick == null) 16.dp else 4.dp
         Text(
-            modifier = Modifier.padding(start = 4.dp)
+            modifier = Modifier.padding(start = padding)
                 .align(Alignment.CenterVertically),
             color = MixDrinksColors.White,
             text = name,

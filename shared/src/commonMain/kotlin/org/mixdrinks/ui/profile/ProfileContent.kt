@@ -7,6 +7,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slid
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import org.mixdrinks.ui.details.DetailView
 import org.mixdrinks.ui.items.ItemDetailsView
+import org.mixdrinks.ui.profile.root.ProfileRootContent
 import org.mixdrinks.ui.tag.TagCocktails
 import org.mixdrinks.ui.visited.VisitedCocktailsContent
 
@@ -25,6 +26,7 @@ internal fun ProfileContent(component: ProfileComponent) {
                         is ProfileComponent.ProfileChild.Details -> DetailView(child.component)
                         is ProfileComponent.ProfileChild.Item -> ItemDetailsView(child.component)
                         is ProfileComponent.ProfileChild.VisitedCocktails -> VisitedCocktailsContent(child.component)
+                        is ProfileComponent.ProfileChild.ProfileRoot -> ProfileRootContent(child.component)
                     }
                 }
             )

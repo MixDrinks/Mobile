@@ -9,6 +9,7 @@ import org.mixdrinks.dto.TagId
 import org.mixdrinks.dto.TasteId
 import org.mixdrinks.ui.details.CocktailsDetailNavigation
 import org.mixdrinks.ui.items.ItemDetailsNavigation
+import org.mixdrinks.ui.profile.root.ProfileRootNavigation
 import org.mixdrinks.ui.tag.CommonTag
 import org.mixdrinks.ui.tag.CommonTagNavigation
 import org.mixdrinks.ui.visited.VisitedCocktailsNavigation
@@ -18,7 +19,8 @@ internal class ProfileNavigator(
 ) : VisitedCocktailsNavigation,
     CommonTagNavigation,
     CocktailsDetailNavigation,
-    ItemDetailsNavigation {
+    ItemDetailsNavigation,
+    ProfileRootNavigation {
 
     override fun navigateToDetails(cocktailId: CocktailId) {
         stackNavigation.push(ProfileComponent.ProfileContentConfig.DetailsConfig(cocktailId.id))
@@ -38,5 +40,9 @@ internal class ProfileNavigator(
 
     override fun back() {
         stackNavigation.pop()
+    }
+
+    override fun navigateToVisitedCocktails() {
+        stackNavigation.push(ProfileComponent.ProfileContentConfig.VisitedCocktailsConfig())
     }
 }

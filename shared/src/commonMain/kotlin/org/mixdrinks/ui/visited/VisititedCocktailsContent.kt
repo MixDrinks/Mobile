@@ -1,11 +1,9 @@
 package org.mixdrinks.ui.visited
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,13 +17,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
+import org.mixdrinks.app.utils.ResString
 import org.mixdrinks.ui.list.cocktailListInserter
+import org.mixdrinks.ui.widgets.MixDrinksHeader
 import org.mixdrinks.ui.widgets.undomain.ContentHolder
 
 @Composable
 internal fun VisitedCocktailsContent(component: VisitedCocktailsComponent) {
     Column {
-        Header(component)
+        MixDrinksHeader(
+            name = ResString.visitedCocktails,
+            onBackClick = { component.back() }
+        )
 
         ContentHolder(
             stateflow = component.state,
@@ -59,7 +62,7 @@ internal fun VisitedCocktailsContent(component: VisitedCocktailsComponent) {
 }
 
 @Composable
-private fun Header(component: VisitedCocktailsComponent) {
+private fun Header() {
     Row(
         modifier = Modifier
             .background(MixDrinksColors.Main)
@@ -75,20 +78,6 @@ private fun Header(component: VisitedCocktailsComponent) {
             style = MixDrinksTextStyles.H2,
             softWrap = false,
             maxLines = 1,
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            modifier = Modifier
-                .clickable {
-                    component.logout()
-                }
-                .align(Alignment.CenterVertically)
-                .padding(end = 4.dp),
-            text = "Вийти",
-            style = MixDrinksTextStyles.H4,
-            color = MixDrinksColors.White,
         )
     }
 }

@@ -22,6 +22,14 @@ internal object MixDrinksTextStyles {
         letterSpacing = (-0.07).sp
     )
 
+    val H3 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.W600,
+        letterSpacing = (-0.07).sp,
+        lineHeight = 20.sp,
+    )
+
     val H4 = TextStyle(
         fontFamily = FontFamily.Default,
         fontSize = 18.sp,

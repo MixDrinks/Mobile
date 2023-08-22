@@ -8,4 +8,6 @@ interface VisitedCocktailsNavigation {
     fun navigateToDetails(cocktailId: CocktailId)
 
     fun navigateToTagCocktails(tagId: TagId)
+
+    fun back()
 }

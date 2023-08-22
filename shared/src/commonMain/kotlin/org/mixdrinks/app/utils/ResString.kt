@@ -7,5 +7,13 @@ internal object ResString {
     const val clearFilterForFoundSomething = "Очистіть фільтри, щоб знайти щось"
     const val filters = "Фільтри"
     const val clear = "Очистити"
-
+    const val profile = "Профіль"
+    const val visitedCocktails = "Відвідані коктейлі"
+    const val logout = "Вийти"
+    const val deleteAccount = "Видалити акаунт"
+    const val deleteAccountDialogMessage = "Ви впевнені, що хочете видалити акаунт?"
+    const val deleteAccountDialogYes = "Так"
+    const val deleteAccountDialogNo = "Ні"
+    const val search = "Пошук"
 }
+

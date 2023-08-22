@@ -20,6 +20,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -78,13 +79,14 @@ private fun TopBar(component: ListComponent) {
             Row(modifier = Modifier
                 .padding(horizontal = 4.dp)
             ) {
-                Icon(
-                    painter = painterResource("ic_search.xml"),
-                    contentDescription = "Фільтри",
+                Image(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .clickable { component.openSearch() }
                         .size(36.dp),
+                    painter = painterResource("ic_search.xml"),
+                    contentDescription = ResString.search,
+                    colorFilter = ColorFilter.tint(Color.White)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -124,6 +126,10 @@ private fun SearchField(component: ListComponent, isSearchActive: Boolean) {
                     contentDescription = "Закрити"
                 )
             },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = MixDrinksColors.White,
+                cursorColor = MixDrinksColors.White,
+            ),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             value = searchQuery,

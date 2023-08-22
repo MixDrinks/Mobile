@@ -6,10 +6,10 @@ import de.jensklingenberg.ktorfit.http.Query
 
 internal interface UserVisitedCocktailsService {
 
-    @GET("/user-api/cocktail/visit/list")
+    @GET("user-api/cocktail/visit/list")
     suspend fun getVisitedCocktails(): List<VisitedCocktail>
 
-    @POST("/user-api/cocktail/visit")
+    @POST("user-api/cocktail/visit")
     suspend fun visitCocktail(@Query("id") id: Int)
 
 }
