@@ -45,7 +45,7 @@ internal class Graph {
 
     val tokenStorage = TokenStorage(settings)
 
-    val httpClient =  HttpClient {
+    private val httpClient = HttpClient {
         install(Logging)
         install(ContentNegotiation) {
             json(json)
@@ -57,16 +57,15 @@ internal class Graph {
         }
     }
 
-    val visitedCocktailsService = Ktorfit.Builder()
+    private val ktorfit = Ktorfit.Builder()
         .httpClient(httpClient)
         .baseUrl(baseUrl)
         .build()
+
+    val visitedCocktailsService = ktorfit
         .create<UserVisitedCocktailsService>()
 
-    val deleteAccountService = Ktorfit.Builder()
-        .httpClient(httpClient)
-        .baseUrl(baseUrl)
-        .build()
+    val deleteAccountService = ktorfit
         .create<DeleteAccountService>()
 
     val snapshotRepository: SnapshotRepository = SnapshotRepository(snapshotService, settings, json)
