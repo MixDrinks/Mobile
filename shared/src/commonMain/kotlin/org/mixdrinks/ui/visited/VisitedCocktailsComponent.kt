@@ -10,7 +10,6 @@ import org.mixdrinks.data.SnapshotRepository
 import org.mixdrinks.data.TagsRepository
 import org.mixdrinks.domain.ImageUrlCreators
 import org.mixdrinks.dto.CocktailId
-import org.mixdrinks.ui.auth.AuthBus
 import org.mixdrinks.ui.list.CocktailListMapper
 import org.mixdrinks.ui.list.CocktailsListState
 import org.mixdrinks.ui.widgets.undomain.UiState
@@ -64,7 +63,7 @@ internal class VisitedCocktailsComponent(
     sealed class VisitedCocktailList {
         data class Cocktails(val cocktails: List<CocktailsListState.Cocktails.Cocktail>) : VisitedCocktailList()
 
-        object Empty : VisitedCocktailList()
+        data object Empty : VisitedCocktailList()
     }
 
 }
