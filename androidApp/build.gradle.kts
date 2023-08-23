@@ -46,11 +46,17 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
         }
         getByName("debug") {
             isDebuggable = true
+            isMinifyEnabled = true
+            isShrinkResources = true
             this.resValue("string", "app_name", "MixDrinks")
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
