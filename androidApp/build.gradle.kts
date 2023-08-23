@@ -49,6 +49,8 @@ android {
         }
         getByName("debug") {
             isDebuggable = true
+            isMinifyEnabled = true
+            isShrinkResources = true
             this.resValue("string", "app_name", "MixDrinks")
 
             proguardFiles(
