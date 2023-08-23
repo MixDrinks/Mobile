@@ -122,10 +122,17 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 FirebaseAuth.getInstance().currentUser?.sendNewToken()
             }
+            .addOnFailureListener { e ->
+                Firebase.crashlytics.recordException(e)
+            }
     }
 
     private fun FirebaseUser?.sendNewToken() {
-        this ?: return
+        if (this == null) {
+            Firebase.crashlytics.recordException(Exception("User is null"))
+            return
+        }
+
         getIdToken(true)
             .addOnCompleteListener {
                 it.result?.token?.let { token ->
