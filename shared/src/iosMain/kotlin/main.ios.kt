@@ -1,8 +1,10 @@
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
+import cocoapods.FirebaseAnalytics.*
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.PredictiveBackGestureIcon
@@ -38,6 +40,10 @@ fun MainViewController(): UIViewController {
             MixDrinksApp(componentContext, null)
         }
     }
+}
+
+actual fun trackEvent(action: String, data: Map<String, String>) {
+    FIRAnalytics.logEventWithName(action, data as Map<Any?, *>?)
 }
 
 @Suppress("FunctionNaming")

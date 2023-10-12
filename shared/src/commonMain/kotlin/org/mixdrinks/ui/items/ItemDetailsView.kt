@@ -62,9 +62,10 @@ internal fun ItemViewContent(
             )
         }
         cocktailListInserter(
-            cocktails,
-            predefineComponent::navigateToDetails,
-            predefineComponent::navigateToTagCocktails
+            cocktails = cocktails,
+            onClick = predefineComponent::navigateToDetails,
+            onTagClick = predefineComponent::navigateToTagCocktails,
+            trackingScreen = "page_item_details"
         )
     }
 }

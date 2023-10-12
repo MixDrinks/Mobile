@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -26,17 +27,30 @@ import com.google.firebase.ktx.Firebase
 import setAppleAuthStart
 import setGoogleAuthStart
 import setLogout
+import trackAnalyticsCallback
 
 
 @Keep
 class MainActivity : AppCompatActivity() {
 
-    lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var register: ActivityResultLauncher<Intent>
     private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        trackAnalyticsCallback = { action, data ->
+            FirebaseAnalytics.getInstance(applicationContext)
+                .logEvent(
+                    action,
+                    Bundle().apply {
+                        data.forEach { (key, value) ->
+                            putString(key, value)
+                        }
+                    })
+        }
+
         val deepLink = intent?.data?.toString()
         window.statusBarColor = android.graphics.Color.parseColor("#FF2B4718")
         setContent {
@@ -85,15 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        firebaseAuth.currentUser?.getIdToken(true)
-            ?.addOnCompleteListener {
-                it.result?.token?.let { token ->
-                    NewToken(token)
-                }
-            }
-            ?.addOnFailureListener {
-                Firebase.crashlytics.recordException(it)
-            }
+        firebaseAuth.currentUser?.sendNewToken()
         register = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)

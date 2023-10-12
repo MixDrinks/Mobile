@@ -135,13 +135,14 @@ class MainViewModel: NSObject, ObservableObject, ASAuthorizationControllerDelega
 
         GIDSignIn.sharedInstance.signIn(withPresenting: getUiWindow().rootViewController!) { [unowned self] result, error in
             guard error == nil else {
-                fatalError("Error is null")
+                print("error google \(error)")
+                return
             }
 
             guard let user = result?.user,
                   let idToken = user.idToken?.tokenString
             else {
-                fatalError("resul?.User is null")
+                return
             }
 
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
