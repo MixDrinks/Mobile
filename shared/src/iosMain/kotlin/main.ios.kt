@@ -1,4 +1,4 @@
-
+@file:Suppress("WildcardImport")
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
