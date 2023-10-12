@@ -96,7 +96,9 @@ jobs:
         steps:
             -   uses: actions/checkout@v3
             -   name: Set XCode Version
-                run: sudo xcode-select -s /Applications/Xcode_15.0.app
+                run: |
+                    sudo xcode-select -s /Applications/Xcode_15.0.app
+                    xcode-select -s /Applications/Xcode_15.0.app
             -   name: Apply versions
                 run: |
                     /usr/libexec/Plistbuddy -c "Set CFBundleVersion $MIXDRINKS_MOBILE_APP_VERSION_CODE" iosApp/iosApp/Info.plist
