@@ -11,7 +11,7 @@ import org.mixdrinks.ui.widgets.MixDrinksHeader
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun TagCocktails(
-    component: CommonTagCocktailsComponent
+    component: CommonTagCocktailsComponent,
 ) {
     val name by component.name.collectAsState()
     val cocktails by component.state.collectAsState()
@@ -25,9 +25,10 @@ internal fun TagCocktails(
         }
 
         cocktailListInserter(
-            cocktails,
-            component::navigateToDetails,
-            component::navigateToTagCocktails
+            cocktails = cocktails,
+            onClick = component::navigateToDetails,
+            onTagClick = component::navigateToTagCocktails,
+            trackingScreen = "page_tag_cocktails"
         )
     }
 }

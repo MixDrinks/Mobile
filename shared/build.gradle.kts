@@ -33,6 +33,12 @@ kotlin {
         }
         extraSpecAttributes["resources"] =
             "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
+        podfile = project.file("../iosApp/Podfile")
+
+        pod("GoogleSignIn")
+        pod("FirebaseCore")
+        pod("FirebaseAuth")
+        pod("FirebaseAnalytics")
     }
 
     sourceSets {
@@ -73,6 +79,8 @@ kotlin {
                 api("androidx.activity:activity-compose:1.7.2")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.1")
+                implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+                implementation("com.google.firebase:firebase-analytics-ktx")
             }
         }
         val iosX64Main by getting
@@ -109,6 +117,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-common-ktx:20.4.0")
     add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
     add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
     add("kspIosX64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")

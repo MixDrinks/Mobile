@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -27,12 +28,13 @@ import com.google.firebase.ktx.Firebase
 import setAppleAuthStart
 import setGoogleAuthStart
 import setLogout
+import trackAnalyticsCallback
 
 
 @Keep
 class MainActivity : AppCompatActivity() {
 
-    lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var register: ActivityResultLauncher<Intent>
     private lateinit var firebaseAuth: FirebaseAuth
 
@@ -42,6 +44,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        trackAnalyticsCallback = { action, data ->
+            FirebaseAnalytics.getInstance(applicationContext)
+                .logEvent(
+                    action,
+                    Bundle().apply {
+                        data.forEach { (key, value) ->
+                            putString(key, value)
+                        }
+                    })
+        }
+
         val deepLink = intent?.data?.toString()
         window.statusBarColor = android.graphics.Color.parseColor("#FF2B4718")
         setContent {
@@ -75,15 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        firebaseAuth.currentUser?.getIdToken(true)
-            ?.addOnCompleteListener {
-                it.result?.token?.let { token ->
-                    NewToken(token)
-                }
-            }
-            ?.addOnFailureListener {
-                Firebase.crashlytics.recordException(it)
-            }
+        firebaseAuth.currentUser?.sendNewToken()
         register = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -97,14 +103,14 @@ class MainActivity : AppCompatActivity() {
         val pending = firebaseAuth.pendingAuthResult
         if (pending != null) {
             pending.addOnSuccessListener { authResult ->
-                authResult.user.sendNewToken(AuthProvider.APPLE)
+                authResult.user.sendNewToken()
             }.addOnFailureListener { e ->
                 authFail(AuthProvider.APPLE, e)
             }
         } else {
             firebaseAuth.startActivityForSignInWithProvider(this, appleProvider.build())
                 .addOnSuccessListener { authResult ->
-                    authResult.user.sendNewToken(AuthProvider.APPLE)
+                    authResult.user.sendNewToken()
                 }
                 .addOnFailureListener { e ->
                     authFail(AuthProvider.APPLE, e)
@@ -133,16 +139,16 @@ class MainActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { _ ->
-                FirebaseAuth.getInstance().currentUser?.sendNewToken(AuthProvider.GOOGLE)
+                FirebaseAuth.getInstance().currentUser?.sendNewToken()
             }
             .addOnFailureListener { e ->
                 authFail(AuthProvider.GOOGLE, e)
             }
     }
 
-    private fun FirebaseUser?.sendNewToken(provider: AuthProvider) {
+    private fun FirebaseUser?.sendNewToken() {
         if (this == null) {
-            authFail(provider, Exception("User is null"))
+            Firebase.crashlytics.recordException(Exception("User is null"))
             return
         }
 
@@ -153,7 +159,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                authFail(provider, it)
+                Firebase.crashlytics.recordException(it)
             }
     }
 

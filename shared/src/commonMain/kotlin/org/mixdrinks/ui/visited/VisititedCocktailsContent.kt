@@ -32,9 +32,10 @@ internal fun VisitedCocktailsContent(component: VisitedCocktailsComponent) {
                 is VisitedCocktailsComponent.VisitedCocktailList.Cocktails -> {
                     LazyColumn {
                         cocktailListInserter(
-                            cocktails.cocktails,
-                            component::navigateToDetails,
-                            component::navigateToTagCocktails,
+                            cocktails = cocktails.cocktails,
+                            onClick = component::navigateToDetails,
+                            onTagClick = component::navigateToTagCocktails,
+                            trackingScreen = "page_visited_cocktails",
                         )
                     }
                 }

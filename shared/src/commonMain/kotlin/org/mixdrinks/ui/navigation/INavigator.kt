@@ -12,8 +12,6 @@ internal interface INavigator {
 
     fun navigateToItem(itemsType: ItemsType.Type, id: Int)
 
-    fun navigateToDetails(cocktailId: Int)
-
     fun navigateToDetails(cocktailId: CocktailId)
 
     fun navigateToSearchItem(searchItemType: SearchItemComponent.SearchItemType)

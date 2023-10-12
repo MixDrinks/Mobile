@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberAsyncImagePainter
 import org.mixdrinks.app.styles.MixDrinksColors
 import org.mixdrinks.app.styles.MixDrinksTextStyles
+import org.mixdrinks.data.Tracking
 import org.mixdrinks.dto.CocktailId
 import org.mixdrinks.dto.TagId
 import org.mixdrinks.ui.tag.Tag
@@ -34,10 +35,17 @@ internal fun CocktailList(
     cocktails: CocktailsListState.Cocktails,
     onClick: (CocktailId) -> Unit,
     onTagClick: (TagId) -> Unit,
+    trackingScreen: String,
 ) {
     LazyColumn {
         items(cocktails.list, key = { cocktail -> cocktail.id.id }) { cocktail ->
-            Cocktail(Modifier.animateItemPlacement(), cocktail, onClick, onTagClick)
+            Cocktail(
+                modifier = Modifier.animateItemPlacement(),
+                cocktail = cocktail,
+                onClick = onClick,
+                onTagClick = onTagClick,
+                trackingScreen = trackingScreen
+            )
         }
     }
 }
@@ -46,10 +54,17 @@ internal fun LazyListScope.cocktailListInserter(
     cocktails: CocktailsListState.Cocktails,
     onClick: (CocktailId) -> Unit,
     onTagClick: (TagId) -> Unit,
+    trackingScreen: String,
 ) {
     cocktails.list.forEach {
         item(key = it.id.id) {
-            Cocktail(Modifier, it, onClick, onTagClick)
+            Cocktail(
+                modifier = Modifier,
+                cocktail = it,
+                onClick = onClick,
+                onTagClick = onTagClick,
+                trackingScreen = trackingScreen
+            )
         }
     }
 }
@@ -58,10 +73,17 @@ internal fun LazyListScope.cocktailListInserter(
     cocktails: List<CocktailsListState.Cocktails.Cocktail>,
     onClick: (CocktailId) -> Unit,
     onTagClick: (TagId) -> Unit,
+    trackingScreen: String,
 ) {
     cocktails.forEach {
         item(key = it.id.id) {
-            Cocktail(Modifier, it, onClick, onTagClick)
+            Cocktail(
+                modifier = Modifier,
+                cocktail = it,
+                onClick = onClick,
+                onTagClick = onTagClick,
+                trackingScreen = trackingScreen
+            )
         }
     }
 }
@@ -73,6 +95,7 @@ internal fun Cocktail(
     cocktail: CocktailsListState.Cocktails.Cocktail,
     onClick: (CocktailId) -> Unit,
     onTagClick: (TagId) -> Unit,
+    trackingScreen: String,
 ) {
     Card(
         modifier = modifier
@@ -81,7 +104,14 @@ internal fun Cocktail(
             .padding(horizontal = 8.dp, vertical = 4.dp),
         shape = RoundedCornerShape(8.dp),
     ) {
-        Row(modifier = Modifier.clickable { onClick(cocktail.id) }) {
+        Row(modifier = Modifier.clickable {
+            Tracking.track(
+                action = "open_cocktail_details",
+                screen = trackingScreen,
+                data = mapOf("cocktail_name" to cocktail.name)
+            )
+            onClick(cocktail.id)
+        }) {
             Image(
                 painter = rememberAsyncImagePainter(cocktail.url),
                 contentDescription = "Коктейль ${cocktail.name}",

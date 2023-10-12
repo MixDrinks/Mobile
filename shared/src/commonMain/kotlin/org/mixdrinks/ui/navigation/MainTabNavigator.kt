@@ -92,10 +92,6 @@ internal class MainTabNavigator(
         )
     }
 
-    override fun navigateToDetails(cocktailId: Int) {
-        stackNavigation.push(Config.DetailsConfig(cocktailId))
-    }
-
     override fun navigateToDetails(cocktailId: CocktailId) {
         stackNavigation.push(Config.DetailsConfig(cocktailId.id))
     }

@@ -178,17 +178,18 @@ private fun OpenFilterButton(modifier: Modifier, component: ListComponent) {
 internal fun Content(component: ListComponent) {
     ContentHolder(
         stateflow = component.state,
-    ) {
-        when (it) {
+    ) { cocktailsListState ->
+        when (cocktailsListState) {
             is CocktailsListState.PlaceHolder -> {
-                PlaceHolder(it, component)
+                PlaceHolder(cocktailsListState, component)
             }
 
             is CocktailsListState.Cocktails -> {
                 CocktailList(
-                    it,
-                    component::navigateToDetails,
-                    component::navigateToTagCocktails
+                    cocktails = cocktailsListState,
+                    onClick = component::navigateToDetails,
+                    onTagClick = component::navigateToTagCocktails,
+                    trackingScreen = "page_all_cocktails"
                 )
             }
         }
