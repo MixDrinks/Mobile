@@ -97,12 +97,6 @@ jobs:
             -   uses: actions/checkout@v3
             -   name: Set XCode Version
                 run: sudo xcode-select -s /Applications/Xcode_15.0.app
-            -   name: Install Dependencies
-                run: |
-                    cd iosApp
-                    pod install --repo-update
-                    cd ..
-                shell: bash
             -   name: Apply versions
                 run: |
                     /usr/libexec/Plistbuddy -c "Set CFBundleVersion $MIXDRINKS_MOBILE_APP_VERSION_CODE" iosApp/iosApp/Info.plist
@@ -117,7 +111,12 @@ jobs:
                 uses: gradle/gradle-build-action@v2.5.1
                 with:
                     arguments: podInstall
-
+            -   name: Install Dependencies
+                run: |
+                    cd iosApp
+                    pod install --repo-update
+                    cd ..
+                shell: bash
             -   name: "Build IOS App"
                 uses: yukiarrr/ios-build-action@v1.11.0
                 with:
