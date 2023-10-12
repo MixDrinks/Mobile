@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var register: ActivityResultLauncher<Intent>
     private lateinit var firebaseAuth: FirebaseAuth
+
+    enum class AuthProvider(val trackName: String) {
+        GOOGLE("google"), APPLE("apple")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,22 +79,7 @@ class MainActivity : AppCompatActivity() {
         val appleProvider = OAuthProvider.newBuilder("apple.com")
 
         setAppleAuthStart {
-            val pending = firebaseAuth.pendingAuthResult
-            if (pending != null) {
-                pending.addOnSuccessListener { authResult ->
-                    authResult.user.sendNewToken()
-                }.addOnFailureListener { e ->
-                    Firebase.crashlytics.recordException(e)
-                }
-            } else {
-                firebaseAuth.startActivityForSignInWithProvider(this, appleProvider.build())
-                    .addOnSuccessListener { authResult ->
-                        authResult.user.sendNewToken()
-                    }
-                    .addOnFailureListener { e ->
-                        Firebase.crashlytics.recordException(e)
-                    }
-            }
+            signInApple(appleProvider)
         }
 
         setLogout {
@@ -108,6 +98,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun signInApple(appleProvider: OAuthProvider.Builder) {
+        authStart(AuthProvider.APPLE)
+        val pending = firebaseAuth.pendingAuthResult
+        if (pending != null) {
+            pending.addOnSuccessListener { authResult ->
+                authResult.user.sendNewToken()
+            }.addOnFailureListener { e ->
+                authFail(AuthProvider.APPLE, e)
+            }
+        } else {
+            firebaseAuth.startActivityForSignInWithProvider(this, appleProvider.build())
+                .addOnSuccessListener { authResult ->
+                    authResult.user.sendNewToken()
+                }
+                .addOnFailureListener { e ->
+                    authFail(AuthProvider.APPLE, e)
+                }
+        }
+    }
+
     private fun signInGoogle() {
         val signInIntent: Intent = googleSignInClient.signInIntent
         register.launch(signInIntent)
@@ -120,6 +130,7 @@ class MainActivity : AppCompatActivity() {
                 update(account)
             }
         } catch (e: ApiException) {
+            authFail(AuthProvider.GOOGLE, e)
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
         }
     }
@@ -127,11 +138,11 @@ class MainActivity : AppCompatActivity() {
     private fun update(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener(this) { _ ->
                 FirebaseAuth.getInstance().currentUser?.sendNewToken()
             }
             .addOnFailureListener { e ->
-                Firebase.crashlytics.recordException(e)
+                authFail(AuthProvider.GOOGLE, e)
             }
     }
 
@@ -150,5 +161,20 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Firebase.crashlytics.recordException(it)
             }
+    }
+
+    private fun authStart(provider: AuthProvider) {
+        Firebase.analytics.logEvent("auth_start", Bundle().apply {
+            putString("provider", provider.trackName)
+        })
+    }
+
+    private fun authFail(provider: AuthProvider, exception: Exception? = null) {
+        Firebase.analytics.logEvent("auth_fail", Bundle().apply {
+            putString("provider", provider.trackName)
+        })
+        if (exception != null) {
+            Firebase.crashlytics.recordException(exception)
+        }
     }
 }
