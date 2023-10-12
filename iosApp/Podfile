@@ -4,14 +4,7 @@ target 'iosApp' do
   pod 'shared', :path => '../shared'
 end
 
-<<<<<<< Updated upstream
-pod 'GoogleSignIn'
-pod 'FirebaseCore'
-pod 'FirebaseAuth'
-pod 'FirebaseAnalytics'
-=======
 pod 'GoogleSignIn', '7.0.0'
 pod 'FirebaseCore', '10.15.0'
 pod 'FirebaseAuth', '10.15.0'
 pod 'FirebaseAnalytics', '10.15.0'
->>>>>>> Stashed changes
