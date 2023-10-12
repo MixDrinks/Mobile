@@ -127,7 +127,6 @@ jobs:
                     team-id: ${{ secrets.MIXDRINKS_IOS_TEAM_ID }}
                     certificate-password: ${{ secrets.MIXDRINKS_IOS_CERTIFICATE_PASSWORD }}
                     export-options: iosApp/exportOptionsRelease.plist
-                    workspace-path: iosApp/iosApp.xcworkspace
                     export-method: "app-store"
             -   name: "Upload IPA file as artifact"
                 uses: actions/upload-artifact@v3
