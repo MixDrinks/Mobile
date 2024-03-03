@@ -64,7 +64,7 @@ kotlin {
                 implementation("com.arkivanov.decompose:decompose:2.1.0-compose-experimental-alpha-03")
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.1.0-compose-experimental-alpha-03")
 
-                implementation("io.github.qdsfdhvh:image-loader:1.2.10")
+                implementation("io.github.qdsfdhvh:image-loader:1.7.8")
 
                 implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
             }
