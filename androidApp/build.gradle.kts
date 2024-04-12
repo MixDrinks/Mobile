@@ -15,7 +15,7 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation("com.google.android.gms:play-services-auth:20.6.0")
-                implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+                implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
                 implementation("com.google.firebase:firebase-auth-ktx")
                 implementation("com.google.firebase:firebase-crashlytics-ktx")
                 implementation("com.google.firebase:firebase-analytics-ktx")
@@ -69,6 +69,6 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
 }
