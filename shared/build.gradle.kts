@@ -12,7 +12,7 @@ plugins {
 }
 
 val ktorVersion = "2.2.4"
-val ktorfitVersion = "1.0.1"
+val ktorfitVersion = "1.14.0"
 
 kotlin {
     android()
