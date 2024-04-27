@@ -61,7 +61,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-                implementation("com.arkivanov.decompose:decompose:2.1.0-compose-experimental-alpha-03")
+                implementation("com.arkivanov.decompose:decompose:2.2.3")
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.1.0-compose-experimental-alpha-03")
 
                 implementation("io.github.qdsfdhvh:image-loader:1.2.10")
